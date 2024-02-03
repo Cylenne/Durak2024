@@ -1,9 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
-import java.util.Arrays;
 import java.util.List;
 
-public class AttackScreen{
+public class RoundScreen {
     private JFrame frame;
     private JLabel gameMessage;
     private JPanel firstHumanPlayerPanel;

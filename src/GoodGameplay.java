@@ -1,7 +1,7 @@
 import javax.swing.Timer;
 import java.util.*;
 
-public class Gameplay {
+public class GoodGameplay {
     private List<Player> players;
     private Deck deck;
     private String gameMessage;
@@ -10,7 +10,7 @@ public class Gameplay {
     private Card.Suit trumpSuit;
     private Card trump;
     private MainScreen mainScreen;
-    private RoundScreen roundScreen;
+    private RoundScreen attackScreen;
     private int roundCounter;
     private Player startingPlayer;
     private Boolean currentRoundDefended = false;
@@ -19,47 +19,17 @@ public class Gameplay {
     private Timer roundTimer;
     private Timer messageTimer;
 
-    // this is a callback method we'll call in main in order to ensure that only AFTER the user has selected the
-    // number and type of players, will the players actually be created and can the game flow continue
-    public interface OnPlayersReadyCallback {
-        void onPlayersReady(List<Player> allPlayers, Deck standardDeck);
-    }
-
-    public void initializeStartingScreen(OnPlayersReadyCallback callback) {
+    public void startPhase() {
+        // create deck
         deck = new Deck();
 
-        StartingScreen startingScreen = new StartingScreen((players, standardDeck) -> {
-            onPlayersReady(players);
-            // call the callback when players are ready
-            callback.onPlayersReady(players, standardDeck);
-        });
-
+        // initialize StartingScreen
+        StartingScreen startingScreen = new StartingScreen(this::onPlayersReady);
         startingScreen.setStandardDeck(deck);
         startingScreen.setupStartingScreen();
     }
 
-    void onPlayersReady(List<Player> players) {
-        this.players = players;
-    }
-
-    private void startPhase() {
-        // the players list is assumed to be already set with choices from the GUI
-        DeckManager.dealCards(players, deck);
-
-        PlayerManager.printAllPlayerDetails(players);
-
-        getTrump(deck);
-        PlayerManager.sortEachPlayersHand(players, trumpSuit);
-
-        deck.getDeck().add(trump);
-
-        startingPlayer = PlayerManager.determineStartingPlayer(players, trumpSuit);
-        gameMessage = startingPlayer.getName() + " starts the game";
-
-        printCurrentGameState();
-    }
-
-    public void round() {
+    public void attackPhase() {
         List<Player> activePlayersInRound = new ArrayList<>();
         PlayerManager.sortEachPlayersHand(players, trumpSuit);
 
@@ -182,9 +152,52 @@ public class Gameplay {
 //        System.out.println("Game message: " + gameMessage);
     }
 
-    private void getTrump(Deck deck) {
-        trump = DeckManager.dealTrump(deck);
-        trumpSuit = trump.getSuit();
+    private void onPlayersReady(List<Player> allPlayers, Deck deck) {
+        // save the players to the class variable
+        players = allPlayers;
+
+        DeckManager.dealCards(allPlayers, deck);
+
+        PlayerManager.printAllPlayerDetails(allPlayers);
+
+        getTrump(deck);
+        PlayerManager.sortEachPlayersHand(players, trumpSuit);
+
+        deck.getDeck().add(trump);
+
+        startingPlayer = PlayerManager.determineStartingPlayer(players, trumpSuit);
+        gameMessage = startingPlayer.getName() + " starts the game";
+
+        printCurrentGameState();
+
+        mainScreen = new MainScreen();
+        mainScreen.setupStartingScreen(players, trump, gameMessage);
+
+        roundCounter = 1;
+
+        roundTimer = new Timer(5000, e -> {
+            if (isGameOngoing) { // because of the timer, while has been changed to if (timer generates the loops)
+
+                attackPhase();
+
+                if (attackScreen == null) {
+                    mainScreen.close();
+                    attackScreen = new RoundScreen();
+                    attackScreen.setUpAttackScreen(players, trump, gameMessage);
+                } else {
+                    attackScreen.updateAttackScreen(players, gameMessage);
+                }
+
+                roundTimer.setRepeats(true); // without this we only reach round 1
+
+            } else {
+                gameOver();
+                roundTimer.stop();
+            }
+
+        });
+
+        roundTimer.start();
     }
 
     private void printCurrentGameState() {
@@ -193,10 +206,12 @@ public class Gameplay {
         System.out.println("The starting player is: " + startingPlayer);
     }
 
-    public void updateGameMessageWithinRounds(String newMessage) {
-        gameMessage += "\n" + newMessage;
+    private void getTrump(Deck deck) {
+        trump = DeckManager.dealTrump(deck);
+        trumpSuit = trump.getSuit();
     }
 
+    // iterator needed to avoid ConcurrentModificationException
     public void roundEndCheck() {
         Iterator<Player> iterator = players.iterator();
 
@@ -213,37 +228,6 @@ public class Gameplay {
         if (players.size() == 1) {
             isGameOngoing = false;
         }
-    }
-
-    public void attackPhase() {
-        mainScreen = new MainScreen();
-        mainScreen.setupStartingScreen(players, trump, gameMessage);
-
-        roundCounter = 1;
-
-        roundTimer = new Timer(5000, e -> {
-            if (isGameOngoing) { // because of the timer, while has been changed to if (timer generates the loops)
-
-                round();
-
-                if (roundScreen == null) {
-                    mainScreen.close();
-                    roundScreen = new RoundScreen();
-                    roundScreen.setUpAttackScreen(players, trump, gameMessage);
-                } else {
-                    roundScreen.updateAttackScreen(players, gameMessage);
-                }
-
-                roundTimer.setRepeats(true); // without this we only reach round 1
-
-            } else {
-                gameOver();
-                roundTimer.stop();
-            }
-
-        });
-
-        roundTimer.start();
     }
 
     public void gameOver() {
@@ -268,13 +252,8 @@ public class Gameplay {
 
     }
 
-    public static void main(String[] args) {
-        Gameplay game = new Gameplay();
-
-        // use a callback to handle asynchronous onPlayersReady
-        game.initializeStartingScreen((allPlayers, standardDeck) -> {
-            // now you can safely call startPhase or any other methods
-            game.startPhase();
-        });
+    public void updateGameMessageWithinRounds(String newMessage) {
+        gameMessage += "\n" + newMessage;
     }
+
 }
