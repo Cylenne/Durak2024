@@ -7,7 +7,7 @@
 //    private Card trump;
 //    @Override
 //    public void execute() {
-//        initializeStartingScreen(players, deck);
+//
 //    }
 //
 //    private void initializeStartingScreen(Gameplay gameplay) {

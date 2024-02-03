@@ -22,16 +22,16 @@ public class Gameplay {
     // this is a callback method we'll call in main in order to ensure that only AFTER the user has selected the
     // number and type of players, will the players actually be created and can the game flow continue
     public interface OnPlayersReadyCallback {
-        void onPlayersReady(List<Player> allPlayers, Deck standardDeck);
+        void onPlayersReady(List<Player> allPlayers);
     }
 
     public void initializeStartingScreen(OnPlayersReadyCallback callback) {
         deck = new Deck();
 
-        StartingScreen startingScreen = new StartingScreen((players, standardDeck) -> {
+        StartingScreen startingScreen = new StartingScreen((players) -> {
             onPlayersReady(players);
             // call the callback when players are ready
-            callback.onPlayersReady(players, standardDeck);
+            callback.onPlayersReady(players);
         });
 
         startingScreen.setStandardDeck(deck);
@@ -272,9 +272,10 @@ public class Gameplay {
         Gameplay game = new Gameplay();
 
         // use a callback to handle asynchronous onPlayersReady
-        game.initializeStartingScreen((allPlayers, standardDeck) -> {
+        game.initializeStartingScreen((allPlayers) -> {
             // now you can safely call startPhase or any other methods
             game.startPhase();
+            game.attackPhase();
         });
     }
 }

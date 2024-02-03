@@ -20,7 +20,7 @@ public class StartingScreen {
     private OnPlayersReadyListener callback;
     private Deck standardDeck;
     public interface OnPlayersReadyListener {
-        void onPlayersReady(List<Player> players, Deck standardDeck);
+        void onPlayersReady(List<Player> players);
     }
     public StartingScreen(OnPlayersReadyListener callback) {
         this.callback = callback;
@@ -91,7 +91,7 @@ public class StartingScreen {
             allPlayers.addAll(computerPlayers);
 //            System.out.println(allPlayers);
 
-            callback.onPlayersReady(allPlayers,standardDeck);
+            callback.onPlayersReady(allPlayers);
             // Handle the game initialization based on selected players
             frame.dispose(); // close starting screen window
         });
