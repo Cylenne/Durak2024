@@ -18,45 +18,19 @@ public class Gameplay {
     private List<Player> winners = new ArrayList<>();
     private Timer roundTimer;
     private Timer messageTimer;
+    private StartPhase startPhase;
 
-    // this is a callback method we'll call in main in order to ensure that only AFTER the user has selected the
-    // number and type of players, will the players actually be created and can the game flow continue
-    public interface OnPlayersReadyCallback {
-        void onPlayersReady(List<Player> allPlayers, Deck standardDeck);
-    }
+    private void gameFlow() {
 
-    public void initializeStartingScreen(OnPlayersReadyCallback callback) {
-        deck = new Deck();
-
-        StartingScreen startingScreen = new StartingScreen((players, standardDeck) -> {
-            onPlayersReady(players);
-            // call the callback when players are ready
-            callback.onPlayersReady(players, standardDeck);
+        startPhase.initializeStartingScreen((players, standardDeck) -> {
+            // now you can safely call startPhase or any other methods
+            startPhase.startGame();
+            attackPhase();
         });
 
-        startingScreen.setStandardDeck(deck);
-        startingScreen.setupStartingScreen();
-    }
-
-    void onPlayersReady(List<Player> players) {
-        this.players = players;
-    }
-
-    private void startPhase() {
-        // the players list is assumed to be already set with choices from the GUI
-        DeckManager.dealCards(players, deck);
-
-        PlayerManager.printAllPlayerDetails(players);
-
-        getTrump(deck);
-        PlayerManager.sortEachPlayersHand(players, trumpSuit);
-
-        deck.getDeck().add(trump);
-
-        startingPlayer = PlayerManager.determineStartingPlayer(players, trumpSuit);
-        gameMessage = startingPlayer.getName() + " starts the game";
-
-        printCurrentGameState();
+//        startPhase = new StartPhase(players, deck, trump, trumpSuit, startingPlayer, gameMessage);
+//        startPhase.execute();
+//        attackPhase();
     }
 
     public void round() {
@@ -182,17 +156,6 @@ public class Gameplay {
 //        System.out.println("Game message: " + gameMessage);
     }
 
-    private void getTrump(Deck deck) {
-        trump = DeckManager.dealTrump(deck);
-        trumpSuit = trump.getSuit();
-    }
-
-    private void printCurrentGameState() {
-        System.out.println("The trump is: " + trump);
-        DeckManager.printDeck(deck);
-        System.out.println("The starting player is: " + startingPlayer);
-    }
-
     public void updateGameMessageWithinRounds(String newMessage) {
         gameMessage += "\n" + newMessage;
     }
@@ -270,11 +233,6 @@ public class Gameplay {
 
     public static void main(String[] args) {
         Gameplay game = new Gameplay();
-
-        // use a callback to handle asynchronous onPlayersReady
-        game.initializeStartingScreen((allPlayers, standardDeck) -> {
-            // now you can safely call startPhase or any other methods
-            game.startPhase();
-        });
+        game.gameFlow();
     }
 }
