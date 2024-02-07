@@ -9,6 +9,7 @@ public class StartPhase {
     private Player startingPlayer;
     private String gameMessage;
 
+
     public StartPhase(List<Player> players, Deck deck, Card.Suit trumpSuit, Player startingPlayer, String gameMessage) {
         this.players = players;
         this.deck = deck;
@@ -16,6 +17,20 @@ public class StartPhase {
         this.trumpSuit = trumpSuit;
         this.startingPlayer = startingPlayer;
         this.gameMessage = gameMessage;
+    }
+
+    public static void main(String[] args) {
+        ConfigPhase configPhase = ConfigPhase.ConfigPhaseBuilder.newInstance()
+                .setPlayers()
+                .setDeck()
+                .setTrump()
+                .setTrumpSuit().build();
+
+        // shit is again asynchronous, this needs to be fixed before i call any other method
+//        System.out.println(configPhase.getPlayers());
+//        System.out.println(configPhase.getDeck());
+//        System.out.println(configPhase.getTrump());
+
     }
 
     // Method to transfer values to DestinationClass
