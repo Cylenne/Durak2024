@@ -71,26 +71,26 @@ public class StartPhase {
 
     // this is a callback method we'll call in main in order to ensure that only AFTER the user has selected the
     // number and type of players, will the players actually be created and can the game flow continue
-    public interface OnPlayersReadyCallback {
-        void onPlayersReady(List<Player> allPlayers);
-    }
+//    public interface OnPlayersReadyCallback {
+//        void onPlayersReady(List<Player> allPlayers);
+//    }
+//
+//    void onPlayersReady(List<Player> players) {
+//        this.players = players;// config comes here
+//    }
 
-    void onPlayersReady(List<Player> players) {
-        this.players = players;// config comes here
-    }
-
-    public void initializeStartingScreen(OnPlayersReadyCallback callback) {
-        deck = new Deck();
-
-        StartingScreen startingScreen = new StartingScreen((players) -> {
-            onPlayersReady(players);
-            // call the callback when players are ready
-            callback.onPlayersReady(players);
-        });
-
-        startingScreen.setStandardDeck(deck);
-        startingScreen.setupStartingScreen();
-    }
+//    public void initializeStartingScreen(OnPlayersReadyCallback callback) {
+//        deck = new Deck();
+//
+//        StartingScreen startingScreen = new StartingScreen((players) -> {
+//            onPlayersReady(players);
+//            // call the callback when players are ready
+//            callback.onPlayersReady(players);
+//        });
+//
+//        startingScreen.setStandardDeck(deck);
+//        startingScreen.setupStartingScreen();
+//    }
 
     public void initiateStartPhase(Card trump) {
         // the players list is assumed to be already set with choices from the GUI

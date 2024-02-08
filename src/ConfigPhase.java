@@ -89,7 +89,7 @@ public class ConfigPhase {
             this.players = players;// config comes here
         }
 
-        public void initializeStartingScreen(StartPhase.OnPlayersReadyCallback callback) {
+        public void initializeStartingScreen(OnPlayersReadyCallback callback) {
             setDeck();
 
             StartingScreen startingScreen = new StartingScreen((players) -> {
