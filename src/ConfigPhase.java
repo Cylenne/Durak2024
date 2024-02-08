@@ -81,6 +81,8 @@ public class ConfigPhase {
             return new ConfigPhase(this);
         }
 
+        // this is a callback method we'll call in main in order to ensure that only AFTER the user has selected the
+        // number and type of players, will the players actually be created and can the game flow continue
         public interface OnPlayersReadyCallback {
             void onPlayersReady(List<Player> allPlayers);
         }

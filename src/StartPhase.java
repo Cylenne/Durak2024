@@ -5,102 +5,57 @@ import java.util.concurrent.Executors;
 
 public class StartPhase {
 
-    private List<Player> players;
-    private Deck deck;
+    // SHOULD THIS BE A SINGLETON??
 
-    private Card.Suit trumpSuit;
-    private Player startingPlayer;
-    private String gameMessage;
-
-
-
-    public StartPhase(List<Player> players, Deck deck, Card.Suit trumpSuit, Player startingPlayer, String gameMessage) {
-        this.players = players;
-        this.deck = deck;
-
-        this.trumpSuit = trumpSuit;
-        this.startingPlayer = startingPlayer;
-        this.gameMessage = gameMessage;
-    }
-
+    private static List<Player> players;
+    private static Deck deck;
+    private static Card trump;
+    private static Card.Suit trumpSuit;
+    private static Player startingPlayer;
+    private static String gameMessage;
     private static ConfigPhase configPhase;
 
-    public static void main(String[] args) {
+    public void execute() {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         CountDownLatch latch = new CountDownLatch(1);
 
-        executor.execute(() -> {
-            ConfigPhase.ConfigPhaseBuilder.newInstance()
-                    .setPlayers(players -> {
-                        configPhase = players;
-                        latch.countDown();
-                    })
-                    .setDeck()
-                    .setTrump()
-                    .setTrumpSuit().build();
-        });
+        executor.execute(() -> ConfigPhase.ConfigPhaseBuilder.newInstance()
+                .setPlayers(players -> {
+                    configPhase = players;
+                    latch.countDown();
+                })
+                .setDeck()
+                .setTrump()
+                .setTrumpSuit().build());
 
         try {
-            latch.await(); // Wait for the latch to be released
+            latch.await();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
-        print(configPhase); // Now print the configPhase
+        //
+        transferAttributes();
+        initiateStartPhase();
         executor.shutdown();
     }
 
-    public static void print(ConfigPhase configPhase) {
+    public static void transferAttributes(){
         if (configPhase != null) {
-            PlayerManager.printAllPlayerDetails(configPhase.getPlayers());
-            configPhase.getDeck().printDeck();
-            System.out.println(configPhase.getTrump());
-            System.out.println(configPhase.getTrumpSuit());
-
+            players = configPhase.getPlayers();
+            deck = configPhase.getDeck();
+            trump = configPhase.getTrump();
+            trumpSuit = configPhase.getTrumpSuit();
         } else {
             System.out.println("ConfigPhase is null.");
         }
     }
 
-
-    // Method to transfer values to DestinationClass
-//    public void transferValues() {
-//        Gameplay gameplay = new Gameplay(players, deck, trump, trumpSuit, startingPlayer, gameMessage);
-//        // Call methods or perform operations on the DestinationClass instance
-//    }
-
-    // this is a callback method we'll call in main in order to ensure that only AFTER the user has selected the
-    // number and type of players, will the players actually be created and can the game flow continue
-//    public interface OnPlayersReadyCallback {
-//        void onPlayersReady(List<Player> allPlayers);
-//    }
-//
-//    void onPlayersReady(List<Player> players) {
-//        this.players = players;// config comes here
-//    }
-
-//    public void initializeStartingScreen(OnPlayersReadyCallback callback) {
-//        deck = new Deck();
-//
-//        StartingScreen startingScreen = new StartingScreen((players) -> {
-//            onPlayersReady(players);
-//            // call the callback when players are ready
-//            callback.onPlayersReady(players);
-//        });
-//
-//        startingScreen.setStandardDeck(deck);
-//        startingScreen.setupStartingScreen();
-//    }
-
-    public void initiateStartPhase(Card trump) {
+    public static void initiateStartPhase() {
         // the players list is assumed to be already set with choices from the GUI
         DeckManager.dealCards(players, deck);
 
         PlayerManager.printAllPlayerDetails(players);
 
-        Card localTrump = getTrump(deck);
-        trump.setRank(localTrump.getRank());
-        trump.setSuit(localTrump.getSuit());
         PlayerManager.sortEachPlayersHand(players, trumpSuit);
 
         deck.getDeck().add(trump);
@@ -109,16 +64,9 @@ public class StartPhase {
         gameMessage = startingPlayer.getName() + " starts the game";
 
         printCurrentGameState(trump);
-//        transferValues();
     }
 
-    private Card getTrump(Deck deck) {
-        Card trump = DeckManager.dealTrump(deck);
-        trumpSuit = trump.getSuit();
-        return trump;
-    }
-
-    private void printCurrentGameState(Card trump) {
+    private static void printCurrentGameState(Card trump) {
         System.out.println("The trump is: " + trump);
         DeckManager.printDeck(deck);
         System.out.println("The starting player is: " + startingPlayer);
