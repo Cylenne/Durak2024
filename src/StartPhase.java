@@ -1,4 +1,7 @@
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class StartPhase {
 
@@ -10,6 +13,7 @@ public class StartPhase {
     private String gameMessage;
 
 
+
     public StartPhase(List<Player> players, Deck deck, Card.Suit trumpSuit, Player startingPlayer, String gameMessage) {
         this.players = players;
         this.deck = deck;
@@ -19,19 +23,44 @@ public class StartPhase {
         this.gameMessage = gameMessage;
     }
 
+    private static ConfigPhase configPhase;
+
     public static void main(String[] args) {
-        ConfigPhase configPhase = ConfigPhase.ConfigPhaseBuilder.newInstance()
-                .setPlayers()
-                .setDeck()
-                .setTrump()
-                .setTrumpSuit().build();
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        CountDownLatch latch = new CountDownLatch(1);
 
-        // shit is again asynchronous, this needs to be fixed before i call any other method
-//        System.out.println(configPhase.getPlayers());
-//        System.out.println(configPhase.getDeck());
-//        System.out.println(configPhase.getTrump());
+        executor.execute(() -> {
+            ConfigPhase.ConfigPhaseBuilder.newInstance()
+                    .setPlayers(players -> {
+                        configPhase = players;
+                        latch.countDown();
+                    })
+                    .setDeck()
+                    .setTrump()
+                    .setTrumpSuit().build();
+        });
 
+        try {
+            latch.await(); // Wait for the latch to be released
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        print(configPhase); // Now print the configPhase
+        executor.shutdown();
     }
+
+    public static void print(ConfigPhase configPhase) {
+        if (configPhase != null) {
+            PlayerManager.printAllPlayerDetails(configPhase.getPlayers());
+            configPhase.getDeck().printDeck();
+            System.out.println(configPhase.getTrump());
+
+        } else {
+            System.out.println("ConfigPhase is null.");
+        }
+    }
+
 
     // Method to transfer values to DestinationClass
 //    public void transferValues() {

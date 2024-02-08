@@ -1,4 +1,5 @@
 import java.util.List;
+import java.util.function.Consumer;
 
 public class ConfigPhase {
     private final List<Player> players;
@@ -53,12 +54,11 @@ public class ConfigPhase {
             this.trumpSuit = trumpSuit;
         }
 
-        public ConfigPhaseBuilder setPlayers() {
-
-            initializeStartingScreen((allPlayers) -> {
-
+        public ConfigPhaseBuilder setPlayers(Consumer<ConfigPhase> callback) {
+            initializeStartingScreen(players -> {
+                onPlayersReady(players);
+                callback.accept(new ConfigPhase(this));
             });
-
             return this;
         }
 
