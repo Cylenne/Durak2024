@@ -55,6 +55,7 @@ public class StartPhase {
             PlayerManager.printAllPlayerDetails(configPhase.getPlayers());
             configPhase.getDeck().printDeck();
             System.out.println(configPhase.getTrump());
+            System.out.println(configPhase.getTrumpSuit());
 
         } else {
             System.out.println("ConfigPhase is null.");

@@ -68,12 +68,12 @@ public class ConfigPhase {
         }
 
         public ConfigPhaseBuilder setTrump() {
-            this.trump = new Card(8, Card.Suit.SPADE);;
+            this.trump = DeckManager.dealTrump(deck);
             return this;
         }
 
         public ConfigPhaseBuilder setTrumpSuit() {
-            this.trumpSuit = trumpSuit;
+            this.trumpSuit = trump.getSuit();
             return this;
         }
 
@@ -101,6 +101,7 @@ public class ConfigPhase {
             startingScreen.setStandardDeck(deck);
             startingScreen.setupStartingScreen();
         }
+
     }
 }
 
