@@ -20,8 +20,18 @@ public class Gameplay {
     private Timer messageTimer;
 
     private void gameFlow() {
-        StartPhase startPhase = new StartPhase();
-        startPhase.execute();
+        StartPhase.execute();
+        transferAttributes();
+        attackPhase();
+    }
+
+    public void transferAttributes(){
+            players = StartPhase.getPlayers();
+            deck = StartPhase.getDeck();
+            trump = StartPhase.getTrump();
+            trumpSuit = StartPhase.getTrumpSuit();
+            startingPlayer = StartPhase.getStartingPlayer();
+            gameMessage = StartPhase.getGameMessage();
     }
 
     public void round() {

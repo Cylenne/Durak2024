@@ -4,7 +4,6 @@ import java.util.function.Consumer;
 public class ConfigPhase {
     private final List<Player> players;
     private final Deck deck;
-
     private final Card trump;
     private final Card.Suit trumpSuit;
 

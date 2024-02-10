@@ -15,11 +15,11 @@ public class StartPhase {
     private static String gameMessage;
     private static ConfigPhase configPhase;
 
-    public void execute() {
+    public static void execute() {
         ExecutorService executor = Executors.newSingleThreadExecutor();
-        CountDownLatch latch = new CountDownLatch(1);
+        CountDownLatch latch = new CountDownLatch(1); // we are waiting for 1 event
 
-        executor.execute(() -> ConfigPhase.ConfigPhaseBuilder.newInstance()
+        executor.execute(() -> ConfigPhase.ConfigPhaseBuilder.newInstance() // event we are waiting for = ConfigPhase creation
                 .setPlayers(players -> {
                     configPhase = players;
                     latch.countDown();
@@ -29,11 +29,11 @@ public class StartPhase {
                 .setTrumpSuit().build());
 
         try {
-            latch.await();
-        } catch (InterruptedException e) {
+            latch.await(); // this thread is waiting
+        } catch (InterruptedException e) { // await can throw exception
             e.printStackTrace();
         }
-        //
+        // these are all the events for ConfigPhase to be created
         transferAttributes();
         initiateStartPhase();
         executor.shutdown();
@@ -70,5 +70,33 @@ public class StartPhase {
         System.out.println("The trump is: " + trump);
         DeckManager.printDeck(deck);
         System.out.println("The starting player is: " + startingPlayer);
+    }
+
+    public static List<Player> getPlayers() {
+        return players;
+    }
+
+    public static Deck getDeck() {
+        return deck;
+    }
+
+    public static Card getTrump() {
+        return trump;
+    }
+
+    public static Card.Suit getTrumpSuit() {
+        return trumpSuit;
+    }
+
+    public static Player getStartingPlayer() {
+        return startingPlayer;
+    }
+
+    public static String getGameMessage() {
+        return gameMessage;
+    }
+
+    public static ConfigPhase getConfigPhase() {
+        return configPhase;
     }
 }
