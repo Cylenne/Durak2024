@@ -63,10 +63,10 @@ public class StartPhase {
         startingPlayer = PlayerManager.determineStartingPlayer(players, trumpSuit);
         gameMessage = startingPlayer.getName() + " starts the game";
 
-        printCurrentGameState(trump);
+        printCurrentGameState();
     }
 
-    private static void printCurrentGameState(Card trump) {
+    public static void printCurrentGameState() {
         System.out.println("The trump is: " + trump);
         DeckManager.printDeck(deck);
         System.out.println("The starting player is: " + startingPlayer);

@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class PlayerManager {
 
@@ -60,13 +61,13 @@ public class PlayerManager {
     }
 
     public static Player determineAttacker(
-            int roundCounter,
+            AtomicInteger roundCounter,
             Player attacker, // included due to last attacker
             Player defender,
             List<Player> players,
             Card.Suit trumpSuit,
             boolean currentRoundDefended) {
-        if (roundCounter == 1) {
+        if (roundCounter.get() == 1) {
             attacker = PlayerManager.determineStartingPlayer(players, trumpSuit);
         } else {
             if (currentRoundDefended) {

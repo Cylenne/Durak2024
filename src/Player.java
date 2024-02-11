@@ -14,8 +14,8 @@ public abstract class Player {
 
     public void initialDeal(Deck deck) {
         while (hand.size() < 6) {
-            hand.add(deck.getDeck().get(0));
-            deck.getDeck().remove(0);
+            hand.add(deck.getDeck().getFirst());
+            deck.getDeck().removeFirst();
         }
     }
 
