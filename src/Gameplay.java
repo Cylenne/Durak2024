@@ -12,7 +12,6 @@ public class Gameplay {
     private MainScreen mainScreen;
     private RoundScreen roundScreen;
     private int roundCounter;
-    private Player startingPlayer;
     private Boolean currentRoundDefended = false;
     private boolean isGameOngoing = true;
     private List<Player> winners = new ArrayList<>();
@@ -21,8 +20,41 @@ public class Gameplay {
 
     private void gameFlow() {
         StartPhase.execute();
-        transferAttributes();
-        attackPhase();
+
+        // I don't think I'll need any of these, including the MainScreen
+//        transferAttributes();
+//
+//        mainScreen = new MainScreen();
+//        mainScreen.setupStartingScreen(players, trump, gameMessage);
+
+        roundCounter = 1;
+
+        AttackPhase.execute(roundCounter);
+
+//        roundTimer = new Timer(2000, e -> {
+//            if (isGameOngoing) { // because of the timer, while has been changed to if (timer generates the loops)
+//
+//                round();
+//
+//                if (roundScreen == null) {
+//                    mainScreen.close();
+//                    roundScreen = new RoundScreen();
+//                    roundScreen.setUpAttackScreen(players, trump, gameMessage);
+//                } else {
+//                    roundScreen.updateAttackScreen(players, gameMessage);
+//                }
+//
+//                roundTimer.setRepeats(true); // without this we only reach round 1
+//
+//            } else {
+//                gameOver();
+//                roundTimer.stop();
+//            }
+//
+//        });
+//
+//        roundTimer.start();
+
     }
 
     public void transferAttributes(){
@@ -30,7 +62,6 @@ public class Gameplay {
             deck = StartPhase.getDeck();
             trump = StartPhase.getTrump();
             trumpSuit = StartPhase.getTrumpSuit();
-            startingPlayer = StartPhase.getStartingPlayer();
             gameMessage = StartPhase.getGameMessage();
     }
 
@@ -177,37 +208,6 @@ public class Gameplay {
         if (players.size() == 1) {
             isGameOngoing = false;
         }
-    }
-
-    public void attackPhase() {
-        mainScreen = new MainScreen();
-        mainScreen.setupStartingScreen(players, trump, gameMessage);
-
-        roundCounter = 1;
-
-        roundTimer = new Timer(5000, e -> {
-            if (isGameOngoing) { // because of the timer, while has been changed to if (timer generates the loops)
-
-                round();
-
-                if (roundScreen == null) {
-                    mainScreen.close();
-                    roundScreen = new RoundScreen();
-                    roundScreen.setUpAttackScreen(players, trump, gameMessage);
-                } else {
-                    roundScreen.updateAttackScreen(players, gameMessage);
-                }
-
-                roundTimer.setRepeats(true); // without this we only reach round 1
-
-            } else {
-                gameOver();
-                roundTimer.stop();
-            }
-
-        });
-
-        roundTimer.start();
     }
 
     public void gameOver() {

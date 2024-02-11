@@ -61,7 +61,8 @@ public class PlayerManager {
 
     public static Player determineAttacker(
             int roundCounter,
-            Player attacker, Player defender,
+            Player attacker, // included due to last attacker
+            Player defender,
             List<Player> players,
             Card.Suit trumpSuit,
             boolean currentRoundDefended) {

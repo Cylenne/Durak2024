@@ -39,7 +39,7 @@ public class StartPhase {
         executor.shutdown();
     }
 
-    public static void transferAttributes(){
+    private static void transferAttributes(){
         if (configPhase != null) {
             players = configPhase.getPlayers();
             deck = configPhase.getDeck();
@@ -50,7 +50,7 @@ public class StartPhase {
         }
     }
 
-    public static void initiateStartPhase() {
+    private static void initiateStartPhase() {
         // the players list is assumed to be already set with choices from the GUI
         DeckManager.dealCards(players, deck);
 
