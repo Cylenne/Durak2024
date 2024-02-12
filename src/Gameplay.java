@@ -4,219 +4,53 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Gameplay {
-    private List<Player> players;
-    private Deck deck;
     private String gameMessage;
-    private Player attacker;
-    private Player defender;
-    private Card.Suit trumpSuit;
-    private Card trump;
-    private MainScreen mainScreen;
     private RoundScreen roundScreen;
     private AtomicInteger roundCounter = new AtomicInteger();
-    private Boolean currentRoundDefended = false;
     private AtomicBoolean isGameOngoing = new AtomicBoolean();
-    private List<Player> winners = new ArrayList<>();
     private Timer roundTimer;
-    private Timer messageTimer;
 
     private void gameFlow() {
         StartPhase.execute();
-
-        // I don't think I'll need any of these, including the MainScreen
-//        transferAttributes();
-//
-//        mainScreen = new MainScreen();
-//        mainScreen.setupStartingScreen(players, trump, gameMessage);
 
         roundCounter.set(1);
         isGameOngoing.set(true);
         AttackPhase attackPhase = new AttackPhase();
 
-        roundTimer = new Timer(2000, e -> {
-            try {
-            if (isGameOngoing.get()) { // because of the timer, while has been changed to if (timer generates the loops)
-                System.out.println("GAME IS ONGOING");
+        while (isGameOngoing.get()) {
+            attackPhase.execute(roundCounter, isGameOngoing);
+        }
+        gameOver(AttackPhase.getPlayers(), AttackPhase.getWinners());
 
-                attackPhase.execute(roundCounter, isGameOngoing);
 
-                if (roundScreen == null) {
-                    mainScreen.close();
-                    roundScreen = new RoundScreen();
-                    roundScreen.setUpAttackScreen(players, trump, gameMessage);
-                } else {
-                    roundScreen.updateAttackScreen(players, gameMessage);
-                }
-
-                roundTimer.setRepeats(true); // without this we only reach round 1
-
-            } else {
-                gameOver();
-                roundTimer.stop();
-            } } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-
-        });
-
-        roundTimer.start();
+//        roundTimer = new Timer(2000, e -> {
+//            System.out.println("GAME IS ONGOING");
+//            if (isGameOngoing.get()) { // because of the timer, while has been changed to if (timer generates the loops)
+//
+//                attackPhase.execute(roundCounter, isGameOngoing);
+//
+//                if (roundScreen == null) {
+//                    roundScreen = new RoundScreen(); // add this to AttackPhase
+//                    roundScreen.setUpAttackScreen(AttackPhase.getPlayers(), StartPhase.getTrump(), AttackPhase.getGameMessage()); // add this to AttackPhase
+//                } else {
+//                    roundScreen.updateAttackScreen(AttackPhase.getPlayers(), AttackPhase.getGameMessage());
+//                }
+//
+//                roundTimer.setRepeats(true); // without this we only reach round 1
+//
+//            } else {
+//                gameOver(AttackPhase.getPlayers(), AttackPhase.getWinners());
+//                roundTimer.stop();
+//            }
+//
+//        });
+//
+//        roundTimer.start();
 
     }
 
-//    public void transferAttributes(){
-//            players = StartPhase.getPlayers();
-//            deck = StartPhase.getDeck();
-//            trump = StartPhase.getTrump();
-//            trumpSuit = StartPhase.getTrumpSuit();
-//            gameMessage = StartPhase.getGameMessage();
-//    }
-//
-//    public void round() {
-//        List<Player> activePlayersInRound = new ArrayList<>();
-//        PlayerManager.sortEachPlayersHand(players, trumpSuit);
-//
-//        // attacker gives out attacking cards
-//        attacker = PlayerManager.determineAttacker(roundCounter, attacker, defender, players, trumpSuit, currentRoundDefended);
-//        activePlayersInRound.add(attacker);
-//
-//        Set<Card> initialAttackingCards = new HashSet<>();
-//
-//        System.out.println("Round: " + roundCounter);
-//        System.out.println("Current attacker: " + attacker);
-//
-//        if (attacker instanceof ComputerPlayer) {
-//            initialAttackingCards = attacker.addAttackingCards(trumpSuit, deck);
-//        } else {
-//            // attacker is human -> write method for human
-//        }
-//        System.out.println("Initial attacking cards: " + initialAttackingCards);
-//
-//        // determine the defender
-//        defender = PlayerManager.determineDefender(attacker, players);
-//        System.out.println("Current defender: " + defender);
-//        activePlayersInRound.add(defender);
-//
-//        // adding additional attackers right after the attacker
-//        for (Player player : players) {
-//            if (!player.equals(attacker) && !player.equals(defender)) {
-//                activePlayersInRound.add(1, player);
-//            }
-//        }
-//
-//        Set<Card> allDefendingCards = new HashSet<>();
-//        Set<Card> allAttackingCards = new HashSet<>(initialAttackingCards);
-//
-//        int attackLoopCounter = 1;
-//        boolean roundOn = true;
-//        List<Card> attackingCardsPerLoop = new ArrayList<>();
-//
-//        gameMessage = "";
-//        updateGameMessageWithinRounds("Round: " + roundCounter + "\n"
-//                + "Number of remaining cards in deck: " + deck.getDeck().size() + "\n"
-//                + attacker.getName() + " is attacking " + defender.getName());
-//
-//        while (roundOn) {
-//
-//            if (attackLoopCounter == 1) {
-//                attackingCardsPerLoop.addAll(initialAttackingCards);
-//                for (Player player : players) {
-//                    if (player instanceof ComputerPlayer) {
-//                        if (!player.equals(defender)) { // additional cards can only be added as long as defender has enough cards
-//                            attackingCardsPerLoop.addAll(player.addAdditionalAttackingCards(initialAttackingCards, deck,
-//                                    trumpSuit, PlayerManager.isDefenderRightBeforeAdditionalAttacker(players, defender, attacker), defender, attackingCardsPerLoop));
-//                        }
-//                    } else {
-//                        // add human player code
-//                    }
-//                }
-//
-//            }
-//
-//            System.out.println("Attacking cards per loop: " + attackingCardsPerLoop);
-//            updateGameMessageWithinRounds("Attacking cards: " + attackingCardsPerLoop);
-//
-//            Set<Card> defendingCardsPerLoop = new HashSet<>();
-//            if (defender instanceof ComputerPlayer) {
-//                RoundResult defenseResult = defender.defenseState(attackingCardsPerLoop, trumpSuit, deck);
-//                defendingCardsPerLoop = defenseResult.getDefendingCards();
-//                allDefendingCards.addAll(defendingCardsPerLoop);
-//                currentRoundDefended = defenseResult.isRoundDefended();
-//                System.out.println("CURRENT LOOP ROUND DEFENDED: " + currentRoundDefended);
-//                if (!currentRoundDefended) {
-//                    roundOn = false;
-//                }
-//            } else {
-//                // human defender -> write this code
-//            }
-//
-//            updateGameMessageWithinRounds("Defending cards: " + defendingCardsPerLoop);
-//            updateGameMessageWithinRounds(currentRoundDefended ? "Successful defense so far" : "Unsuccessful defense");
-//
-//            allAttackingCards.addAll(attackingCardsPerLoop);
-//            attackingCardsPerLoop.clear();
-//            attackLoopCounter++;
-//
-//            for (Player player : players) {
-//                if (player instanceof ComputerPlayer) {
-//                    if (!player.equals(defender)) {
-//                        attackingCardsPerLoop.addAll(player.addAdditionalAttackingCards(defendingCardsPerLoop, deck,
-//                                trumpSuit, PlayerManager.isDefenderRightBeforeAdditionalAttacker(players, defender, attacker), defender, attackingCardsPerLoop));
-//                    }
-//                } else {
-//                    // add human player code
-//                }
-//            }
-//
-//            if (attackingCardsPerLoop.isEmpty()) {
-//                roundOn = false;
-//                updateGameMessageWithinRounds("No additional attacking cards are available");
-//            }
-//
-//            allAttackingCards.addAll(attackingCardsPerLoop);
-//        }
-//
-//        if (currentRoundDefended) {
-//            defender.getHand().removeAll(allDefendingCards);
-////            System.out.println(defender.getName() + " has successfully countered the attack");
-//            updateGameMessageWithinRounds(defender.getName() + " has successfully countered the attack" + "\n");
-//            currentRoundDefended = true;
-//        } else {
-//            updateGameMessageWithinRounds(defender.getName() + " has not been able to counter the attack" + "\n");
-////            System.out.println(defender.getName() + " has not been able to counter the attack");
-//            // defender takes all attacking and defending cards
-//            defender.getHand().addAll(allAttackingCards);
-//            defender.getHand().addAll(allDefendingCards);
-//        }
-//
-//        roundCounter++;
-//        DeckManager.drawMissingCards(activePlayersInRound, deck, players);
-//        roundEndCheck();
-////        System.out.println("Game message: " + gameMessage);
-//    }
-//
-//    public void updateGameMessageWithinRounds(String newMessage) {
-//        gameMessage += "\n" + newMessage;
-//    }
-//
-//    public void roundEndCheck() {
-//        Iterator<Player> iterator = players.iterator();
-//
-//        while (iterator.hasNext()) {
-//            Player player = iterator.next();
-//            if (deck.getDeck().isEmpty() && player.getHand().isEmpty()) {
-//                updateGameMessageWithinRounds(player.getName() + " is no longer in game");
-//                System.out.println(player.getName() + " is no longer in game");
-//                iterator.remove();  // using iterator to safely remove the player
-//                winners.add(player);
-//            }
-//        }
-//
-//        if (players.size() == 1) {
-//            isGameOngoing = false;
-//        }
-//    }
 
-    public void gameOver() {
+    private void gameOver(List<Player> players, List<Player> winners) {
 
         System.out.println("Game Over: " + winners.getFirst().getName() + " has won the game!");
         String leaderboard = "";
@@ -229,12 +63,13 @@ public class Gameplay {
             leaderboard = i + suffix + " place: " + winners.get(i - 1).getName();
             System.out.println(leaderboard);
         }
-        System.out.println("The durak is " + players.getFirst().getName());
+        String durak = players.getFirst().getName();
+        System.out.println("The durak is " + durak);
 
         gameMessage = "Round: " + roundCounter + "\n"
                 + "Game Over: " + winners.getFirst().getName() + " has won the game!" + "\n"
                 + leaderboard + "\n"
-                + "The durak is " + players.getFirst().getName();
+                + "The durak is " + durak;
 
     }
 

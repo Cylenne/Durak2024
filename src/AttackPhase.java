@@ -13,6 +13,18 @@ public class AttackPhase {
     private static Boolean currentRoundDefended;
     private static List<Player> winners = new ArrayList<>();
 
+    public static List<Player> getWinners() {
+        return winners;
+    }
+
+    public static List<Player> getPlayers() {
+        return players;
+    }
+
+    public static String getGameMessage() {
+        return gameMessage;
+    }
+
     // non-static variables = instance variables can vary in each instance
     private Set<Card> initialAttackingCards = new HashSet<>();
 
@@ -79,7 +91,6 @@ public class AttackPhase {
 
     private void round(AtomicInteger roundCounter, Player attacker, Player defender, Set<Card> initialAttackingCards, List<Player> activePlayersInRound, AtomicBoolean isGameOngoing) {
 
-        System.out.println("INITIAL ATTACKING CARDS: " + initialAttackingCards);
         Set<Card> allDefendingCards = new HashSet<>();
         Set<Card> allAttackingCards = new HashSet<>(initialAttackingCards);
 
