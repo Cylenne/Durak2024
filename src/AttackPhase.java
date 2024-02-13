@@ -5,15 +5,18 @@ import java.util.concurrent.atomic.AtomicInteger;
 // this is one attack phase called multiple times from Gameplay
 public class AttackPhase {
 
-    // static variables are the same over all instances
+    // Static variables are shared among all instances of a class
     private static List<Player> players;
     private static Deck deck;
     private static Card.Suit trumpSuit;
     private static String gameMessage;
     private static final List<Player> winners = new ArrayList<>();
+
+    // Non-static variables are specific to that instance of a class
     private Boolean currentRoundDefended = false;
     private Player attacker = null;
     private Player defender = null;
+
 
     public static List<Player> getWinners() {
         return winners;
