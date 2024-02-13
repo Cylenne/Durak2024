@@ -4,7 +4,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Gameplay {
     private String gameMessage;
-    private RoundScreen roundScreen;
+    private AttackScreen attackScreen;
     private AtomicInteger roundCounter = new AtomicInteger();
     private AtomicBoolean isGameOngoing = new AtomicBoolean();
 
@@ -19,11 +19,11 @@ public class Gameplay {
         while (isGameOngoing.get()) {
             attackPhase.execute(roundCounter, isGameOngoing);
 
-            if (roundScreen == null) {
-                    roundScreen = new RoundScreen(); // add this to AttackPhase
-                    roundScreen.setUpAttackScreen(AttackPhase.getPlayers(), StartPhase.getTrump(), AttackPhase.getGameMessage()); // add this to AttackPhase
+            if (attackScreen == null) {
+                    attackScreen = new AttackScreen(); // add this to AttackPhase
+                    attackScreen.setUpAttackScreen(AttackPhase.getPlayers(), StartPhase.getTrump(), AttackPhase.getGameMessage()); // add this to AttackPhase
                 } else {
-                    roundScreen.updateAttackScreen(AttackPhase.getPlayers(), AttackPhase.getGameMessage());
+                    attackScreen.updateAttackScreen(AttackPhase.getPlayers(), AttackPhase.getGameMessage());
                 }
 
             Thread.sleep(2000);

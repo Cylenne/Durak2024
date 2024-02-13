@@ -10,8 +10,10 @@ public class AttackPhase {
     private static Deck deck;
     private static Card.Suit trumpSuit;
     private static String gameMessage;
-    private static Boolean currentRoundDefended;
-    private static List<Player> winners = new ArrayList<>();
+    private static final List<Player> winners = new ArrayList<>();
+    private Boolean currentRoundDefended = false;
+    private Player attacker = null;
+    private Player defender = null;
 
     public static List<Player> getWinners() {
         return winners;
@@ -31,20 +33,18 @@ public class AttackPhase {
     public void execute(AtomicInteger roundCounter, AtomicBoolean isGameOngoing) {
 
         transferAttributes();
-        Boolean currentRoundDefended = false;
-
         List<Player> activePlayersInRound = new ArrayList<>();
 
-        Player attacker = null;
-        Player defender = null;
-
-
         attacker = PlayerManager.determineAttacker(roundCounter, attacker, defender, players, trumpSuit, currentRoundDefended);
+        System.out.println("Round: " + roundCounter);
+        System.out.println("Current attacker: " + attacker);
         defender = PlayerManager.determineDefender(attacker, players);
-        sortHandsOfActivePlayers();
+        System.out.println("Current defender: " + defender);
+        activePlayersInRound.add(defender);
 
-        mainAttackersMove(attacker, defender, activePlayersInRound, roundCounter, currentRoundDefended);
-        determineDefender(attacker, activePlayersInRound);
+        PlayerManager.sortEachPlayersHand(players, trumpSuit);
+
+        mainAttackersMove(attacker, roundCounter);
         addAdditionalAttackers(attacker, defender, activePlayersInRound);
 
         round(roundCounter, attacker, defender, initialAttackingCards, activePlayersInRound, isGameOngoing);
@@ -58,18 +58,8 @@ public class AttackPhase {
         gameMessage = StartPhase.getGameMessage();
     }
 
-    private static void sortHandsOfActivePlayers() {
-        PlayerManager.sortEachPlayersHand(players, trumpSuit);
-    }
-
     // main attacker gives out attacking cards
-    private void mainAttackersMove(Player attacker, Player defender, List<Player> activePlayersInRound, AtomicInteger roundCounter, Boolean currentRoundDefended) {
-        // attacker gives out attacking cards
-        attacker = PlayerManager.determineAttacker(roundCounter, attacker, defender, players, trumpSuit, currentRoundDefended);
-        activePlayersInRound.add(attacker);
-
-        System.out.println("Round: " + roundCounter);
-        System.out.println("Current attacker: " + attacker);
+    private void mainAttackersMove(Player attacker, AtomicInteger roundCounter) {
 
         if (attacker instanceof ComputerPlayer) {
             initialAttackingCards = attacker.addAttackingCards(trumpSuit, deck);
@@ -77,12 +67,6 @@ public class AttackPhase {
             // attacker is human -> write method for human
         }
         System.out.println("Initial attacking cards: " + initialAttackingCards);
-    }
-
-    private void determineDefender(Player attacker, List<Player> activePlayersInRound) {
-        Player defender = PlayerManager.determineDefender(attacker, players);
-        System.out.println("Current defender: " + defender);
-        activePlayersInRound.add(defender);
     }
 
     private void addAdditionalAttackers(Player attacker, Player defender, List<Player> activePlayersInRound) {
