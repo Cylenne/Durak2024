@@ -97,7 +97,7 @@ public class PlayerManager {
 
     public static Player determineDefender(Player currentAttacker, List<Player> players) {
         int attackerIndex = players.indexOf(currentAttacker);
-        if (attackerIndex == players.size() - 1) {
+        if (attackerIndex == players.size() - 1) { // if attacker is last in players, he attacks the first in players
             return players.getFirst();
         } else {
             return players.get(attackerIndex + 1);

@@ -1,4 +1,3 @@
-import javax.swing.Timer;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -8,9 +7,9 @@ public class Gameplay {
     private RoundScreen roundScreen;
     private AtomicInteger roundCounter = new AtomicInteger();
     private AtomicBoolean isGameOngoing = new AtomicBoolean();
-    private Timer roundTimer;
 
-    private void gameFlow() {
+
+    private void gameFlow() throws InterruptedException {
         StartPhase.execute();
 
         roundCounter.set(1);
@@ -19,33 +18,18 @@ public class Gameplay {
 
         while (isGameOngoing.get()) {
             attackPhase.execute(roundCounter, isGameOngoing);
+
+            if (roundScreen == null) {
+                    roundScreen = new RoundScreen(); // add this to AttackPhase
+                    roundScreen.setUpAttackScreen(AttackPhase.getPlayers(), StartPhase.getTrump(), AttackPhase.getGameMessage()); // add this to AttackPhase
+                } else {
+                    roundScreen.updateAttackScreen(AttackPhase.getPlayers(), AttackPhase.getGameMessage());
+                }
+
+            Thread.sleep(2000);
+
         }
         gameOver(AttackPhase.getPlayers(), AttackPhase.getWinners());
-
-
-//        roundTimer = new Timer(2000, e -> {
-//            System.out.println("GAME IS ONGOING");
-//            if (isGameOngoing.get()) { // because of the timer, while has been changed to if (timer generates the loops)
-//
-//                attackPhase.execute(roundCounter, isGameOngoing);
-//
-//                if (roundScreen == null) {
-//                    roundScreen = new RoundScreen(); // add this to AttackPhase
-//                    roundScreen.setUpAttackScreen(AttackPhase.getPlayers(), StartPhase.getTrump(), AttackPhase.getGameMessage()); // add this to AttackPhase
-//                } else {
-//                    roundScreen.updateAttackScreen(AttackPhase.getPlayers(), AttackPhase.getGameMessage());
-//                }
-//
-//                roundTimer.setRepeats(true); // without this we only reach round 1
-//
-//            } else {
-//                gameOver(AttackPhase.getPlayers(), AttackPhase.getWinners());
-//                roundTimer.stop();
-//            }
-//
-//        });
-//
-//        roundTimer.start();
 
     }
 
@@ -73,7 +57,7 @@ public class Gameplay {
 
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         Gameplay game = new Gameplay();
 
         game.gameFlow();

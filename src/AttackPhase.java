@@ -35,8 +35,12 @@ public class AttackPhase {
 
         List<Player> activePlayersInRound = new ArrayList<>();
 
-        Player attacker = StartPhase.getStartingPlayer();
-        Player defender = PlayerManager.determineDefender(attacker, players);
+        Player attacker = null;
+        Player defender = null;
+
+
+        attacker = PlayerManager.determineAttacker(roundCounter, attacker, defender, players, trumpSuit, currentRoundDefended);
+        defender = PlayerManager.determineDefender(attacker, players);
         sortHandsOfActivePlayers();
 
         mainAttackersMove(attacker, defender, activePlayersInRound, roundCounter, currentRoundDefended);
