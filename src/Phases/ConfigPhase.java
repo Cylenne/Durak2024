@@ -82,8 +82,7 @@ public class ConfigPhase {
             return this;
         }
 
-        public ConfigPhase build(){
-            return new ConfigPhase(this);
+        public void build(){
         }
 
         // this is a callback method we'll call in main in order to ensure that only AFTER the user has selected the
@@ -105,7 +104,6 @@ public class ConfigPhase {
                 callback.onPlayersReady(players);
             });
 
-            startingScreen.setStandardDeck(deck);
             startingScreen.setupStartingScreen();
         }
 

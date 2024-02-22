@@ -1,7 +1,6 @@
 package GUI;
 
 import Player.*;
-import Card.*;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -23,15 +22,12 @@ public class StartingScreen {
 
     // using callback instead of a return statement to save the created players
     private OnPlayersReadyListener callback;
-    private Deck standardDeck;
+
     public interface OnPlayersReadyListener {
         void onPlayersReady(List<Player> players);
     }
     public StartingScreen(OnPlayersReadyListener callback) {
         this.callback = callback;
-    }
-    public void setStandardDeck(Deck standardDeck) {
-        this.standardDeck = standardDeck;
     }
 
     public void setupStartingScreen() {
@@ -112,10 +108,21 @@ public class StartingScreen {
         String[] columnNames = {"Player", "Type"};
         Object[][] data = new Object[numPlayers][2];
 
-        for (int i = 0; i < numPlayers; i++) {
+        // this code was used for the possibility of multiple human players
+//        for (int i = 0; i < numPlayers; i++) {
+//            data[i][0] = "Player " + (i + 1);
+//            data[i][1] = "Computer"; // Default value
+//        }
+
+        // first player is human, the rest are bots
+        data[0][0] = "Player 1";
+        data[0][1] = "Human";
+
+        for (int i = 1; i < numPlayers; i++) {
             data[i][0] = "Player " + (i + 1);
-            data[i][1] = "Computer"; // Default value
+            data[i][1] = "Computer";
         }
+
 
         DefaultTableModel model = new DefaultTableModel(data, columnNames) {
             @Override
