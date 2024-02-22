@@ -1,3 +1,8 @@
+package GUI;
+
+import Player.*;
+import Card.*;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;

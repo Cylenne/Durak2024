@@ -1,6 +1,8 @@
+package Player;
+
 import javax.swing.JOptionPane;
 
-public class GameSetup {
+public class PlayerCreation {
     public HumanPlayer createHumanPlayer(int i) {
         // creating a brand-new window for prompting for the players' name
         String playerName = JOptionPane.showInputDialog(null,

@@ -1,3 +1,6 @@
+package Player;
+
+import Card.*;
 import java.util.*;
 
 public class ComputerPlayer extends Player {

@@ -1,3 +1,4 @@
+package Card;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
@@ -17,7 +18,7 @@ public class Card {
     private int rank;
     private Suit suit;
 
-    Card(int rank, Suit suit) {
+    public Card(int rank, Suit suit) {
         this.rank = rank;
         this.suit = suit;
     }

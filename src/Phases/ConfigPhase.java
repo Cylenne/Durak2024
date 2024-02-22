@@ -1,3 +1,9 @@
+package Phases;
+
+import Card.*;
+import Player.*;
+import GUI.*;
+
 import java.util.List;
 import java.util.function.Consumer;
 

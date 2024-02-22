@@ -1,3 +1,5 @@
+package Card;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -5,7 +7,7 @@ public class Deck extends Card {
 
     private ArrayList<Card> deck;
 
-    Deck() {
+    public Deck() {
         // create all cards from 6 until ace, in every suit
         deck = new ArrayList<>();
         for (Card.Suit suit : Card.Suit.values()) {

@@ -1,3 +1,6 @@
+package Player;
+
+import Card.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -104,7 +107,7 @@ public class PlayerManager {
         }
     }
 
-    static void sortEachPlayersHand(List<Player> players, Card.Suit trumpSuit) {
+    public static void sortEachPlayersHand(List<Player> players, Card.Suit trumpSuit) {
         for (Player player : players) {
             if (trumpSuit != null) {
                 player.getHand().sort(Card.sortRankReversedSuit(trumpSuit));

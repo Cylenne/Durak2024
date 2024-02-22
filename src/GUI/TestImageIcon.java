@@ -1,3 +1,7 @@
+package GUI;
+
+import Card.*;
+
 import javax.swing.*;
 import java.awt.*;
 

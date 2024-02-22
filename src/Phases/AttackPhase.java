@@ -1,6 +1,11 @@
+package Phases;
+
+import Player.*;
+import Card.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+
 
 // this is one attack phase called multiple times from Gameplay
 public class AttackPhase {

@@ -1,3 +1,8 @@
+package GUI;
+
+import Player.*;
+import Card.*;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -9,7 +14,7 @@ import javax.swing.SwingConstants;
 
 public class StartingScreen {
 
-    private GameSetup gameSetup;
+    private PlayerCreation playerCreation;
 
     private JFrame frame;
     private JComboBox<String> playersComboBox;
@@ -33,7 +38,7 @@ public class StartingScreen {
 
         List<Player> allPlayers = new ArrayList<>();
 
-        gameSetup = new GameSetup();
+        playerCreation = new PlayerCreation();
 
         frame = new JFrame("Durak");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -80,9 +85,9 @@ public class StartingScreen {
             // creates HumanPlayer and ComputerPlayer instances based on the array of player types
             for (int i = 0; i < numPlayers; i++) {
                 if ("Human".equals(playerTypes[i])) {
-                    humanPlayers.add(gameSetup.createHumanPlayer(i));
+                    humanPlayers.add(playerCreation.createHumanPlayer(i));
                 } else if ("Computer".equals(playerTypes[i])) {
-                    computerPlayers.add(gameSetup.createComputerPlayer(i));
+                    computerPlayers.add(playerCreation.createComputerPlayer(i));
                 }
             }
 //            System.out.println(humanPlayers);
