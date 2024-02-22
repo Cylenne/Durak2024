@@ -16,11 +16,10 @@ public class StartingScreen {
     private PlayerCreation playerCreation;
 
     private JFrame frame;
-    private JComboBox<String> playersComboBox;
-    private JTable playerTable;
+    private JComboBox<String> numberOfPlayersSelectionBox;
+    private JTable playerTypeTable;
     private JButton startButton;
 
-    // using callback instead of a return statement to save the created players
     private OnPlayersReadyListener callback;
 
     public interface OnPlayersReadyListener {
@@ -32,49 +31,73 @@ public class StartingScreen {
 
     public void setupStartingScreen() {
 
-        List<Player> allPlayers = new ArrayList<>();
+        List<Player> players = new ArrayList<>();
 
         playerCreation = new PlayerCreation();
 
         frame = new JFrame("Durak");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(400, 400);
+        frame.setSize(750, 400);
         frame.setLayout(new BorderLayout());
 
-        // Number of players
+        JPanel welcomePanel = new JPanel();
+        welcomePanel.setLayout(new BoxLayout(welcomePanel, BoxLayout.Y_AXIS));
+
+        JLabel welcomeLabel = new JLabel("Welcome to the Russian card game, Durak! Please select the total number of players:");
+        welcomeLabel.setPreferredSize(new Dimension(400, 40));
+        welcomePanel.add(welcomeLabel);
+
         JPanel numPlayersPanel = new JPanel();
         numPlayersPanel.setLayout(new FlowLayout());
-        JLabel playersLabel = new JLabel("Number of Players:");
-        numPlayersPanel.add(playersLabel);
+        JLabel numPlayersLabel = new JLabel("Number of Players:");
+        numPlayersPanel.add(numPlayersLabel);
 
-        String[] playerOptions = {"2", "3", "4"};
-        playersComboBox = new JComboBox<>(playerOptions);
-        numPlayersPanel.add(playersComboBox);
-        frame.add(numPlayersPanel, BorderLayout.NORTH);
+        String[] numPlayerOptions = {"2", "3", "4"};
+        numberOfPlayersSelectionBox = new JComboBox<>(numPlayerOptions);
+        numPlayersPanel.add(numberOfPlayersSelectionBox);
+        welcomePanel.add(numPlayersPanel);
 
-        playersComboBox.addActionListener(e -> {
+        frame.add(welcomePanel, BorderLayout.NORTH);
+
+        numberOfPlayersSelectionBox.addActionListener(e -> {
             updatePlayerTable();
             startButton.setEnabled(true); // Enable the "Start Game" button when the number of players is selected
         });
 
-        // table for the type of players
-        playerTable = new JTable();
-        playerTable.setDefaultRenderer(Object.class, new CenteredCellRenderer());
-        JScrollPane scrollPane = new JScrollPane(playerTable);
+        playerTypeTable = new JTable();
+        playerTypeTable.setDefaultRenderer(Object.class, new CenteredCellRenderer());
+        JScrollPane scrollPane = new JScrollPane(playerTypeTable);
         frame.add(scrollPane, BorderLayout.CENTER);
 
+
+        JPanel bottomPanel = new JPanel();
+        bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.Y_AXIS));
+        frame.add(bottomPanel, BorderLayout.SOUTH);
+
+        bottomPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        JButton gameRulesButton = new JButton("Game Rules");
+        gameRulesButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        gameRulesButton.setPreferredSize(new Dimension(Integer.MAX_VALUE, gameRulesButton.getPreferredSize().height));
+        gameRulesButton.addActionListener(e -> {
+            GameRulesScreen.showGameRules(frame);
+        });
+        bottomPanel.add(gameRulesButton);
+        bottomPanel.add(Box.createVerticalStrut(10)); // add some spacing between buttons
+
         startButton = new JButton("Start Game");
+        startButton.setAlignmentX(Component.CENTER_ALIGNMENT); // center align
+        startButton.setPreferredSize(new Dimension(Integer.MAX_VALUE, startButton.getPreferredSize().height)); // set button width to match frame width
         startButton.setEnabled(false); // otherwise user could start the game (crash) without selecting the number of players
         startButton.addActionListener(e -> {
             // retrieves the number of players selected and parses it into String then int
-            int numPlayers = Integer.parseInt((String) playersComboBox.getSelectedItem());
+            int numPlayers = Integer.parseInt((String) numberOfPlayersSelectionBox.getSelectedItem());
 
             // retrieves player types selected for each player and adds it to an array
             String[] playerTypes = new String[numPlayers];
             for (int i = 0; i < numPlayers; i++) {
-                playerTypes[i] = (String) playerTable.getValueAt(i, 1);
+                playerTypes[i] = (String) playerTypeTable.getValueAt(i, 1);
             }
-//            System.out.println(Arrays.toString(playerTypes));
 
             List<HumanPlayer> humanPlayers = new ArrayList<>();
             List<ComputerPlayer> computerPlayers = new ArrayList<>();
@@ -86,17 +109,17 @@ public class StartingScreen {
                     computerPlayers.add(playerCreation.createComputerPlayer(i));
                 }
             }
-//            System.out.println(humanPlayers);
-//            System.out.println(computerPlayers);
-            allPlayers.addAll(humanPlayers);
-            allPlayers.addAll(computerPlayers);
-//            System.out.println(allPlayers);
 
-            callback.onPlayersReady(allPlayers);
+            players.addAll(humanPlayers);
+            players.addAll(computerPlayers);
+
+            callback.onPlayersReady(players);
             // Handle the game initialization based on selected players
             frame.dispose(); // close starting screen window
         });
-        frame.add(startButton, BorderLayout.SOUTH);
+        bottomPanel.add(startButton);
+
+
 
         frame.setVisible(true);
         centerFrame();
@@ -104,7 +127,7 @@ public class StartingScreen {
     }
 
     private void updatePlayerTable() {
-        int numPlayers = Integer.parseInt((String) playersComboBox.getSelectedItem());
+        int numPlayers = Integer.parseInt((String) numberOfPlayersSelectionBox.getSelectedItem());
         String[] columnNames = {"Player", "Type"};
         Object[][] data = new Object[numPlayers][2];
 
@@ -116,7 +139,7 @@ public class StartingScreen {
 
         // first player is human, the rest are bots
         data[0][0] = "Player 1";
-        data[0][1] = "Human";
+        data[0][1] = "Computer"; // CHANGE THIS TO HUMAN AS SOON AS THE CODE FOR HUMAN PLAYER IS WRITTEN
 
         for (int i = 1; i < numPlayers; i++) {
             data[i][0] = "Player " + (i + 1);
@@ -136,12 +159,12 @@ public class StartingScreen {
             }
         };
 
-        playerTable.setModel(model);
-        playerTable.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(new JComboBox<>(new String[]{"Human", "Computer"})));
+        playerTypeTable.setModel(model);
+        playerTypeTable.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(new JComboBox<>(new String[]{"Human", "Computer"})));
     }
 
+    // puts window in the middle of your screen
     private void centerFrame() {
-        // puts window in the middle of your screen
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize(); // grabs your display's dimensions, both width and height
         int x = (dim.width - frame.getSize().width) / 2;
         int y = (dim.height - frame.getSize().height) / 2;
