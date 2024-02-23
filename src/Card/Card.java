@@ -91,7 +91,7 @@ public static Comparator<Card> sortRankReversedSuit(Card.Suit trumpSuit) {
         for (File file : cardImageFiles) {
             if (file.getName().contains(suitString) && file.getName().contains(rankString)) {
                 cardAsImage = new ImageIcon("Cards\\" + rankString + "_of_" + suitString + ".png");
-                cardAsImage = resizeImageIcon(cardAsImage, 100, 100);
+                cardAsImage = resizeImageIcon(cardAsImage, 80, 100);
             }
         }
 

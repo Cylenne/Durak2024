@@ -16,9 +16,13 @@ public class AttackScreen {
 
         frame = new JFrame("Durak - Attack Phase");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(700, 700);
+        frame.setSize(800, 800);
         frame.setVisible(true);
         frame.setLayout(new BorderLayout());
+
+        ImageIcon frameIcon = new ImageIcon("Images/clubs.png");
+        Image iconImage = frameIcon.getImage();
+        frame.setIconImage(iconImage);
 
         firstHumanPlayerPanel = new JPanel();
         JPanel trumpAndMessagePanel = new JPanel();

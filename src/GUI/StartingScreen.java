@@ -3,7 +3,6 @@ package GUI;
 import Player.*;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.ArrayList;
@@ -45,6 +44,9 @@ public class StartingScreen {
         frame.setSize(750, 400);
         frame.setLayout(new BorderLayout());
 
+        ImageIcon frameIcon = new ImageIcon("Images/clubs.png");
+        Image iconImage = frameIcon.getImage();
+        frame.setIconImage(iconImage);
 
         // upper panel with welcome message and number of players selection
         JPanel welcomePanel = new JPanel();
@@ -172,7 +174,8 @@ public class StartingScreen {
 
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column != 0; // Make only the "Type" column editable
+                return column != 0 && column !=1; // Make only the "Type" column editable
+                // REMOVE "&& column !=1" if you want to make the second column editable again!!!
             }
         };
 
