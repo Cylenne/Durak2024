@@ -3,6 +3,7 @@ package GUI;
 import Player.*;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.ArrayList;
@@ -10,6 +11,8 @@ import java.util.List;
 
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.SwingConstants;
+
+import static Card.Card.resizeImageIcon;
 
 public class StartingScreen {
 
@@ -25,6 +28,7 @@ public class StartingScreen {
     public interface OnPlayersReadyListener {
         void onPlayersReady(List<Player> players);
     }
+
     public StartingScreen(OnPlayersReadyListener callback) {
         this.callback = callback;
     }
@@ -35,11 +39,14 @@ public class StartingScreen {
 
         playerCreation = new PlayerCreation();
 
+        // frame
         frame = new JFrame("Durak");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(750, 400);
         frame.setLayout(new BorderLayout());
 
+
+        // upper panel with welcome message and number of players selection
         JPanel welcomePanel = new JPanel();
         welcomePanel.setLayout(new BoxLayout(welcomePanel, BoxLayout.Y_AXIS));
 
@@ -59,17 +66,30 @@ public class StartingScreen {
 
         frame.add(welcomePanel, BorderLayout.NORTH);
 
+
         numberOfPlayersSelectionBox.addActionListener(e -> {
             updatePlayerTable();
             startButton.setEnabled(true); // Enable the "Start Game" button when the number of players is selected
         });
 
+        // center panel for player types table and spades image
+        JPanel centerPanel = new JPanel();
+        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
+        frame.add(centerPanel, BorderLayout.CENTER);
+
         playerTypeTable = new JTable();
         playerTypeTable.setDefaultRenderer(Object.class, new CenteredCellRenderer());
         JScrollPane scrollPane = new JScrollPane(playerTypeTable);
-        frame.add(scrollPane, BorderLayout.CENTER);
+        centerPanel.add(scrollPane);
 
+        ImageIcon spadesImage = new ImageIcon("Images/coolAce.png");
+        spadesImage = resizeImageIcon(spadesImage, 100, 100);
+        JLabel spadesImageLabel = new JLabel(spadesImage);
+        JPanel imagePanel = new JPanel(new BorderLayout());
+        imagePanel.add(spadesImageLabel, BorderLayout.CENTER);
+        centerPanel.add(imagePanel, BorderLayout.CENTER);
 
+        // bottom panel for start game and game rules buttons
         JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.Y_AXIS));
         frame.add(bottomPanel, BorderLayout.SOUTH);
@@ -79,9 +99,7 @@ public class StartingScreen {
         JButton gameRulesButton = new JButton("Game Rules");
         gameRulesButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         gameRulesButton.setPreferredSize(new Dimension(Integer.MAX_VALUE, gameRulesButton.getPreferredSize().height));
-        gameRulesButton.addActionListener(e -> {
-            GameRulesScreen.showGameRules(frame);
-        });
+        gameRulesButton.addActionListener(e -> GameRulesScreen.showGameRules(frame));
         bottomPanel.add(gameRulesButton);
         bottomPanel.add(Box.createVerticalStrut(10)); // add some spacing between buttons
 
@@ -118,7 +136,6 @@ public class StartingScreen {
             frame.dispose(); // close starting screen window
         });
         bottomPanel.add(startButton);
-
 
 
         frame.setVisible(true);
@@ -179,7 +196,6 @@ public class StartingScreen {
             return this;
         }
     }
-
 
 
 }

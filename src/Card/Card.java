@@ -87,18 +87,18 @@ public static Comparator<Card> sortRankReversedSuit(Card.Suit trumpSuit) {
         }
 
         // if suit and rank are both found, image icon is created and resized
-        ImageIcon CardAsImage = null;
+        ImageIcon cardAsImage = null;
         for (File file : cardImageFiles) {
             if (file.getName().contains(suitString) && file.getName().contains(rankString)) {
-                CardAsImage = new ImageIcon("Cards\\" + rankString + "_of_" + suitString + ".png");
-                CardAsImage = resizeImageIcon(CardAsImage, 80, 100);
+                cardAsImage = new ImageIcon("Cards\\" + rankString + "_of_" + suitString + ".png");
+                cardAsImage = resizeImageIcon(cardAsImage, 100, 100);
             }
         }
 
-        return CardAsImage;
+        return cardAsImage;
     }
 
-    private static ImageIcon resizeImageIcon(ImageIcon originalIcon, int width, int height) {
+    public static ImageIcon resizeImageIcon(ImageIcon originalIcon, int width, int height) {
         Image image = originalIcon.getImage();
         Image resizedImage = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
         return new ImageIcon(resizedImage);
