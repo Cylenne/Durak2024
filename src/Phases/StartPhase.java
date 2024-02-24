@@ -17,7 +17,7 @@ public class StartPhase {
     private static Card trump;
     private static Card.Suit trumpSuit;
     private static Player startingPlayer;
-    private static String gameMessage;
+    private static StringBuilder gameMessage;
     private static ConfigPhase configPhase;
 
     public static void execute() {
@@ -66,15 +66,15 @@ public class StartPhase {
         deck.getDeck().add(trump);
 
         startingPlayer = PlayerManager.determineStartingPlayer(players, trumpSuit);
-        gameMessage = startingPlayer.getName() + " starts the game";
 
         printCurrentGameState();
     }
 
     public static void printCurrentGameState() {
-        System.out.println("The trump is: " + trump);
+        gameMessage = new StringBuilder("The trump is: " + trump + "\n");
+        gameMessage.append(startingPlayer.getName() + " starts the game\n");
+        System.out.println(gameMessage);
         DeckManager.printDeck(deck);
-        System.out.println("The starting player is: " + startingPlayer);
     }
 
     public static List<Player> getPlayers() {
@@ -97,7 +97,7 @@ public class StartPhase {
         return startingPlayer;
     }
 
-    public static String getGameMessage() {
+    public static StringBuilder getGameMessage() {
         return gameMessage;
     }
 

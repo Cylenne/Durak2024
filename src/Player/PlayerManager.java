@@ -23,6 +23,7 @@ public class PlayerManager {
     }
 
     public static void printAllPlayerDetails(List<Player> allPlayers) {
+        System.out.println();
         for (Player player : allPlayers) {
             System.out.print(player.getName() + "'s hand: ");
             for (Card card : player.getHand()) {
@@ -30,6 +31,7 @@ public class PlayerManager {
             }
             System.out.println();
         }
+        System.out.println();
     }
 
     public static Player determineStartingPlayer(List<Player> players, Card.Suit trumpSuit) {
