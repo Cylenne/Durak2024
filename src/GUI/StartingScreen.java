@@ -52,9 +52,11 @@ public class StartingScreen {
         JPanel welcomePanel = new JPanel();
         welcomePanel.setLayout(new BoxLayout(welcomePanel, BoxLayout.Y_AXIS));
 
-        JLabel welcomeLabel = new JLabel("Welcome to the Russian card game, Durak! Please select the total number of players:");
-        welcomeLabel.setPreferredSize(new Dimension(400, 40));
-        welcomePanel.add(welcomeLabel);
+        JPanel welcomeMessagePanel = new JPanel();
+        welcomeMessagePanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
+        JLabel welcomeMessageLabel = new JLabel("Welcome to the Russian card game, Durak! Please select the total number of players:");
+        welcomeMessagePanel.add(welcomeMessageLabel);
+        welcomePanel.add(welcomeMessagePanel);
 
         JPanel numPlayersPanel = new JPanel();
         numPlayersPanel.setLayout(new FlowLayout());
@@ -84,7 +86,7 @@ public class StartingScreen {
         JScrollPane scrollPane = new JScrollPane(playerTypeTable);
         centerPanel.add(scrollPane);
 
-        ImageIcon spadesImage = new ImageIcon("Images/coolAce.png");
+        ImageIcon spadesImage = new ImageIcon("Images/coolClubs.png");
         spadesImage = resizeImageIcon(spadesImage, 100, 100);
         JLabel spadesImageLabel = new JLabel(spadesImage);
         JPanel imagePanel = new JPanel(new BorderLayout());
