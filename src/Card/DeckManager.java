@@ -18,7 +18,7 @@ public class DeckManager {
     }
 
     public static void printDeck(Deck deck) {
-        System.out.print("The remaining deck is: ");
+        System.out.print("\nThe remaining deck is: ");
         deck.printDeck();
     }
 
@@ -46,8 +46,6 @@ public class DeckManager {
                 missingCards = 6 - player.getHand().size();
             }
         }
-        DeckManager.printDeck(deck);
-        PlayerManager.printAllPlayerDetails(players);
     }
 
 }

@@ -66,8 +66,6 @@ public class ComputerPlayer extends Player {
                     if (remainingDeck.getDeck().isEmpty()) { // in endgame
                         if (isDefenderRightBeforeAdditionalAttacker || areAllCardSame(additionalAttackersHand)) {
                             // gives out all cards (trump included) if they are all the same rank or if additionalAttacker wants to skip being attacked
-//                            System.out.println("ATTACKING CARDS PER LOOP: " + attackingCardsPerLoop.size());
-//                            System.out.println("CURRENT DEFENDER'S CARDS : " + currentDefender.getHand().size());
                             if (attackingCardsPerLoop.size() < currentDefender.getHand().size()) { // attacking cards have to be less or equal than defender's available card
                                 additionalAttackingCardsPerPlayer.add(additionalAttackersCard);
                             }
@@ -111,10 +109,8 @@ public class ComputerPlayer extends Player {
                 currentLoopRoundDefended = false;
                 break;
             }
-//            System.out.println("Current loop round defended: " + currentLoopRoundDefended);
         }
 
-//        System.out.println("Defending cards: " + defendingCards);
         return new RoundResult(currentLoopRoundDefended, defendingCards);
 
         // should there be a preference to block with cards of the same rank (even trump) to avoid additional attacking cards?
@@ -131,7 +127,7 @@ public class ComputerPlayer extends Player {
                 canBeatCard = true;
                 defendersHand.remove(defendersCard);
                 gameMessage.add("Attacking card " + attackingCard + " was countered by " + defendersCard + "\n");
-                System.out.println("Attacking card " + attackingCard + " was countered by " + defendersCard);
+//                System.out.println("Attacking card " + attackingCard + " was countered by " + defendersCard);
                 defendingCards.add(defendersCard);
                 break; // once the smallest ranked defender's card was found to beat the attacking card, no need to search further
             }
@@ -139,7 +135,7 @@ public class ComputerPlayer extends Player {
 
         if (!canBeatCard) {
             gameMessage.add("Attacking card " + attackingCard + " could not be countered" + "\n");
-            System.out.println("Attacking card " + attackingCard + " could not be countered");
+//            System.out.println("Attacking card " + attackingCard + " could not be countered");
         }
 
         return canBeatCard;

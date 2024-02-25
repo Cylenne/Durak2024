@@ -1,5 +1,6 @@
 package Phases;
 
+import GUI.AttackScreen;
 import Player.*;
 import Card.*;
 
@@ -16,28 +17,18 @@ public class AttackPhase {
     private static Deck deck;
     private static Card.Suit trumpSuit;
     private static final List<Player> winners = new ArrayList<>();
+    private static AttackScreen attackScreen;
 
     // Non-static variables are specific to that instance of a class
     private Boolean currentRoundDefended = false;
     private Player attacker = null;
     private Player defender = null;
     private List<String> gameMessage = new ArrayList<>();
-
+    private Set<Card> initialAttackingCards = new HashSet<>();
 
     public static List<Player> getWinners() {
         return winners;
     }
-
-    public static List<Player> getPlayers() {
-        return players;
-    }
-
-    public List<String> getGameMessage() {
-        return gameMessage;
-    }
-
-    // non-static variables = instance variables can vary in each instance
-    private Set<Card> initialAttackingCards = new HashSet<>();
 
     public void execute(AtomicInteger roundCounter, AtomicBoolean isGameOngoing) {
 
@@ -46,10 +37,19 @@ public class AttackPhase {
 
         attacker = PlayerManager.determineAttacker(roundCounter, attacker, defender, players, trumpSuit, currentRoundDefended);
         defender = PlayerManager.determineDefender(attacker, players);
+
+        gameMessage.clear();
+
         gameMessage.add("\nRound: " + roundCounter + "\n"
                 + "Number of remaining cards in deck: " + deck.getDeck().size() + "\n"
                 + attacker.getName() + " is attacking " + defender.getName() + "\n");
         System.out.println(gameMessage);
+
+        if (attackScreen == null) {
+            attackScreen = new AttackScreen();
+            attackScreen.setUpAttackScreen(StartPhase.getPlayers(), StartPhase.getTrump(), StartPhase.getGameMessage());
+        }
+
         activePlayersInRound.add(attacker);
         activePlayersInRound.add(defender);
 
@@ -60,6 +60,12 @@ public class AttackPhase {
 
         round(roundCounter, attacker, defender, initialAttackingCards, activePlayersInRound, isGameOngoing);
 
+        attackScreen.updateAttackScreen(players, gameMessage);
+
+        System.out.println(gameMessage);
+
+        DeckManager.printDeck(deck);
+        PlayerManager.printAllPlayerDetails(players);
     }
 
     private static void transferAttributes() {
@@ -76,8 +82,8 @@ public class AttackPhase {
         } else {
             // attacker is human -> write method for human
         }
-        gameMessage.addFirst("Initial attacking cards: " + initialAttackingCards + "\n");
-        System.out.println("Initial attacking cards: " + initialAttackingCards);
+        gameMessage.set(0, "Initial attacking cards: " + initialAttackingCards + "\n");
+//        System.out.println("Initial attacking cards: " + initialAttackingCards);
     }
 
     private void addAdditionalAttackers(Player attacker, Player defender, List<Player> activePlayersInRound) {
@@ -112,9 +118,9 @@ public class AttackPhase {
             if (attackingCardsPerLoop.isEmpty()) {
                 roundOn.set(false);
                 gameMessage.add("No additional attacking cards\n");
-                System.out.println("No additional attacking cards");
+//                System.out.println("No additional attacking cards");
             } else {
-                System.out.println("Additional attacking cards: " + attackingCardsPerLoop);
+//                System.out.println("Additional attacking cards: " + attackingCardsPerLoop);
                 gameMessage.add("Additional attacking cards: " + attackingCardsPerLoop + "\n");
             }
 
@@ -144,7 +150,7 @@ public class AttackPhase {
             }
         }
 
-        System.out.println("Attacking cards per sub attack: " + attackingCardsPerLoop);
+//        System.out.println("Attacking cards per sub attack: " + attackingCardsPerLoop);
         gameMessage.add("Attacking cards per sub attack: " + attackingCardsPerLoop + "\n");
     }
 
@@ -153,12 +159,11 @@ public class AttackPhase {
             RoundResult defenseResult = defender.defenseState(attackingCardsPerLoop, trumpSuit, deck, gameMessage);
             defendingCardsPerLoop.addAll(defenseResult.getDefendingCards());
             gameMessage.add("Defending cards: " + defendingCardsPerLoop + "\n");
-            System.out.println("Defending cards: " + defendingCardsPerLoop);
+//            System.out.println("Defending cards: " + defendingCardsPerLoop);
             allDefendingCards.addAll(defendingCardsPerLoop);
             currentRoundDefended = defenseResult.isRoundDefended();
-            System.out.println(currentRoundDefended ? "Successful defense so far" : "Unsuccessful defense");
-            gameMessage.add(currentRoundDefended ? "Successful defense so far" : "Unsuccessful defense" + "\n");
-//            System.out.println("CURRENT LOOP ROUND DEFENDED: " + currentRoundDefended);
+//            System.out.println(currentRoundDefended ? "Successful defense so far" : "Unsuccessful defense");
+            gameMessage.add(currentRoundDefended ? "Successful defense so far\n" : "Unsuccessful defense\n");
 
             if (!currentRoundDefended) {
                 roundOn.set(false);
@@ -192,11 +197,11 @@ public class AttackPhase {
         if (currentRoundDefended) {
             defender.getHand().removeAll(allDefendingCards);
             gameMessage.add(defender.getName() + " has successfully countered the attack" + "\n");
-            System.out.println(defender.getName() + " has successfully countered the attack" + "\n");
+//            System.out.println(defender.getName() + " has successfully countered the attack" + "\n");
             currentRoundDefended = true;
         } else {
             gameMessage.add(defender.getName() + " has not been able to counter the attack" + "\n");
-            System.out.println(defender.getName() + " has not been able to counter the attack" + "\n");
+//            System.out.println(defender.getName() + " has not been able to counter the attack" + "\n");
             // defender takes all attacking and defending cards
             defender.getHand().addAll(allAttackingCards);
             defender.getHand().addAll(allDefendingCards);
@@ -210,7 +215,7 @@ public class AttackPhase {
             Player player = iterator.next();
             if (deck.getDeck().isEmpty() && player.getHand().isEmpty()) {
                 gameMessage.add(player.getName() + " is no longer in game");
-                System.out.println(player.getName() + " is no longer in game");
+//                System.out.println(player.getName() + " is no longer in game");
                 iterator.remove();  // using iterator to safely remove the player
                 winners.add(player);
             }
@@ -220,10 +225,5 @@ public class AttackPhase {
             isGameOngoing.set(false);
         }
     }
-
-//    private void updateGameMessageWithinRounds(String newMessage) {
-//        gameMessage += "\n" + newMessage;
-//    }
-
 
 }

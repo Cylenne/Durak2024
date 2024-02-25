@@ -1,12 +1,9 @@
-import GUI.*;
 import Phases.*;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Gameplay {
-    private String gameMessage;
-    private AttackScreen attackScreen;
     private AtomicInteger roundCounter = new AtomicInteger();
     private AtomicBoolean isGameOngoing = new AtomicBoolean();
 
@@ -20,18 +17,10 @@ public class Gameplay {
 
         while (isGameOngoing.get()) {
             attackPhase.execute(roundCounter, isGameOngoing);
-
-            if (attackScreen == null) {
-                    attackScreen = new AttackScreen();
-                    attackScreen.setUpAttackScreen(StartPhase.getPlayers(), StartPhase.getTrump(), StartPhase.getGameMessage());
-                } else {
-                    attackScreen.updateAttackScreen(AttackPhase.getPlayers(), attackPhase.getGameMessage());
-                }
-
             Thread.sleep(3000);
 
         }
-        GameOverPhase.gameOver(AttackPhase.getPlayers(), AttackPhase.getWinners(), gameMessage, roundCounter);
+        GameOverPhase.gameOver(StartPhase.getPlayers(), AttackPhase.getWinners(), roundCounter);
     }
 
 

@@ -6,7 +6,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class GameOverPhase {
 
-    public static void gameOver(List<Player> players, List<Player> winners, String gameMessage, AtomicInteger roundCounter) {
+    public static void gameOver(List<Player> players, List<Player> winners, AtomicInteger roundCounter) {
 
         System.out.println("Game Over: " + winners.getFirst().getName() + " has won the game!");
         String leaderboard = "";
@@ -22,7 +22,7 @@ public class GameOverPhase {
         String durak = players.getFirst().getName();
         System.out.println("The durak is " + durak);
 
-        gameMessage = "Round: " + roundCounter + "\n"
+        String gameMessage = "Round: " + roundCounter + "\n"
                 + "Game Over: " + winners.getFirst().getName() + " has won the game!" + "\n"
                 + leaderboard + "\n"
                 + "The durak is " + durak;

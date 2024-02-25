@@ -54,7 +54,7 @@ public class AttackScreen {
         gameMessage = new JTextArea();
         gameMessage.setEditable(false);
         gameMessage.append(displayMessage);
-        gameMessage.setFont(new Font("BlackJack", Font.PLAIN, 9));
+        gameMessage.setFont(new Font("BlackJack", Font.PLAIN, 12));
 
         JScrollPane scrollPane = new JScrollPane(gameMessage);
         scrollPane.setPreferredSize(new Dimension(500, 200));

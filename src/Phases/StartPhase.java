@@ -71,7 +71,7 @@ public class StartPhase {
     }
 
     public static void printCurrentGameState() {
-        gameMessage = "The trump is: " + trump + "\n" + startingPlayer.getName() + " starts the game\n";
+        gameMessage = "The trump is: " + trump + "\n" + startingPlayer.getName() + " starts the game";
         System.out.println(gameMessage);
         DeckManager.printDeck(deck);
     }
