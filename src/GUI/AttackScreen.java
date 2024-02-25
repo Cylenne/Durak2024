@@ -5,12 +5,16 @@ import Card.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
 
 public class AttackScreen {
     private JFrame frame;
-    private JLabel gameMessage;
+    private JTextArea gameMessage; // multiline text component
     private JPanel firstHumanPlayerPanel;
+    private Timer timer;
+    private int step = 0;
 
     public void setUpAttackScreen(List<Player> players, Card trump, String displayMessage) {
 
@@ -47,7 +51,9 @@ public class AttackScreen {
         trumpText.setFont(new Font("Arial", Font.BOLD, 14));
 
         // JLabel uses HTML-like syntax for text rendering, so in order to display line breaks,we need HTML formatting
-        gameMessage = new JLabel(displayMessage, SwingConstants.CENTER);
+        gameMessage = new JTextArea();
+        gameMessage.setEditable(false);
+        gameMessage.append(displayMessage);
         gameMessage.setFont(new Font("BlackJack", Font.PLAIN, 9));
 
         JScrollPane scrollPane = new JScrollPane(gameMessage);
@@ -74,7 +80,21 @@ public class AttackScreen {
     }
 
     public void updateAttackScreen(List<Player> players, List<String> displayMessage) {
-        gameMessage.setText(String.join(" ", displayMessage));
+
+        // Timer to update the message every 3 seconds
+        timer = new Timer(3000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (step < displayMessage.size()) {
+                    gameMessage.append(displayMessage.get(step));
+                    step++;
+                } else {
+                    timer.stop();
+                }
+            }
+        });
+        timer.start();
+
     }
 
 }
