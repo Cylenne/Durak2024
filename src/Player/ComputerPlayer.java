@@ -87,7 +87,7 @@ public class ComputerPlayer extends Player {
 
     // I want this method to return multiple values, hence the RoundResult class was made
     @Override
-    public RoundResult defenseState(List<Card> attackingCards, Card.Suit trumpSuit, Deck remainingDeck, StringBuilder gameMessage) {
+    public RoundResult defenseState(List<Card> attackingCards, Card.Suit trumpSuit, Deck remainingDeck, List<String> gameMessage) {
 
         List<Card> defendersHand = this.getHand();
         Set<Card> defendingCards = new HashSet<>();
@@ -120,7 +120,7 @@ public class ComputerPlayer extends Player {
         // should there be a preference to block with cards of the same rank (even trump) to avoid additional attacking cards?
     }
 
-    public boolean canBeatCard(List<Card> defendersHand, Card attackingCard, Card.Suit trumpSuit, Set<Card> defendingCards, StringBuilder gameMessage) {
+    public boolean canBeatCard(List<Card> defendersHand, Card attackingCard, Card.Suit trumpSuit, Set<Card> defendingCards, List<String> gameMessage) {
         boolean canBeatCard = false;
 
         for (Card defendersCard : defendersHand) {
@@ -130,7 +130,7 @@ public class ComputerPlayer extends Player {
                     || (defendersCard.getSuit().equals(trumpSuit))) {
                 canBeatCard = true;
                 defendersHand.remove(defendersCard);
-                gameMessage.append("Attacking card " + attackingCard + " was countered by " + defendersCard + "\n");
+                gameMessage.add("Attacking card " + attackingCard + " was countered by " + defendersCard + "\n");
                 System.out.println("Attacking card " + attackingCard + " was countered by " + defendersCard);
                 defendingCards.add(defendersCard);
                 break; // once the smallest ranked defender's card was found to beat the attacking card, no need to search further
@@ -138,7 +138,7 @@ public class ComputerPlayer extends Player {
         }
 
         if (!canBeatCard) {
-            gameMessage.append("Attacking card " + attackingCard + " could not be countered" + "\n");
+            gameMessage.add("Attacking card " + attackingCard + " could not be countered" + "\n");
             System.out.println("Attacking card " + attackingCard + " could not be countered");
         }
 

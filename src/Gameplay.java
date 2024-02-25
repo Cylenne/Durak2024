@@ -22,13 +22,13 @@ public class Gameplay {
             attackPhase.execute(roundCounter, isGameOngoing);
 
             if (attackScreen == null) {
-                    attackScreen = new AttackScreen(); // add this to AttackPhase
-                    attackScreen.setUpAttackScreen(AttackPhase.getPlayers(), StartPhase.getTrump(), attackPhase.getGameMessage()); // add this to AttackPhase
+                    attackScreen = new AttackScreen();
+                    attackScreen.setUpAttackScreen(StartPhase.getPlayers(), StartPhase.getTrump(), StartPhase.getGameMessage());
                 } else {
                     attackScreen.updateAttackScreen(AttackPhase.getPlayers(), attackPhase.getGameMessage());
                 }
 
-            Thread.sleep(2000);
+            Thread.sleep(10000);
 
         }
         GameOverPhase.gameOver(AttackPhase.getPlayers(), AttackPhase.getWinners(), gameMessage, roundCounter);

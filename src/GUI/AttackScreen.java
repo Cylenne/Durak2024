@@ -12,7 +12,7 @@ public class AttackScreen {
     private JLabel gameMessage;
     private JPanel firstHumanPlayerPanel;
 
-    public void setUpAttackScreen(List<Player> players, Card trump, StringBuilder displayMessage) {
+    public void setUpAttackScreen(List<Player> players, Card trump, String displayMessage) {
 
         frame = new JFrame("Durak - Attack Phase");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -47,7 +47,7 @@ public class AttackScreen {
         trumpText.setFont(new Font("Arial", Font.BOLD, 14));
 
         // JLabel uses HTML-like syntax for text rendering, so in order to display line breaks,we need HTML formatting
-        gameMessage = new JLabel("<html>" + displayMessage.replace(0,displayMessage.length(),"\n<br/>") + "</html>", SwingConstants.CENTER);
+        gameMessage = new JLabel(displayMessage, SwingConstants.CENTER);
         gameMessage.setFont(new Font("BlackJack", Font.PLAIN, 9));
 
         JScrollPane scrollPane = new JScrollPane(gameMessage);
@@ -73,8 +73,8 @@ public class AttackScreen {
 
     }
 
-    public void updateAttackScreen(List<Player> players, StringBuilder displayMessage) {
-        gameMessage.setText("<html>" + displayMessage.replace(0, displayMessage.length(), "\n<br/>") + "</html>");
+    public void updateAttackScreen(List<Player> players, List<String> displayMessage) {
+        gameMessage.setText(String.join(" ", displayMessage));
     }
 
 }
