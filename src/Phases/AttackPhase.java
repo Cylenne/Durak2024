@@ -93,23 +93,21 @@ public class AttackPhase {
         Set<Card> allDefendingCards = new HashSet<>();
         Set<Card> allAttackingCards = new HashSet<>(initialAttackingCards);
 
-        AtomicInteger attackLoopCounter = new AtomicInteger();
-        attackLoopCounter.set(1);
+        AtomicInteger subAttackCounter = new AtomicInteger();
+        subAttackCounter.set(1);
         AtomicBoolean roundOn = new AtomicBoolean();
         roundOn.set(true);
         List<Card> attackingCardsPerLoop = new ArrayList<>();
 
-        Set<Card> defendingCardsPerLoop = new HashSet<>();
-
         while (roundOn.get()) {
 
-            addAttackingCards(attacker, defender, initialAttackingCards, attackLoopCounter, attackingCardsPerLoop);
+            addAttackingCards(attacker, defender, initialAttackingCards, subAttackCounter, attackingCardsPerLoop);
 
-//            Set<Card> defendingCardsPerLoop = new HashSet<>();
+            Set<Card> defendingCardsPerLoop = new HashSet<>();
 
             addDefendingCards(defender, attackingCardsPerLoop, defendingCardsPerLoop, allDefendingCards, roundOn);
 
-            checkForAdditionalAttack(allAttackingCards, attackingCardsPerLoop, attackLoopCounter, defender, defendingCardsPerLoop, attacker);
+            checkForAdditionalAttack(allAttackingCards, attackingCardsPerLoop, subAttackCounter, defender, defendingCardsPerLoop, attacker);
 
             if (attackingCardsPerLoop.isEmpty()) {
                 roundOn.set(false);
@@ -130,9 +128,9 @@ public class AttackPhase {
         roundEndCheck(isGameOngoing);
     }
 
-    private void addAttackingCards(Player attacker, Player defender, Set<Card> initialAttackingCards, AtomicInteger attackLoopCounter, List<Card> attackingCardsPerLoop) {
+    private void addAttackingCards(Player attacker, Player defender, Set<Card> initialAttackingCards, AtomicInteger subAttackCounter, List<Card> attackingCardsPerLoop) {
 
-        if (attackLoopCounter.get() == 1) {
+        if (subAttackCounter.get() == 1) {
             attackingCardsPerLoop.addAll(initialAttackingCards);
             for (Player player : players) {
                 if (player instanceof ComputerPlayer) {
@@ -146,14 +144,14 @@ public class AttackPhase {
             }
         }
 
-        System.out.println("Attacking cards per loop: " + attackingCardsPerLoop);
-        gameMessage.append("Attacking cards per loop: " + attackingCardsPerLoop + "\n");
+        System.out.println("Attacking cards per sub attack: " + attackingCardsPerLoop);
+        gameMessage.append("Attacking cards per sub attack: " + attackingCardsPerLoop + "\n");
     }
 
     private void addDefendingCards(Player defender, List<Card> attackingCardsPerLoop, Set<Card> defendingCardsPerLoop, Set<Card> allDefendingCards, AtomicBoolean roundOn) {
         if (defender instanceof ComputerPlayer) {
             RoundResult defenseResult = defender.defenseState(attackingCardsPerLoop, trumpSuit, deck, gameMessage);
-            defendingCardsPerLoop = defenseResult.getDefendingCards();
+            defendingCardsPerLoop.addAll(defenseResult.getDefendingCards());
             gameMessage.append("Defending cards: " + defendingCardsPerLoop + "\n");
             System.out.println("Defending cards: " + defendingCardsPerLoop);
             allDefendingCards.addAll(defendingCardsPerLoop);
@@ -172,10 +170,10 @@ public class AttackPhase {
 
     }
 
-    public void checkForAdditionalAttack(Set<Card> allAttackingCards, List<Card> attackingCardsPerLoop, AtomicInteger attackLoopCounter, Player defender, Set<Card> defendingCardsPerLoop, Player attacker) {
+    public void checkForAdditionalAttack(Set<Card> allAttackingCards, List<Card> attackingCardsPerLoop, AtomicInteger subAttackCounter, Player defender, Set<Card> defendingCardsPerLoop, Player attacker) {
         allAttackingCards.addAll(attackingCardsPerLoop);
         attackingCardsPerLoop.clear();
-        attackLoopCounter.incrementAndGet();
+        subAttackCounter.incrementAndGet();
 
         for (Player player : players) {
             if (player instanceof ComputerPlayer) {
@@ -187,6 +185,7 @@ public class AttackPhase {
                 // add human player code
             }
         }
+
     }
 
     public void roundEndMessage(Player defender, Set<Card> allDefendingCards, Set<Card> allAttackingCards) {

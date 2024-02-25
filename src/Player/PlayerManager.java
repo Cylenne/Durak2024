@@ -1,8 +1,10 @@
 package Player;
 
 import Card.*;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class PlayerManager {
@@ -103,7 +105,13 @@ public class PlayerManager {
     public static Player determineDefender(Player currentAttacker, List<Player> players) {
         int attackerIndex = players.indexOf(currentAttacker);
         if (attackerIndex == players.size() - 1) { // if attacker is last in players, he attacks the first in players
-            return players.getFirst();
+            if (players.getFirst() != null) {
+                return players.getFirst();
+            } else { // this occurs if there are 2 Duraks (two players exiting lastly at the same time and the game ends)
+                // THIS NEEDS TO BE RESOLVED
+                return null;
+            }
+
         } else {
             return players.get(attackerIndex + 1);
         }

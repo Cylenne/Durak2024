@@ -28,7 +28,7 @@ public class Gameplay {
                     attackScreen.updateAttackScreen(AttackPhase.getPlayers(), attackPhase.getGameMessage());
                 }
 
-//            Thread.sleep(2000);
+            Thread.sleep(2000);
 
         }
         GameOverPhase.gameOver(AttackPhase.getPlayers(), AttackPhase.getWinners(), gameMessage, roundCounter);
