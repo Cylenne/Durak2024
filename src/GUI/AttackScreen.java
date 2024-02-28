@@ -1,5 +1,6 @@
 package GUI;
 
+import Phases.AttackPhase;
 import Player.*;
 import Card.*;
 
@@ -8,6 +9,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 public class AttackScreen {
     private JFrame frame;
@@ -79,7 +81,7 @@ public class AttackScreen {
 
     }
 
-    public void updateAttackScreen(List<Player> players, List<String> displayMessage) {
+    public void updateAttackScreen(List<Player> players, List<String> displayMessage, CountDownLatch latch) {
 
         // Timer to update the message every 3 seconds
         timer = new Timer(3000, new ActionListener() {
@@ -90,6 +92,7 @@ public class AttackScreen {
                     step++;
                 } else {
                     timer.stop();
+                    latch.countDown();
                 }
             }
         });

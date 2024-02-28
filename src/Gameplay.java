@@ -17,7 +17,7 @@ public class Gameplay {
 
         while (isGameOngoing.get()) {
             attackPhase.execute(roundCounter, isGameOngoing);
-            Thread.sleep(3000);
+//            Thread.sleep(3000);
 
         }
         GameOverPhase.gameOver(StartPhase.getPlayers(), AttackPhase.getWinners(), roundCounter);

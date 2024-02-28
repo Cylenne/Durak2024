@@ -5,6 +5,7 @@ import Player.*;
 import Card.*;
 
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -25,12 +26,15 @@ public class AttackPhase {
     private Player defender = null;
     private List<String> gameMessage = new ArrayList<>();
     private Set<Card> initialAttackingCards = new HashSet<>();
+    private CountDownLatch latch;
 
     public static List<Player> getWinners() {
         return winners;
     }
 
     public void execute(AtomicInteger roundCounter, AtomicBoolean isGameOngoing) {
+
+        latch = new CountDownLatch(1);
 
         transferAttributes();
         List<Player> activePlayersInRound = new ArrayList<>();
@@ -60,7 +64,13 @@ public class AttackPhase {
 
         round(roundCounter, attacker, defender, initialAttackingCards, activePlayersInRound, isGameOngoing);
 
-        attackScreen.updateAttackScreen(players, gameMessage);
+        attackScreen.updateAttackScreen(players, gameMessage, latch);
+
+        try {
+            latch.await(); // This will block until latch.countDown() is called
+        } catch (InterruptedException e) {
+            e.printStackTrace(); // Handle InterruptedException
+        }
 
         System.out.println(gameMessage);
 
@@ -82,7 +92,7 @@ public class AttackPhase {
         } else {
             // attacker is human -> write method for human
         }
-        gameMessage.set(0, "Initial attacking cards: " + initialAttackingCards + "\n");
+        gameMessage.add("Initial attacking cards: " + initialAttackingCards + "\n");
 //        System.out.println("Initial attacking cards: " + initialAttackingCards);
     }
 
