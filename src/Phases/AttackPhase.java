@@ -47,7 +47,7 @@ public class AttackPhase {
         gameMessage.add("\nRound: " + roundCounter + "\n"
                 + "Number of remaining cards in deck: " + deck.getDeck().size() + "\n"
                 + attacker.getName() + " is attacking " + defender.getName() + "\n");
-        System.out.println(gameMessage);
+//        System.out.println(gameMessage);
 
         if (attackScreen == null) {
             attackScreen = new AttackScreen();
@@ -64,15 +64,15 @@ public class AttackPhase {
 
         round(roundCounter, attacker, defender, initialAttackingCards, activePlayersInRound, isGameOngoing);
 
+        System.out.println(gameMessage);
+
         attackScreen.updateAttackScreen(players, gameMessage, latch);
 
         try {
             latch.await(); // This will block until latch.countDown() is called
         } catch (InterruptedException e) {
-            e.printStackTrace(); // Handle InterruptedException
+            e.printStackTrace();
         }
-
-        System.out.println(gameMessage);
 
         DeckManager.printDeck(deck);
         PlayerManager.printAllPlayerDetails(players);

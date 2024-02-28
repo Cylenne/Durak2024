@@ -16,7 +16,6 @@ public class AttackScreen {
     private JTextArea gameMessage; // multiline text component
     private JPanel firstHumanPlayerPanel;
     private Timer timer;
-    private int step = 0;
 
     public void setUpAttackScreen(List<Player> players, Card trump, String displayMessage) {
 
@@ -83,13 +82,17 @@ public class AttackScreen {
 
     public void updateAttackScreen(List<Player> players, List<String> displayMessage, CountDownLatch latch) {
 
+        final int[] step = {0}; // because of the inner class and action listener this needs to be a final one-element array
+
+        gameMessage.setText("");
+
         // Timer to update the message every 3 seconds
-        timer = new Timer(3000, new ActionListener() {
+        timer = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (step < displayMessage.size()) {
-                    gameMessage.append(displayMessage.get(step));
-                    step++;
+                if (step[0] < displayMessage.size()) {
+                    gameMessage.append(displayMessage.get(step[0]));
+                    step[0]++;
                 } else {
                     timer.stop();
                     latch.countDown();
