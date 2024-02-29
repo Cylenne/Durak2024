@@ -125,7 +125,10 @@ public class AttackPhase {
 
             if (attackingCardsPerLoop.isEmpty()) {
                 roundOn.set(false);
-                gameMessage.add("No additional attacking cards\n");
+                gameMessage.add("No additional attacking cards. The attack has finished.\n");
+                if(!deck.getDeck().isEmpty()) {
+                    gameMessage.add("Players are redrawing cards.\n");
+                }
             } else {
                 gameMessage.add("Additional attacking cards: " + listToString(attackingCardsPerLoop) + "\n");
             }
@@ -202,7 +205,7 @@ public class AttackPhase {
             gameMessage.add(defender.getName() + " has successfully countered the attack" + "\n");
             currentRoundDefended = true;
         } else {
-            gameMessage.add(defender.getName() + " has not been able to counter the attack" + "\n");
+            gameMessage.add(defender.getName() + " has not been able to counter the attack. The defender takes all attacking and defending cards." + "\n");
             // defender takes all attacking and defending cards
             defender.getHand().addAll(allAttackingCards);
             defender.getHand().addAll(allDefendingCards);

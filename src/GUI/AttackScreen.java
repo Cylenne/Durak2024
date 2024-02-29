@@ -13,10 +13,12 @@ import java.util.concurrent.CountDownLatch;
 public class AttackScreen {
     private JFrame frame;
     private JTextArea gameMessage; // multiline text component
-    private JPanel firstHumanPlayerPanel;
+    private JPanel humanPlayerPanel;
     private Timer timer;
 
     public void setUpAttackScreen(List<Player> players, Card trump, String displayMessage) {
+
+        //-------------frame---------------------------
 
         frame = new JFrame("Durak - Attack Phase");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -27,34 +29,39 @@ public class AttackScreen {
         Image iconImage = frameIcon.getImage();
         frame.setIconImage(iconImage);
 
-        firstHumanPlayerPanel = new JPanel();
-        JPanel trumpAndMessagePanel = new JPanel();
-        JPanel attackPanel = new JPanel();
+        //----------------humanPlayerPanel------------------------
 
-        firstHumanPlayerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        humanPlayerPanel = new JPanel();
+        JPanel trumpAndMessagePanel = new JPanel();
+
+        humanPlayerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         trumpAndMessagePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        firstHumanPlayerPanel.setPreferredSize(new Dimension(100, 100 + 30));
+        humanPlayerPanel.setPreferredSize(new Dimension(100, 100 + 30));
         trumpAndMessagePanel.setPreferredSize(new Dimension(100, 110 + 30));
-        attackPanel.setPreferredSize(new Dimension(300, 300 + 30));
 
-        frame.add(firstHumanPlayerPanel, BorderLayout.SOUTH);
-        frame.add(trumpAndMessagePanel, BorderLayout.NORTH);
-        frame.add(attackPanel, BorderLayout.CENTER);
+        humanPlayerPanel.setLayout(new FlowLayout());
 
-        //-------------inner panels---------------------------
+        List<Card> firstHumanPlayerHand = players.getFirst().getHand();
+
+        for (Card card : firstHumanPlayerHand) {
+            humanPlayerPanel.add(new JLabel(card.toImageIcon()));
+        }
+
+        //-------------trumpAndMessagePanel---------------------------
+
         trumpAndMessagePanel.setLayout(new BorderLayout());
 
         JLabel trumpIcon = new JLabel(trump.toImageIcon(), SwingConstants.CENTER);
         JLabel trumpText = new JLabel("Trump", SwingConstants.CENTER);
         trumpText.setFont(new Font("Arial", Font.BOLD, 14));
 
-        // JLabel uses HTML-like syntax for text rendering, so in order to display line breaks,we need HTML formatting
         gameMessage = new JTextArea();
         gameMessage.setEditable(false);
         gameMessage.append(displayMessage);
         gameMessage.setFont(new Font("BlackJack", Font.PLAIN, 12));
         gameMessage.setFocusable(false); // removes the cursor
+        gameMessage.setBackground(frame.getContentPane().getBackground()); // setting the field's background color to that of the frame's
 
         JScrollPane scrollPane = new JScrollPane(gameMessage);
         scrollPane.setPreferredSize(new Dimension(500, 200));
@@ -67,15 +74,16 @@ public class AttackScreen {
         trumpAndMessagePanel.add(trumpPanel, BorderLayout.WEST);
         trumpAndMessagePanel.add(scrollPane, BorderLayout.CENTER);
 
-        //-------------first human player---------------------------
+        //-------------centralPanel---------------------------
 
-        firstHumanPlayerPanel.setLayout(new FlowLayout());
+        JPanel centralPanel = new JPanel();
+//        centralPanel.setPreferredSize(new Dimension(300, 300 + 30));
 
-        List<Card> firstHumanPlayerHand = players.getFirst().getHand();
 
-        for (Card card : firstHumanPlayerHand) {
-            firstHumanPlayerPanel.add(new JLabel(card.toImageIcon()));
-        }
+
+        frame.add(humanPlayerPanel, BorderLayout.SOUTH);
+        frame.add(trumpAndMessagePanel, BorderLayout.NORTH);
+        frame.add(centralPanel, BorderLayout.CENTER);
 
         frame.setVisible(true); // this needs to be set after the components have been added, otherwise the screen remains blank
 
