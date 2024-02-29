@@ -221,7 +221,7 @@ public class AttackPhase {
             }
         }
 
-        if (players.size() == 1) {
+        if (players.size() <= 1) { // in case of very last attack being defended, players size can be 0
             isGameOngoing.set(false);
         }
     }

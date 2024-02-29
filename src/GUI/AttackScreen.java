@@ -21,7 +21,6 @@ public class AttackScreen {
         frame = new JFrame("Durak - Attack Phase");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH); // full screen
-        frame.setVisible(true);
         frame.setLayout(new BorderLayout());
 
         ImageIcon frameIcon = new ImageIcon("Images/clubs.png");
@@ -55,6 +54,7 @@ public class AttackScreen {
         gameMessage.setEditable(false);
         gameMessage.append(displayMessage);
         gameMessage.setFont(new Font("BlackJack", Font.PLAIN, 12));
+        gameMessage.setFocusable(false); // removes the cursor
 
         JScrollPane scrollPane = new JScrollPane(gameMessage);
         scrollPane.setPreferredSize(new Dimension(500, 200));
@@ -76,6 +76,8 @@ public class AttackScreen {
         for (Card card : firstHumanPlayerHand) {
             firstHumanPlayerPanel.add(new JLabel(card.toImageIcon()));
         }
+
+        frame.setVisible(true); // this needs to be set after the components have been added, otherwise the screen remains blank
 
     }
 

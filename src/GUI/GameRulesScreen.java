@@ -23,9 +23,10 @@ public class GameRulesScreen extends JDialog {
                 "4. The player with the lowest trump card starts the game.\n" +
                 "5. Players take turns attacking each other by playing cards of the same rank.\n" +
                 "6. Additional attackers may join the attack if they have the same rank of cards as the initial attacker's.\n" +
-                "7. The defender must beat all attacking cards with higher cards of the same suit or any trump card.\n" +
-                "8. If the defender cannot beat the attacking cards, they must pick up all the cards on the table.\n" +
-                "9. The game continues until all cards are played or only one player has cards left.\n\n" +
+                "7. However, the total number of attacking cards cannot exceed the number of cards in the defender's hand.\n" +
+                "8. The defender must beat all attacking cards with higher cards of the same suit or any trump card.\n" +
+                "9. If the defender cannot beat the attacking cards, they must pick up all the cards on the table and their chance to attack is skipped.\n" +
+                "10. The game continues until all cards are played or only one player has cards left.\n\n" +
                 "Enjoy playing Durak!";
         rulesTextArea.setText(gameRulesText);
 
