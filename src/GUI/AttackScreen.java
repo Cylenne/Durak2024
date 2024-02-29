@@ -1,6 +1,5 @@
 package GUI;
 
-import Phases.AttackPhase;
 import Player.*;
 import Card.*;
 
@@ -92,6 +91,7 @@ public class AttackScreen {
             public void actionPerformed(ActionEvent e) {
                 if (step[0] < displayMessage.size()) {
                     gameMessage.append(displayMessage.get(step[0]));
+                    gameMessage.setCaretPosition(gameMessage.getDocument().getLength()); // this jumps to the bottom of the field with each update
                     step[0]++;
                 } else {
                     timer.stop();
