@@ -65,7 +65,7 @@ public class AttackPhase {
 
         printRoundMessage(gameMessage);
 
-        attackScreen.updateAttackScreen(players, gameMessage, latch);
+        attackScreen.updateAttackScreenMessage(gameMessage, latch);
 
         try {
             latch.await(); // This will block until latch.countDown() is called

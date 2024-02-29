@@ -10,6 +10,8 @@ import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
+import static Card.Card.resizeImageIcon;
+
 public class AttackScreen {
     private JFrame frame;
     private JTextArea gameMessage; // multiline text component
@@ -18,8 +20,35 @@ public class AttackScreen {
 
     public void setUpAttackScreen(List<Player> players, Card trump, String displayMessage) {
 
-        //-------------frame---------------------------
+        createFrame();
+        JPanel mainPanel = createMainPanel();
+        addHumanPlayerPanel(players, mainPanel);
+        addTrumpAndMessagePanel(trump, displayMessage, mainPanel);
+        JPanel centralPanel = addCentralPanel(mainPanel);
+        addComputerPlayersPanel(players, centralPanel);
 
+
+        //---------------------addAttackingCardsPanel------------------------------
+
+        JPanel attackingCardsPanel = new JPanel();
+        centralPanel.add(attackingCardsPanel, BorderLayout.NORTH);
+
+
+
+        //---------------------addDefendingCardsPanel------------------------------
+        JPanel defendingCardsPanel = new JPanel();
+        centralPanel.add(defendingCardsPanel, BorderLayout.SOUTH);
+
+
+
+
+        //---------------------------------------------------
+
+        frame.setVisible(true); // this needs to be set after the components have been added, otherwise the screen remains blank
+
+    }
+
+    private void createFrame() {
         frame = new JFrame("Durak - Attack Phase");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH); // full screen
@@ -29,28 +58,34 @@ public class AttackScreen {
         Image iconImage = frameIcon.getImage();
         frame.setIconImage(iconImage);
 
-        //----------------humanPlayerPanel------------------------
+    }
 
+    private JPanel createMainPanel() {
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        frame.add(mainPanel);
+        return mainPanel;
+    }
+
+    private void addHumanPlayerPanel(List<Player> players, JPanel mainPanel) {
         humanPlayerPanel = new JPanel();
-        JPanel trumpAndMessagePanel = new JPanel();
-
         humanPlayerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        trumpAndMessagePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
         humanPlayerPanel.setPreferredSize(new Dimension(100, 100 + 30));
-        trumpAndMessagePanel.setPreferredSize(new Dimension(100, 110 + 30));
-
         humanPlayerPanel.setLayout(new FlowLayout());
 
         List<Card> firstHumanPlayerHand = players.getFirst().getHand();
-
         for (Card card : firstHumanPlayerHand) {
             humanPlayerPanel.add(new JLabel(card.toImageIcon()));
         }
 
-        //-------------trumpAndMessagePanel---------------------------
+        mainPanel.add(humanPlayerPanel, BorderLayout.SOUTH);
+    }
 
+    private void addTrumpAndMessagePanel(Card trump, String displayMessage, JPanel mainPanel) {
+        JPanel trumpAndMessagePanel = new JPanel();
         trumpAndMessagePanel.setLayout(new BorderLayout());
+        trumpAndMessagePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        trumpAndMessagePanel.setPreferredSize(new Dimension(100, 110 + 30));
 
         JLabel trumpIcon = new JLabel(trump.toImageIcon(), SwingConstants.CENTER);
         JLabel trumpText = new JLabel("Trump", SwingConstants.CENTER);
@@ -74,22 +109,43 @@ public class AttackScreen {
         trumpAndMessagePanel.add(trumpPanel, BorderLayout.WEST);
         trumpAndMessagePanel.add(scrollPane, BorderLayout.CENTER);
 
-        //-------------centralPanel---------------------------
-
-        JPanel centralPanel = new JPanel();
-//        centralPanel.setPreferredSize(new Dimension(300, 300 + 30));
-
-
-
-        frame.add(humanPlayerPanel, BorderLayout.SOUTH);
-        frame.add(trumpAndMessagePanel, BorderLayout.NORTH);
-        frame.add(centralPanel, BorderLayout.CENTER);
-
-        frame.setVisible(true); // this needs to be set after the components have been added, otherwise the screen remains blank
-
+        mainPanel.add(trumpAndMessagePanel, BorderLayout.NORTH);
     }
 
-    public void updateAttackScreen(List<Player> players, List<String> displayMessage, CountDownLatch latch) {
+    private JPanel addCentralPanel(JPanel mainPanel) {
+        JPanel centralPanel = new JPanel();
+//        centralPanel.setPreferredSize(new Dimension(300, 300 + 30));
+        centralPanel.setLayout(new BorderLayout());
+        mainPanel.add(centralPanel, BorderLayout.CENTER);
+        return centralPanel;
+    }
+
+    public void addComputerPlayersPanel(List<Player> players, JPanel centralPanel){
+        JPanel computerPlayersPanel = new JPanel();
+        computerPlayersPanel.setPreferredSize(new Dimension(80, 150));
+        computerPlayersPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        centralPanel.add(computerPlayersPanel, BorderLayout.WEST);
+
+        // creating as many player icons as there are players
+        for (int i = 1; i < players.size(); i++) {
+
+            JPanel playerIconPanel = new JPanel();
+            ImageIcon playerIcon = new ImageIcon("Images/3cardsFromBack.png");
+            playerIcon = resizeImageIcon(playerIcon, 100, 100);
+            JLabel playerIconLabel = new JLabel(playerIcon);
+            playerIconPanel.add(playerIconLabel);
+
+            JPanel playerNamePanel = new JPanel();
+            JLabel playerNameText = new JLabel("Player " + (i + 1), SwingConstants.CENTER);
+            playerNameText.setFont(new Font("Arial", Font.BOLD, 12));
+            playerNamePanel.add(playerNameText);
+
+            computerPlayersPanel.add(playerIconPanel);
+            computerPlayersPanel.add(playerNamePanel);
+        }
+    }
+
+    public void updateAttackScreenMessage(List<String> displayMessage, CountDownLatch latch) {
 
         final int[] step = {0}; // because of the inner class and action listener this needs to be a final one-element array
 
