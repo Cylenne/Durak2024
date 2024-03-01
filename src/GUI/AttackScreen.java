@@ -17,15 +17,18 @@ public class AttackScreen {
     private JTextArea gameMessage; // multiline text component
     private JPanel humanPlayerPanel;
     private Timer timer;
+    private JPanel mainPanel;
+    private JPanel centralPanel;
+    private JPanel computerPlayersPanel;
 
     public void setUpAttackScreen(List<Player> players, Card trump, String displayMessage) {
 
         createFrame();
-        JPanel mainPanel = createMainPanel();
-        addHumanPlayerPanel(players, mainPanel);
-        addTrumpAndMessagePanel(trump, displayMessage, mainPanel);
-        JPanel centralPanel = addCentralPanel(mainPanel);
-        addComputerPlayersPanel(players, centralPanel);
+        mainPanel = createMainPanel();
+        addHumanPlayerPanel(players);
+        addTrumpAndMessagePanel(trump, displayMessage);
+        centralPanel = addCentralPanel();
+        addComputerPlayersPanel(players);
 
 
         //---------------------addAttackingCardsPanel------------------------------
@@ -67,7 +70,7 @@ public class AttackScreen {
         return mainPanel;
     }
 
-    private void addHumanPlayerPanel(List<Player> players, JPanel mainPanel) {
+    private void addHumanPlayerPanel(List<Player> players) {
         humanPlayerPanel = new JPanel();
         humanPlayerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         humanPlayerPanel.setPreferredSize(new Dimension(100, 100 + 30));
@@ -81,7 +84,7 @@ public class AttackScreen {
         mainPanel.add(humanPlayerPanel, BorderLayout.SOUTH);
     }
 
-    private void addTrumpAndMessagePanel(Card trump, String displayMessage, JPanel mainPanel) {
+    private void addTrumpAndMessagePanel(Card trump, String displayMessage) {
         JPanel trumpAndMessagePanel = new JPanel();
         trumpAndMessagePanel.setLayout(new BorderLayout());
         trumpAndMessagePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -112,7 +115,7 @@ public class AttackScreen {
         mainPanel.add(trumpAndMessagePanel, BorderLayout.NORTH);
     }
 
-    private JPanel addCentralPanel(JPanel mainPanel) {
+    private JPanel addCentralPanel() {
         JPanel centralPanel = new JPanel();
 //        centralPanel.setPreferredSize(new Dimension(300, 300 + 30));
         centralPanel.setLayout(new BorderLayout());
@@ -120,28 +123,31 @@ public class AttackScreen {
         return centralPanel;
     }
 
-    public void addComputerPlayersPanel(List<Player> players, JPanel centralPanel){
-        JPanel computerPlayersPanel = new JPanel();
+    public void addComputerPlayersPanel(List<Player> players){
+        computerPlayersPanel = new JPanel();
         computerPlayersPanel.setPreferredSize(new Dimension(80, 150));
         computerPlayersPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
         centralPanel.add(computerPlayersPanel, BorderLayout.WEST);
 
-        // creating as many player icons as there are players
-        for (int i = 1; i < players.size(); i++) {
+        // creating as many player icons as there are players in game
+        for (Player player : players) {
 
-            JPanel playerIconPanel = new JPanel();
-            ImageIcon playerIcon = new ImageIcon("Images/3cardsFromBack.png");
-            playerIcon = resizeImageIcon(playerIcon, 100, 100);
-            JLabel playerIconLabel = new JLabel(playerIcon);
-            playerIconPanel.add(playerIconLabel);
+            if (player instanceof ComputerPlayer) {
 
-            JPanel playerNamePanel = new JPanel();
-            JLabel playerNameText = new JLabel("Player " + (i + 1), SwingConstants.CENTER);
-            playerNameText.setFont(new Font("Arial", Font.BOLD, 12));
-            playerNamePanel.add(playerNameText);
+                JPanel playerIconPanel = new JPanel();
+                ImageIcon playerIcon = new ImageIcon("Images/3cardsFromBack.png");
+                playerIcon = resizeImageIcon(playerIcon, 100, 90);
+                JLabel playerIconLabel = new JLabel(playerIcon);
+                playerIconPanel.add(playerIconLabel);
 
-            computerPlayersPanel.add(playerIconPanel);
-            computerPlayersPanel.add(playerNamePanel);
+                JPanel playerNamePanel = new JPanel();
+                JLabel playerNameText = new JLabel(player.getName(), SwingConstants.CENTER);
+                playerNameText.setFont(new Font("Arial", Font.BOLD, 12));
+                playerNamePanel.add(playerNameText);
+
+                computerPlayersPanel.add(playerIconPanel);
+                computerPlayersPanel.add(playerNamePanel);
+            }
         }
     }
 
@@ -152,7 +158,7 @@ public class AttackScreen {
         gameMessage.setText("");
 
         // Timer to update the message every 3 seconds
-        timer = new Timer(1000, new ActionListener() {
+        timer = new Timer(500, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (step[0] < displayMessage.size()) {
@@ -167,6 +173,14 @@ public class AttackScreen {
         });
         timer.start();
 
+    }
+
+    public void updateComputerPlayersPanel(List<Player> players) {
+        computerPlayersPanel.removeAll(); // remove all existing computer player panels
+        addComputerPlayersPanel(players);
+
+        computerPlayersPanel.revalidate(); // recalculate the layout (when you add/remove components dynamically)
+        computerPlayersPanel.repaint(); // visually renders updated changes
     }
 
 }
