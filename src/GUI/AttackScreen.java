@@ -1,5 +1,6 @@
 package GUI;
 
+import Phases.StartPhase;
 import Player.*;
 import Card.*;
 
@@ -30,7 +31,7 @@ public class AttackScreen {
         createFrame();
         mainPanel = createMainPanel();
         addHumanPlayerPanel(players);
-        addTrumpAndMessagePanel(trump, displayMessage);
+        addTrumpAndMessagePanel(trump);
         centralPanel = addCentralPanel();
         addComputerPlayersPanel(players);
 
@@ -113,7 +114,7 @@ public class AttackScreen {
         mainPanel.add(humanPlayerPanel, BorderLayout.SOUTH);
     }
 
-    private void addTrumpAndMessagePanel(Card trump, String displayMessage) {
+    private void addTrumpAndMessagePanel(Card trump) {
         JPanel trumpAndMessagePanel = new JPanel();
         trumpAndMessagePanel.setLayout(new BorderLayout());
         trumpAndMessagePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -125,7 +126,7 @@ public class AttackScreen {
 
         gameMessage = new JTextArea();
         gameMessage.setEditable(false);
-        gameMessage.append(displayMessage);
+        gameMessage.append(""); // no point in adding text here as it will disappear too fast
         gameMessage.setFont(new Font("BlackJack", Font.PLAIN, 12));
         gameMessage.setFocusable(false); // removes the cursor
         gameMessage.setBackground(frame.getContentPane().getBackground()); // setting the field's background color to that of the frame's
@@ -186,7 +187,7 @@ public class AttackScreen {
         gameMessage.setText("");
 
         // Timer to update the message every 3 seconds
-        timer = new Timer(500, new ActionListener() {
+        timer = new Timer(2000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (step[0] < displayMessage.size()) {

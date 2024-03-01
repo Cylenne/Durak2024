@@ -42,16 +42,23 @@ public class AttackPhase {
         attacker = PlayerManager.determineAttacker(roundCounter, attacker, defender, players, trumpSuit, currentRoundDefended);
         defender = PlayerManager.determineDefender(attacker, players);
 
+        if (attackScreen == null) {
+            attackScreen = new AttackScreen();
+            attackScreen.setUpAttackScreen(StartPhase.getPlayers(), StartPhase.getTrump(), StartPhase.getGameMessage());
+
+//            gameMessage.add(StartPhase.getGameMessage());
+//            waitForUpdatedAttackScreen();
+        }
+
+
+
         gameMessage.clear();
 
         gameMessage.add("\nRound: " + roundCounter + "\n"
                 + "Number of remaining cards in deck: " + deck.getDeck().size() + "\n"
                 + attacker.getName() + " is attacking " + defender.getName() + "\n");
 
-        if (attackScreen == null) {
-            attackScreen = new AttackScreen();
-            attackScreen.setUpAttackScreen(StartPhase.getPlayers(), StartPhase.getTrump(), StartPhase.getGameMessage());
-        }
+//        waitForUpdatedAttackScreen();
 
         activePlayersInRound.add(attacker);
         activePlayersInRound.add(defender);
@@ -65,16 +72,20 @@ public class AttackPhase {
 
         printRoundMessage(gameMessage);
 
-        attackScreen.updateAttackScreenMessage(gameMessage, latch);
-
-        try {
-            latch.await(); // This will block until latch.countDown() is called
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        waitForUpdatedAttackScreen();
 
         DeckManager.printDeck(deck);
         PlayerManager.printAllPlayerDetails(players);
+    }
+
+    private void waitForUpdatedAttackScreen() {
+        attackScreen.updateAttackScreenMessage(gameMessage, latch);
+
+        try {
+            latch.await(); // blocks the flow of code until latch.countDown() is called
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     private static void transferAttributes() {
@@ -126,7 +137,7 @@ public class AttackPhase {
             if (attackingCardsPerLoop.isEmpty()) {
                 roundOn.set(false);
                 gameMessage.add("No additional attacking cards. The attack has finished.\n");
-                if(!deck.getDeck().isEmpty()) {
+                if (!deck.getDeck().isEmpty()) {
                     gameMessage.add("Players are redrawing cards.\n");
                 }
             } else {
