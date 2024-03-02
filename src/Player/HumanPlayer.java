@@ -1,6 +1,7 @@
 package Player;
 
 import Card.*;
+import GUI.AttackScreen;
 
 import java.util.List;
 import java.util.Set;
@@ -27,7 +28,7 @@ public class HumanPlayer extends Player {
     }
 
     @Override
-    public RoundResult defenseState(List<Card> attackingCards, Card.Suit trumpSuit, Deck remainingDeck, List<String> gameMessage) {
+    public RoundResult defenseState(List<Card> attackingCards, Card.Suit trumpSuit, Deck remainingDeck, String gameMessage, AttackScreen attackScreen) {
         // write code
         return null;
     }

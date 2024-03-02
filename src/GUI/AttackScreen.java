@@ -126,7 +126,7 @@ public class AttackScreen {
 
         gameMessage = new JTextArea();
         gameMessage.setEditable(false);
-        gameMessage.append(""); // no point in adding text here as it will disappear too fast
+//        gameMessage.append(""); // no point in adding text here as it will disappear too fast
         gameMessage.setFont(new Font("BlackJack", Font.PLAIN, 12));
         gameMessage.setFocusable(false); // removes the cursor
         gameMessage.setBackground(frame.getContentPane().getBackground()); // setting the field's background color to that of the frame's
@@ -180,28 +180,28 @@ public class AttackScreen {
         }
     }
 
-    public void updateAttackScreenMessage(List<String> displayMessage, CountDownLatch latch) {
 
-        final int[] step = {0}; // because of the inner class and action listener this needs to be a final one-element array
-
-        gameMessage.setText("");
-
-        // Timer to update the message every 3 seconds
-        timer = new Timer(2000, new ActionListener() {
+    public void updateAttackScreenMessage(String message) {
+        CountDownLatch latch = new CountDownLatch(1);
+        Timer timer = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (step[0] < displayMessage.size()) {
-                    gameMessage.append(displayMessage.get(step[0]));
-                    gameMessage.setCaretPosition(gameMessage.getDocument().getLength()); // this jumps to the bottom of the field with each update
-                    step[0]++;
-                } else {
-                    timer.stop();
-                    latch.countDown();
-                }
+                SwingUtilities.invokeLater(() -> {
+                    gameMessage.setText(message);
+                    gameMessage.setCaretPosition(gameMessage.getDocument().getLength());
+                    gameMessage.repaint();
+                    latch.countDown(); // callback to countdown latch
+                });
             }
         });
+        timer.setRepeats(false); // execute the action only once
         timer.start();
 
+        try {
+            latch.await(); // wait for the latch to countdown
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        }
     }
 
     public void updateComputerPlayersPanel(List<Player> players) {

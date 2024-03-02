@@ -1,6 +1,9 @@
 package Player;
 
 import Card.*;
+import GUI.AttackScreen;
+import Phases.AttackPhase;
+
 import java.util.*;
 
 public class ComputerPlayer extends Player {
@@ -85,7 +88,7 @@ public class ComputerPlayer extends Player {
 
     // I want this method to return multiple values, hence the RoundResult class was made
     @Override
-    public RoundResult defenseState(List<Card> attackingCards, Card.Suit trumpSuit, Deck remainingDeck, List<String> gameMessage) {
+    public RoundResult defenseState(List<Card> attackingCards, Card.Suit trumpSuit, Deck remainingDeck, String gameMessage, AttackScreen attackScreen) {
 
         List<Card> defendersHand = this.getHand();
         Set<Card> defendingCards = new HashSet<>();
@@ -100,12 +103,12 @@ public class ComputerPlayer extends Player {
             // if non-endgame and defender has trump Q, K and/or A
             if (!remainingDeck.getDeck().isEmpty() && !defendersStrongestCards(this, trumpSuit).isEmpty()) {
                 defendersTemporaryHand.removeAll(defendersStrongestCards(this, trumpSuit));
-                if (!canBeatCard(defendersTemporaryHand, attackingCards.get(i), trumpSuit, defendingCards, gameMessage)) {
+                if (!canBeatCard(defendersTemporaryHand, attackingCards.get(i), trumpSuit, defendingCards, gameMessage, attackScreen)) {
                     currentLoopRoundDefended = false;
                     break; // if one attacking card can't be beaten, the round is lost already
                 }
                 // in every other situation
-            } else if (!canBeatCard(defendersHand, attackingCards.get(i), trumpSuit, defendingCards, gameMessage)) {
+            } else if (!canBeatCard(defendersHand, attackingCards.get(i), trumpSuit, defendingCards, gameMessage, attackScreen)) {
                 currentLoopRoundDefended = false;
                 break;
             }
@@ -116,7 +119,7 @@ public class ComputerPlayer extends Player {
         // should there be a preference to block with cards of the same rank (even trump) to avoid additional attacking cards?
     }
 
-    public boolean canBeatCard(List<Card> defendersHand, Card attackingCard, Card.Suit trumpSuit, Set<Card> defendingCards, List<String> gameMessage) {
+    public boolean canBeatCard(List<Card> defendersHand, Card attackingCard, Card.Suit trumpSuit, Set<Card> defendingCards, String gameMessage, AttackScreen attackScreen) {
         boolean canBeatCard = false;
 
         for (Card defendersCard : defendersHand) {
@@ -126,16 +129,18 @@ public class ComputerPlayer extends Player {
                     || (defendersCard.getSuit().equals(trumpSuit))) {
                 canBeatCard = true;
                 defendersHand.remove(defendersCard);
-                gameMessage.add("Attacking card " + attackingCard + " was countered by " + defendersCard + "\n");
-//                System.out.println("Attacking card " + attackingCard + " was countered by " + defendersCard);
+                gameMessage = ("Attacking card " + attackingCard + " was countered by " + defendersCard);
+                attackScreen.updateAttackScreenMessage(gameMessage);
+                System.out.println(gameMessage);
                 defendingCards.add(defendersCard);
                 break; // once the smallest ranked defender's card was found to beat the attacking card, no need to search further
             }
         }
 
         if (!canBeatCard) {
-            gameMessage.add("Attacking card " + attackingCard + " could not be countered" + "\n");
-//            System.out.println("Attacking card " + attackingCard + " could not be countered");
+            gameMessage = ("Attacking card " + attackingCard + " could not be countered");
+            attackScreen.updateAttackScreenMessage(gameMessage);
+            System.out.println(gameMessage);
         }
 
         return canBeatCard;
@@ -154,7 +159,7 @@ public class ComputerPlayer extends Player {
 
     // does the hand contain the same rank of cards?
     public boolean areAllCardSame(List<Card> additionalAttackerHand) {
-        Card firstCard = additionalAttackerHand.get(0);
+        Card firstCard = additionalAttackerHand.getFirst();
 
         for (Card additionalAttackersCard : additionalAttackerHand) {
             if (!firstCard.equals(additionalAttackersCard)) {

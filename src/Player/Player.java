@@ -1,6 +1,8 @@
 package Player;
 
 import Card.*;
+import GUI.AttackScreen;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -28,7 +30,7 @@ public abstract class Player {
                                                           Deck remainingDeck, Card.Suit trumpSuit,
                                                           Boolean isDefenderRightBeforeAdditionalAttacker, Player currentDefender,
                                                           List<Card> attackingCardsPerLoop);
-    public abstract RoundResult defenseState(List<Card> attackingCards, Card.Suit trumpSuit, Deck remainingDeck, List<String> gameMessage);
+    public abstract RoundResult defenseState(List<Card> attackingCards, Card.Suit trumpSuit, Deck remainingDeck, String gameMessage, AttackScreen attackScreen);
 
     public String getName() {
         return name;
