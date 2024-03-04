@@ -28,7 +28,7 @@ public class HumanPlayer extends Player {
     }
 
     @Override
-    public RoundResult defenseState(List<Card> attackingCards, Card.Suit trumpSuit, Deck remainingDeck, String gameMessage, AttackScreen attackScreen) {
+    public RoundResult defenseState(List<Card> attackingCards, Card.Suit trumpSuit, Deck remainingDeck, AttackScreen attackScreen) {
         // write code
         return null;
     }

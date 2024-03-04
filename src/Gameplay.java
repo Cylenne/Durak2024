@@ -8,7 +8,7 @@ public class Gameplay {
     private AtomicBoolean isGameOngoing = new AtomicBoolean();
 
 
-    private void gameFlow() throws InterruptedException {
+    private void gameFlow() {
         StartPhase.execute();
 
         roundCounter.set(1);
@@ -17,14 +17,13 @@ public class Gameplay {
 
         while (isGameOngoing.get()) {
             attackPhase.execute(roundCounter, isGameOngoing);
-//            Thread.sleep(3000);
-
         }
+
         GameOverPhase.gameOver(StartPhase.getPlayers(), AttackPhase.getWinners(), roundCounter);
     }
 
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
         Gameplay game = new Gameplay();
 
         game.gameFlow();

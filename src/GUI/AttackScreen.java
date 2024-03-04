@@ -10,6 +10,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
 import static Card.Card.resizeImageIcon;
@@ -25,8 +26,10 @@ public class AttackScreen {
     private JPanel attackingAndDefendingCardsPanel;
     private JPanel attackingCardsPanel;
     private JPanel defendingCardsPanel;
+    private JPanel attackingCardsDisplayed;
+    private JPanel defendingCardsDisplayed;
 
-    public void setUpAttackScreen(List<Player> players, Card trump, String displayMessage) {
+    public void setUpAttackScreen(List<Player> players, Card trump) {
 
         createFrame();
         mainPanel = createMainPanel();
@@ -34,49 +37,7 @@ public class AttackScreen {
         addTrumpAndMessagePanel(trump);
         centralPanel = addCentralPanel();
         addComputerPlayersPanel(players);
-
-
-
-
-        //---------------------addAttackingCardsPanel------------------------------
-        attackingAndDefendingCardsPanel = new JPanel(new BorderLayout());
-        centralPanel.add(attackingAndDefendingCardsPanel, BorderLayout.CENTER);
-
-
-        attackingCardsPanel = new JPanel(new BorderLayout());
-        attackingCardsPanel.setBackground(Color.GREEN);
-        attackingAndDefendingCardsPanel.add(attackingCardsPanel, BorderLayout.NORTH);
-
-        JLabel attackingCardsText =  new JLabel("Attacking cards:");
-        attackingCardsPanel.add(attackingCardsText, BorderLayout.NORTH);
-
-        JPanel attackingCardsDisplayed = new JPanel(new FlowLayout());
-        attackingCardsPanel.add(attackingCardsDisplayed);
-
-
-
-
-
-
-        //---------------------addDefendingCardsPanel------------------------------
-        defendingCardsPanel = new JPanel(new BorderLayout());
-        defendingCardsPanel.setBackground(Color.YELLOW);
-        attackingAndDefendingCardsPanel.add(defendingCardsPanel, BorderLayout.CENTER);
-
-        JLabel defendingCardsText =  new JLabel("Defending cards:");
-        defendingCardsPanel.add(defendingCardsText, BorderLayout.NORTH);
-
-        JPanel defendingCardsDisplayed = new JPanel(new FlowLayout());
-        attackingCardsPanel.add(defendingCardsDisplayed);
-
-
-
-
-
-
-
-        //---------------------------------------------------
-
+        addAttackingAndDefendingCardsPanel();
         frame.setVisible(true); // this needs to be set after the components have been added, otherwise the screen remains blank
 
     }
@@ -103,13 +64,19 @@ public class AttackScreen {
     private void addHumanPlayerPanel(List<Player> players) {
         humanPlayerPanel = new JPanel();
         humanPlayerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        humanPlayerPanel.setPreferredSize(new Dimension(100, 100 + 30));
-        humanPlayerPanel.setLayout(new FlowLayout());
+        humanPlayerPanel.setLayout(new BoxLayout(humanPlayerPanel, BoxLayout.Y_AXIS));
+
+        JLabel label = new JLabel("Your cards:");
+        humanPlayerPanel.add(label);
+
+        JPanel cardsPanel = new JPanel(new FlowLayout());
 
         List<Card> humanPlayerHand = players.getFirst().getHand(); // THIS SHOULD BE CHANGED TO INSTANCE OF HUMANPLAYER IN THE FUTURE
         for (Card card : humanPlayerHand) {
-            humanPlayerPanel.add(new JLabel(card.toImageIcon()));
+            cardsPanel.add(new JLabel(card.toImageIcon()));
         }
+
+        humanPlayerPanel.add(cardsPanel);
 
         mainPanel.add(humanPlayerPanel, BorderLayout.SOUTH);
     }
@@ -152,7 +119,7 @@ public class AttackScreen {
         return centralPanel;
     }
 
-    public void addComputerPlayersPanel(List<Player> players){
+    public void addComputerPlayersPanel(List<Player> players) {
         computerPlayersPanel = new JPanel();
         computerPlayersPanel.setPreferredSize(new Dimension(80, 150));
         computerPlayersPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
@@ -180,10 +147,41 @@ public class AttackScreen {
         }
     }
 
+    public void addAttackingAndDefendingCardsPanel() {
+        attackingAndDefendingCardsPanel = new JPanel(new BorderLayout());
+        centralPanel.add(attackingAndDefendingCardsPanel, BorderLayout.CENTER);
+
+        attackingCardsPanel = new JPanel(new BorderLayout());
+        attackingCardsPanel.setBackground(Color.GREEN);
+        attackingCardsPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        attackingCardsPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        attackingAndDefendingCardsPanel.add(attackingCardsPanel, BorderLayout.NORTH);
+
+        JLabel attackingCardsText = new JLabel("Attacking cards:");
+        attackingCardsPanel.add(attackingCardsText);
+
+        attackingCardsDisplayed = new JPanel(new FlowLayout());
+        attackingCardsPanel.add(attackingCardsDisplayed);
+
+
+
+        defendingCardsPanel = new JPanel(new BorderLayout());
+        defendingCardsPanel.setBackground(Color.YELLOW);
+        defendingCardsPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        defendingCardsPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        attackingAndDefendingCardsPanel.add(defendingCardsPanel, BorderLayout.CENTER);
+
+        JLabel defendingCardsText = new JLabel("Defending cards:");
+        defendingCardsPanel.add(defendingCardsText);
+
+        defendingCardsDisplayed = new JPanel(new FlowLayout());
+        defendingCardsPanel.add(defendingCardsDisplayed);
+    }
+
 
     public void updateAttackScreenMessage(String message) {
         CountDownLatch latch = new CountDownLatch(1);
-        Timer timer = new Timer(1000, new ActionListener() {
+        Timer timer = new Timer(3000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 SwingUtilities.invokeLater(() -> {
@@ -210,6 +208,40 @@ public class AttackScreen {
 
         computerPlayersPanel.revalidate(); // recalculate the layout (when you add/remove components dynamically)
         computerPlayersPanel.repaint(); // visually renders updated changes
+    }
+
+    public void updateHumanPlayerPanel(List<Player> players) {
+        humanPlayerPanel.removeAll();
+        addHumanPlayerPanel(players);
+        computerPlayersPanel.revalidate();
+        computerPlayersPanel.repaint();
+    }
+
+    public void updateAttackingCardsPanel(List<Card> attackingCards){
+        attackingCardsDisplayed.removeAll();
+
+        for (Card card : attackingCards) {
+            attackingCardsDisplayed.add(new JLabel(card.toImageIcon()));
+        }
+
+        attackingCardsPanel.revalidate();
+        attackingCardsPanel.repaint();
+    }
+
+    public void updateDefendingCardsPanel(Set<Card> defendingCards){
+        defendingCardsDisplayed.removeAll();
+
+        for (Card card : defendingCards) {
+            defendingCardsDisplayed.add(new JLabel(card.toImageIcon()));
+        }
+
+        defendingCardsPanel.revalidate();
+        defendingCardsPanel.repaint();
+    }
+
+    public void clearAttackingAndDefendingCardsPanel() {
+        attackingCardsDisplayed.removeAll();
+        defendingCardsDisplayed.removeAll();
     }
 
 }

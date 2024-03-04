@@ -2,7 +2,6 @@ package Player;
 
 import Card.*;
 import GUI.AttackScreen;
-import Phases.AttackPhase;
 
 import java.util.*;
 
@@ -88,7 +87,7 @@ public class ComputerPlayer extends Player {
 
     // I want this method to return multiple values, hence the RoundResult class was made
     @Override
-    public RoundResult defenseState(List<Card> attackingCards, Card.Suit trumpSuit, Deck remainingDeck, String gameMessage, AttackScreen attackScreen) {
+    public RoundResult defenseState(List<Card> attackingCards, Card.Suit trumpSuit, Deck remainingDeck, AttackScreen attackScreen) {
 
         List<Card> defendersHand = this.getHand();
         Set<Card> defendingCards = new HashSet<>();
@@ -103,12 +102,12 @@ public class ComputerPlayer extends Player {
             // if non-endgame and defender has trump Q, K and/or A
             if (!remainingDeck.getDeck().isEmpty() && !defendersStrongestCards(this, trumpSuit).isEmpty()) {
                 defendersTemporaryHand.removeAll(defendersStrongestCards(this, trumpSuit));
-                if (!canBeatCard(defendersTemporaryHand, attackingCards.get(i), trumpSuit, defendingCards, gameMessage, attackScreen)) {
+                if (!canBeatCard(defendersTemporaryHand, attackingCards.get(i), trumpSuit, defendingCards, attackScreen)) {
                     currentLoopRoundDefended = false;
                     break; // if one attacking card can't be beaten, the round is lost already
                 }
                 // in every other situation
-            } else if (!canBeatCard(defendersHand, attackingCards.get(i), trumpSuit, defendingCards, gameMessage, attackScreen)) {
+            } else if (!canBeatCard(defendersHand, attackingCards.get(i), trumpSuit, defendingCards, attackScreen)) {
                 currentLoopRoundDefended = false;
                 break;
             }
@@ -119,9 +118,10 @@ public class ComputerPlayer extends Player {
         // should there be a preference to block with cards of the same rank (even trump) to avoid additional attacking cards?
     }
 
-    public boolean canBeatCard(List<Card> defendersHand, Card attackingCard, Card.Suit trumpSuit, Set<Card> defendingCards, String gameMessage, AttackScreen attackScreen) {
+    public boolean canBeatCard(List<Card> defendersHand, Card attackingCard, Card.Suit trumpSuit, Set<Card> defendingCards, AttackScreen attackScreen) {
         boolean canBeatCard = false;
 
+        String gameMessage;
         for (Card defendersCard : defendersHand) {
 
             if ((attackingCard.getSuit().equals(trumpSuit) && defendersCard.getSuit().equals(trumpSuit)) // attacking card is trump

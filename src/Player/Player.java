@@ -30,7 +30,7 @@ public abstract class Player {
                                                           Deck remainingDeck, Card.Suit trumpSuit,
                                                           Boolean isDefenderRightBeforeAdditionalAttacker, Player currentDefender,
                                                           List<Card> attackingCardsPerLoop);
-    public abstract RoundResult defenseState(List<Card> attackingCards, Card.Suit trumpSuit, Deck remainingDeck, String gameMessage, AttackScreen attackScreen);
+    public abstract RoundResult defenseState(List<Card> attackingCards, Card.Suit trumpSuit, Deck remainingDeck, AttackScreen attackScreen);
 
     public String getName() {
         return name;

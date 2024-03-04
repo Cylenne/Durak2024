@@ -34,8 +34,6 @@ public class AttackPhase {
 
     public void execute(AtomicInteger roundCounter, AtomicBoolean isGameOngoing) {
 
-//        latch = new CountDownLatch(1);
-
         transferAttributes();
         List<Player> activePlayersInRound = new ArrayList<>();
 
@@ -44,7 +42,7 @@ public class AttackPhase {
 
         if (attackScreen == null) {
             attackScreen = new AttackScreen();
-            attackScreen.setUpAttackScreen(StartPhase.getPlayers(), StartPhase.getTrump(), StartPhase.getGameMessage());
+            attackScreen.setUpAttackScreen(StartPhase.getPlayers(), StartPhase.getTrump());
 
             gameMessage = StartPhase.getGameMessage();
             attackScreen.updateAttackScreenMessage(gameMessage);
@@ -72,6 +70,9 @@ public class AttackPhase {
 
         DeckManager.printDeck(deck);
         PlayerManager.printAllPlayerDetails(players);
+
+        attackScreen.updateHumanPlayerPanel(players); // MOVE THIS TO ATTACKS AND DEFENSES ONCE HUMAN PLAYER IS WRITTEN
+        attackScreen.clearAttackingAndDefendingCardsPanel();
     }
 
 
@@ -135,6 +136,7 @@ public class AttackPhase {
             } else {
                 gameMessage = ("Additional attacking cards: " + listToString(attackingCardsPerLoop));
                 attackScreen.updateAttackScreenMessage(gameMessage);
+                attackScreen.updateAttackingCardsPanel(attackingCardsPerLoop);
                 System.out.println(gameMessage);
             }
 
@@ -166,15 +168,17 @@ public class AttackPhase {
 
         gameMessage = ("Attacking cards per sub attack: " + listToString(attackingCardsPerLoop));
         attackScreen.updateAttackScreenMessage(gameMessage);
+        attackScreen.updateAttackingCardsPanel(attackingCardsPerLoop);
         System.out.println(gameMessage);
     }
 
     private void addDefendingCards(Player defender, List<Card> attackingCardsPerLoop, Set<Card> defendingCardsPerLoop, Set<Card> allDefendingCards, AtomicBoolean roundOn) {
         if (defender instanceof ComputerPlayer) {
-            RoundResult defenseResult = defender.defenseState(attackingCardsPerLoop, trumpSuit, deck, gameMessage, attackScreen);
+            RoundResult defenseResult = defender.defenseState(attackingCardsPerLoop, trumpSuit, deck, attackScreen);
             defendingCardsPerLoop.addAll(defenseResult.getDefendingCards());
             gameMessage = ("Defending cards: " + setToString(defendingCardsPerLoop));
             attackScreen.updateAttackScreenMessage(gameMessage);
+            attackScreen.updateDefendingCardsPanel(defendingCardsPerLoop);
             System.out.println(gameMessage);
             allDefendingCards.addAll(defendingCardsPerLoop);
             currentRoundDefended = defenseResult.isRoundDefended();
