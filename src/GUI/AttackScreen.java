@@ -152,7 +152,7 @@ public class AttackScreen {
         centralPanel.add(attackingAndDefendingCardsPanel, BorderLayout.CENTER);
 
         attackingCardsPanel = new JPanel(new BorderLayout());
-        attackingCardsPanel.setBackground(Color.GREEN);
+//        attackingCardsPanel.setBackground(Color.GREEN);
         attackingCardsPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         attackingCardsPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         attackingAndDefendingCardsPanel.add(attackingCardsPanel, BorderLayout.NORTH);
@@ -164,9 +164,8 @@ public class AttackScreen {
         attackingCardsPanel.add(attackingCardsDisplayed);
 
 
-
         defendingCardsPanel = new JPanel(new BorderLayout());
-        defendingCardsPanel.setBackground(Color.YELLOW);
+//        defendingCardsPanel.setBackground(Color.YELLOW);
         defendingCardsPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         defendingCardsPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         attackingAndDefendingCardsPanel.add(defendingCardsPanel, BorderLayout.CENTER);
@@ -181,7 +180,7 @@ public class AttackScreen {
 
     public void updateAttackScreenMessage(String message) {
         CountDownLatch latch = new CountDownLatch(1);
-        Timer timer = new Timer(3000, new ActionListener() {
+        Timer timer = new Timer(4000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 SwingUtilities.invokeLater(() -> {
@@ -217,8 +216,7 @@ public class AttackScreen {
         computerPlayersPanel.repaint();
     }
 
-    public void updateAttackingCardsPanel(List<Card> attackingCards){
-        attackingCardsDisplayed.removeAll();
+    public void updateInitialAttackingCardsPanel(Set<Card> attackingCards) {
 
         for (Card card : attackingCards) {
             attackingCardsDisplayed.add(new JLabel(card.toImageIcon()));
@@ -228,13 +226,14 @@ public class AttackScreen {
         attackingCardsPanel.repaint();
     }
 
-    public void updateDefendingCardsPanel(Set<Card> defendingCards){
-        defendingCardsDisplayed.removeAll();
+    public void updateAttackingCardsPanel(Card attackingCards) {
+        attackingCardsDisplayed.add(new JLabel(attackingCards.toImageIcon()));
+        attackingCardsPanel.revalidate();
+        attackingCardsPanel.repaint();
+    }
 
-        for (Card card : defendingCards) {
-            defendingCardsDisplayed.add(new JLabel(card.toImageIcon()));
-        }
-
+    public void updateDefendingCardsPanel(Card defendingCard) {
+        defendingCardsDisplayed.add(new JLabel(defendingCard.toImageIcon()));
         defendingCardsPanel.revalidate();
         defendingCardsPanel.repaint();
     }

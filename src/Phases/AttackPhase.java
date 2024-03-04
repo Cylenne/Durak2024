@@ -23,7 +23,6 @@ public class AttackPhase {
     private Boolean currentRoundDefended = false;
     private Player attacker = null;
     private Player defender = null;
-    //    private List<String> gameMessage = new ArrayList<>();
     private String gameMessage;
     private Set<Card> initialAttackingCards = new HashSet<>();
 
@@ -86,13 +85,14 @@ public class AttackPhase {
     private void mainAttackersMove(Player attacker) {
 
         if (attacker instanceof ComputerPlayer) {
-            initialAttackingCards = attacker.addAttackingCards(trumpSuit, deck);
+            initialAttackingCards = attacker.addInitialAttackingCards(trumpSuit, deck);
         } else {
             // attacker is human -> write method for human
         }
         gameMessage = ("Initial attacking cards: " + setToString(initialAttackingCards));
         attackScreen.updateAttackScreenMessage(gameMessage);
         System.out.println(gameMessage);
+        attackScreen.updateInitialAttackingCardsPanel(initialAttackingCards);
     }
 
     private void addAdditionalAttackers(Player attacker, Player defender, List<Player> activePlayersInRound) {
@@ -133,12 +133,13 @@ public class AttackPhase {
                     attackScreen.updateAttackScreenMessage(gameMessage);
                     System.out.println(gameMessage);
                 }
-            } else {
-                gameMessage = ("Additional attacking cards: " + listToString(attackingCardsPerLoop));
-                attackScreen.updateAttackScreenMessage(gameMessage);
-                attackScreen.updateAttackingCardsPanel(attackingCardsPerLoop);
-                System.out.println(gameMessage);
             }
+//            else {
+//                gameMessage = ("Additional attacking cards: " + listToString(attackingCardsPerLoop));
+//                attackScreen.updateAttackScreenMessage(gameMessage);
+//                attackScreen.updateAttackingCardsPanel(attackingCardsPerLoop);
+//                System.out.println(gameMessage);
+//            }
 
             allAttackingCards.addAll(attackingCardsPerLoop);
         }
@@ -157,8 +158,13 @@ public class AttackPhase {
             for (Player player : players) {
                 if (player instanceof ComputerPlayer) {
                     if (!player.equals(defender)) { // additional cards can only be added as long as defender has enough cards
-                        attackingCardsPerLoop.addAll(player.addAdditionalAttackingCards(initialAttackingCards, deck,
-                                trumpSuit, PlayerManager.isDefenderRightBeforeAdditionalAttacker(players, defender, attacker), defender, attackingCardsPerLoop));
+                        attackingCardsPerLoop.addAll(player.addAdditionalAttackingCards(
+                                initialAttackingCards,
+                                deck,
+                                trumpSuit,
+                                PlayerManager.isDefenderRightBeforeAdditionalAttacker(players, defender, attacker),
+                                defender, attackingCardsPerLoop,
+                                attackScreen));
                     }
                 } else {
                     // add human player code
@@ -166,20 +172,19 @@ public class AttackPhase {
             }
         }
 
-        gameMessage = ("Attacking cards per sub attack: " + listToString(attackingCardsPerLoop));
-        attackScreen.updateAttackScreenMessage(gameMessage);
-        attackScreen.updateAttackingCardsPanel(attackingCardsPerLoop);
-        System.out.println(gameMessage);
+//        gameMessage = ("Attacking cards per sub attack: " + listToString(attackingCardsPerLoop));
+//        attackScreen.updateAttackScreenMessage(gameMessage);
+//        attackScreen.updateAttackingCardsPanel(attackingCardsPerLoop);
+//        System.out.println(gameMessage);
     }
 
     private void addDefendingCards(Player defender, List<Card> attackingCardsPerLoop, Set<Card> defendingCardsPerLoop, Set<Card> allDefendingCards, AtomicBoolean roundOn) {
         if (defender instanceof ComputerPlayer) {
             RoundResult defenseResult = defender.defenseState(attackingCardsPerLoop, trumpSuit, deck, attackScreen);
             defendingCardsPerLoop.addAll(defenseResult.getDefendingCards());
-            gameMessage = ("Defending cards: " + setToString(defendingCardsPerLoop));
-            attackScreen.updateAttackScreenMessage(gameMessage);
-            attackScreen.updateDefendingCardsPanel(defendingCardsPerLoop);
-            System.out.println(gameMessage);
+//            gameMessage = ("Defending cards: " + setToString(defendingCardsPerLoop));
+//            attackScreen.updateAttackScreenMessage(gameMessage);
+//            System.out.println(gameMessage);
             allDefendingCards.addAll(defendingCardsPerLoop);
             currentRoundDefended = defenseResult.isRoundDefended();
             gameMessage = (currentRoundDefended ? "Successful defense so far" : "Unsuccessful defense");
@@ -204,8 +209,14 @@ public class AttackPhase {
         for (Player player : players) {
             if (player instanceof ComputerPlayer) {
                 if (!player.equals(defender)) {
-                    attackingCardsPerLoop.addAll(player.addAdditionalAttackingCards(defendingCardsPerLoop, deck,
-                            trumpSuit, PlayerManager.isDefenderRightBeforeAdditionalAttacker(players, defender, attacker), defender, attackingCardsPerLoop));
+                    attackingCardsPerLoop.addAll(player.addAdditionalAttackingCards(
+                            defendingCardsPerLoop,
+                            deck,
+                            trumpSuit,
+                            PlayerManager.isDefenderRightBeforeAdditionalAttacker(players, defender, attacker),
+                            defender,
+                            attackingCardsPerLoop,
+                            attackScreen));
                 }
             } else {
                 // add human player code

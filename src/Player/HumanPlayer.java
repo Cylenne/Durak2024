@@ -13,7 +13,7 @@ public class HumanPlayer extends Player {
     }
 
     @Override
-    public Set<Card> addAttackingCards(Card.Suit trumpSuit, Deck remainingDeck) {
+    public Set<Card> addInitialAttackingCards(Card.Suit trumpSuit, Deck remainingDeck) {
         // write this code
         return null;
     }
@@ -22,7 +22,8 @@ public class HumanPlayer extends Player {
     public Set<Card> addAdditionalAttackingCards(Set<Card> attackingCards,
                                                  Deck remainingDeck, Card.Suit trumpSuit,
                                                  Boolean isDefenderRightBeforeAdditionalAttacker, Player currentDefender,
-                                                 List<Card> attackingCardsPerLoop) {
+                                                 List<Card> attackingCardsPerLoop,
+                                                 AttackScreen attackScreen) {
         // write this code
         return null;
     }

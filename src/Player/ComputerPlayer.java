@@ -12,12 +12,13 @@ public class ComputerPlayer extends Player {
     }
 
     @Override
-    public Set<Card> addAttackingCards(Card.Suit trumpSuit, Deck remainingDeck) {
+    public Set<Card> addInitialAttackingCards(Card.Suit trumpSuit, Deck remainingDeck) {
 
         Set<Card> attackingCards = new HashSet<>();
 
         Card smallestRankedCard = this.getHand().getFirst();
         attackingCards.add(smallestRankedCard);
+
 
         // are there multiple cards with the same smallest rank?
         for (int i = 1; i < this.getHand().size(); i++) {
@@ -55,7 +56,8 @@ public class ComputerPlayer extends Player {
             Card.Suit trumpSuit,
             Boolean isDefenderRightBeforeAdditionalAttacker,
             Player currentDefender,
-            List<Card> attackingCardsPerLoop
+            List<Card> attackingCardsPerLoop,
+            AttackScreen attackScreen
     ) {
 
         List<Card> additionalAttackersHand = this.getHand();
@@ -70,11 +72,13 @@ public class ComputerPlayer extends Player {
                             // gives out all cards (trump included) if they are all the same rank or if additionalAttacker wants to skip being attacked
                             if (attackingCardsPerLoop.size() < currentDefender.getHand().size()) { // attacking cards have to be less or equal than defender's available card
                                 additionalAttackingCardsPerPlayer.add(additionalAttackersCard);
+                                printAdditionalAttack(additionalAttackersCard, attackScreen);
                             }
                         }
                     } else { // not end game
                         if (!additionalAttackersCard.getSuit().equals(trumpSuit) && (attackingCardsPerLoop.size() < currentDefender.getHand().size())) {
                             additionalAttackingCardsPerPlayer.add(additionalAttackersCard);
+                            printAdditionalAttack(additionalAttackersCard, attackScreen);
                         }
                     }
                 }
@@ -124,14 +128,19 @@ public class ComputerPlayer extends Player {
         String gameMessage;
         for (Card defendersCard : defendersHand) {
 
-            if ((attackingCard.getSuit().equals(trumpSuit) && defendersCard.getSuit().equals(trumpSuit)) // attacking card is trump
-                    || (defendersCard.getSuit().equals(attackingCard.getSuit()) && defendersCard.getRank() > attackingCard.getRank()) // attacking card is non-trump -> first check if non-trump can beat it
-                    || (defendersCard.getSuit().equals(trumpSuit))) {
+            if (
+                    (attackingCard.getSuit().equals(trumpSuit) && defendersCard.getSuit().equals(trumpSuit)) // if both trump & defender's rank's larger
+                            && defendersCard.getRank() > attackingCard.getRank()
+                    || (defendersCard.getSuit().equals(attackingCard.getSuit()) // attacking card is non-trump & same suit -> first check if non-trump can beat it
+                            && defendersCard.getRank() > attackingCard.getRank())
+                    || (defendersCard.getSuit().equals(trumpSuit))) // attacking card is non-trump -> any trump beats it
+            {
                 canBeatCard = true;
                 defendersHand.remove(defendersCard);
                 gameMessage = ("Attacking card " + attackingCard + " was countered by " + defendersCard);
                 attackScreen.updateAttackScreenMessage(gameMessage);
                 System.out.println(gameMessage);
+                attackScreen.updateDefendingCardsPanel(defendersCard);
                 defendingCards.add(defendersCard);
                 break; // once the smallest ranked defender's card was found to beat the attacking card, no need to search further
             }
@@ -167,5 +176,12 @@ public class ComputerPlayer extends Player {
             }
         }
         return true;
+    }
+
+    public void printAdditionalAttack(Card additionalAttackersCard, AttackScreen attackScreen) {
+        String gameMessage = this.getName() + " is also attacking with " + additionalAttackersCard;
+        System.out.println(gameMessage);
+        attackScreen.updateAttackScreenMessage(gameMessage);
+        attackScreen.updateAttackingCardsPanel(additionalAttackersCard);
     }
 }
