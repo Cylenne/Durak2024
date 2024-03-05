@@ -24,7 +24,7 @@ public abstract class Player {
         }
     }
 
-    public abstract Set<Card> addInitialAttackingCards(Card.Suit trumpSuit, Deck remainingDeck);
+    public abstract Set<Card> addInitialAttackingCards(Card.Suit trumpSuit, Deck remainingDeck, Player currentDefender);
 
     public abstract Set<Card> addAdditionalAttackingCards(Set<Card> attackingCards,
                                                           Deck remainingDeck, Card.Suit trumpSuit,

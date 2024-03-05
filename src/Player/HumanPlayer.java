@@ -13,7 +13,7 @@ public class HumanPlayer extends Player {
     }
 
     @Override
-    public Set<Card> addInitialAttackingCards(Card.Suit trumpSuit, Deck remainingDeck) {
+    public Set<Card> addInitialAttackingCards(Card.Suit trumpSuit, Deck remainingDeck, Player currentDefender) {
         // write this code
         return null;
     }

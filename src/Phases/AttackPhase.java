@@ -85,7 +85,7 @@ public class AttackPhase {
     private void mainAttackersMove(Player attacker) {
 
         if (attacker instanceof ComputerPlayer) {
-            initialAttackingCards = attacker.addInitialAttackingCards(trumpSuit, deck);
+            initialAttackingCards = attacker.addInitialAttackingCards(trumpSuit, deck, defender);
         } else {
             // attacker is human -> write method for human
         }
@@ -134,12 +134,6 @@ public class AttackPhase {
                     System.out.println(gameMessage);
                 }
             }
-//            else {
-//                gameMessage = ("Additional attacking cards: " + listToString(attackingCardsPerLoop));
-//                attackScreen.updateAttackScreenMessage(gameMessage);
-//                attackScreen.updateAttackingCardsPanel(attackingCardsPerLoop);
-//                System.out.println(gameMessage);
-//            }
 
             allAttackingCards.addAll(attackingCardsPerLoop);
         }
@@ -171,20 +165,12 @@ public class AttackPhase {
                 }
             }
         }
-
-//        gameMessage = ("Attacking cards per sub attack: " + listToString(attackingCardsPerLoop));
-//        attackScreen.updateAttackScreenMessage(gameMessage);
-//        attackScreen.updateAttackingCardsPanel(attackingCardsPerLoop);
-//        System.out.println(gameMessage);
     }
 
     private void addDefendingCards(Player defender, List<Card> attackingCardsPerLoop, Set<Card> defendingCardsPerLoop, Set<Card> allDefendingCards, AtomicBoolean roundOn) {
         if (defender instanceof ComputerPlayer) {
             RoundResult defenseResult = defender.defenseState(attackingCardsPerLoop, trumpSuit, deck, attackScreen);
             defendingCardsPerLoop.addAll(defenseResult.getDefendingCards());
-//            gameMessage = ("Defending cards: " + setToString(defendingCardsPerLoop));
-//            attackScreen.updateAttackScreenMessage(gameMessage);
-//            System.out.println(gameMessage);
             allDefendingCards.addAll(defendingCardsPerLoop);
             currentRoundDefended = defenseResult.isRoundDefended();
             gameMessage = (currentRoundDefended ? "Successful defense so far" : "Unsuccessful defense");

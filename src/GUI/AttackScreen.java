@@ -180,7 +180,7 @@ public class AttackScreen {
 
     public void updateAttackScreenMessage(String message) {
         CountDownLatch latch = new CountDownLatch(1);
-        Timer timer = new Timer(4000, new ActionListener() {
+        Timer timer = new Timer(3000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 SwingUtilities.invokeLater(() -> {
@@ -228,6 +228,15 @@ public class AttackScreen {
 
     public void updateAttackingCardsPanel(Card attackingCards) {
         attackingCardsDisplayed.add(new JLabel(attackingCards.toImageIcon()));
+        attackingCardsPanel.revalidate();
+        attackingCardsPanel.repaint();
+    }
+
+    public void updateAttackingCardsPanel(Set<Card> attackingCards) {
+        for (Card card : attackingCards) {
+            attackingCardsDisplayed.add(new JLabel(card.toImageIcon()));
+        }
+
         attackingCardsPanel.revalidate();
         attackingCardsPanel.repaint();
     }
