@@ -87,7 +87,7 @@ public class ComputerPlayer extends Player {
         if (!additionalAttackingCardsPerPlayer.isEmpty()) {
             String gameMessage = this.getName() + " is also attacking with " + setToString(additionalAttackingCardsPerPlayer);
             System.out.println(gameMessage);
-            attackScreen.updateAttackScreenMessage(gameMessage);
+            attackScreen.updateAttackPhaseMessage(gameMessage);
             attackScreen.updateAttackingCardsPanel(additionalAttackingCardsPerPlayer);
         }
         this.getHand().removeAll(additionalAttackingCardsPerPlayer);
@@ -144,7 +144,7 @@ public class ComputerPlayer extends Player {
                 canBeatCard = true;
                 defendersHand.remove(defendersCard);
                 gameMessage = ("Attacking card " + attackingCard + " was countered by " + defendersCard);
-                attackScreen.updateAttackScreenMessage(gameMessage);
+                attackScreen.updateAttackPhaseMessage(gameMessage);
                 System.out.println(gameMessage);
                 attackScreen.updateDefendingCardsPanel(defendersCard);
                 defendingCards.add(defendersCard);
@@ -154,7 +154,7 @@ public class ComputerPlayer extends Player {
 
         if (!canBeatCard) {
             gameMessage = ("Attacking card " + attackingCard + " could not be countered");
-            attackScreen.updateAttackScreenMessage(gameMessage);
+            attackScreen.updateAttackPhaseMessage(gameMessage);
             System.out.println(gameMessage);
         }
 

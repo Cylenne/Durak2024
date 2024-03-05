@@ -6,7 +6,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
-public class MainScreen {
+public class GameOverScreen
+{
 
     private JFrame frame;
 

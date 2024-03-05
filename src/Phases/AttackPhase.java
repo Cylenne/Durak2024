@@ -44,7 +44,7 @@ public class AttackPhase {
             attackScreen.setUpAttackScreen(StartPhase.getPlayers(), StartPhase.getTrump());
 
             gameMessage = StartPhase.getGameMessage();
-            attackScreen.updateAttackScreenMessage(gameMessage);
+            attackScreen.updateAttackPhaseMessage(gameMessage);
         }
 
         gameMessage = "Round: " + roundCounter + "\n"
@@ -53,7 +53,7 @@ public class AttackPhase {
 
         System.out.println(gameMessage);
 
-        attackScreen.updateAttackScreenMessage(gameMessage);
+        attackScreen.updateRoundMessage(gameMessage);
 
         activePlayersInRound.add(attacker);
         activePlayersInRound.add(defender);
@@ -65,7 +65,7 @@ public class AttackPhase {
 
         round(roundCounter, attacker, defender, initialAttackingCards, activePlayersInRound, isGameOngoing);
 
-        attackScreen.updateAttackScreenMessage(gameMessage);
+        attackScreen.updateAttackPhaseMessage(gameMessage);
 
         DeckManager.printDeck(deck);
         PlayerManager.printAllPlayerDetails(players);
@@ -90,7 +90,7 @@ public class AttackPhase {
             // attacker is human -> write method for human
         }
         gameMessage = ("Initial attacking cards: " + setToString(initialAttackingCards));
-        attackScreen.updateAttackScreenMessage(gameMessage);
+        attackScreen.updateAttackPhaseMessage(gameMessage);
         System.out.println(gameMessage);
         attackScreen.updateInitialAttackingCardsPanel(initialAttackingCards);
     }
@@ -126,11 +126,11 @@ public class AttackPhase {
 
             if (attackingCardsPerLoop.isEmpty()) {
                 roundOn.set(false);
-                gameMessage = ("No additional attacking cards. The attack has finished.");
-                attackScreen.updateAttackScreenMessage(gameMessage);
+                gameMessage = ("No additional attacking cards, the attack has finished");
+                attackScreen.updateAttackPhaseMessage(gameMessage);
                 if (!deck.getDeck().isEmpty()) {
-                    gameMessage = ("Players are redrawing cards.");
-                    attackScreen.updateAttackScreenMessage(gameMessage);
+                    gameMessage = ("Players are redrawing cards");
+                    attackScreen.updateAttackPhaseMessage(gameMessage);
                     System.out.println(gameMessage);
                 }
             }
@@ -174,7 +174,7 @@ public class AttackPhase {
             allDefendingCards.addAll(defendingCardsPerLoop);
             currentRoundDefended = defenseResult.isRoundDefended();
             gameMessage = (currentRoundDefended ? "Successful defense so far" : "Unsuccessful defense");
-            attackScreen.updateAttackScreenMessage(gameMessage);
+            attackScreen.updateAttackPhaseMessage(gameMessage);
             System.out.println(gameMessage);
 
             if (!currentRoundDefended) {
@@ -215,12 +215,12 @@ public class AttackPhase {
         if (currentRoundDefended) {
             defender.getHand().removeAll(allDefendingCards);
             gameMessage = (defender.getName() + " has successfully countered the attack");
-            attackScreen.updateAttackScreenMessage(gameMessage);
+            attackScreen.updateAttackPhaseMessage(gameMessage);
             System.out.println(gameMessage);
             currentRoundDefended = true;
         } else {
-            gameMessage = (defender.getName() + " has not been able to counter the attack. The defender takes all attacking and defending cards.");
-            attackScreen.updateAttackScreenMessage(gameMessage);
+            gameMessage = (defender.getName() + " has not been able to counter the attack\nThe defender takes all attacking and defending cards");
+            attackScreen.updateAttackPhaseMessage(gameMessage);
             System.out.println(gameMessage);
             // defender takes all attacking and defending cards
             defender.getHand().addAll(allAttackingCards);
@@ -235,7 +235,7 @@ public class AttackPhase {
             Player player = iterator.next();
             if (deck.getDeck().isEmpty() && player.getHand().isEmpty()) {
                 gameMessage = (player.getName() + " is no longer in game");
-                attackScreen.updateAttackScreenMessage(gameMessage);
+                attackScreen.updateAttackPhaseMessage(gameMessage);
                 System.out.println(gameMessage);
                 iterator.remove();  // using iterator to safely remove the player
                 winners.add(player);
