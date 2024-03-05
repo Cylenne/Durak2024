@@ -28,6 +28,8 @@ public class AttackScreen {
     private JPanel defendingCardsPanel;
     private JPanel attackingCardsDisplayed;
     private JPanel defendingCardsDisplayed;
+    private JLabel attackingCardsText;
+    private JLabel defendingCardsText;
 
     public void setUpAttackScreen(List<Player> players, Card trump) {
 
@@ -137,7 +139,7 @@ public class AttackScreen {
                 playerIconPanel.add(playerIconLabel);
 
                 JPanel playerNamePanel = new JPanel();
-                JLabel playerNameText = new JLabel(player.getName(), SwingConstants.CENTER);
+                JLabel playerNameText = new JLabel(player.getName() + " (" + player.getHand().size() + ")", SwingConstants.CENTER);
                 playerNameText.setFont(new Font("Arial", Font.BOLD, 12));
                 playerNamePanel.add(playerNameText);
 
@@ -153,12 +155,13 @@ public class AttackScreen {
 
         attackingCardsPanel = new JPanel(new BorderLayout());
 //        attackingCardsPanel.setBackground(Color.GREEN);
-        attackingCardsPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        attackingCardsPanel.setBorder(BorderFactory.createEmptyBorder(10, 70, 10, 10));
         attackingCardsPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         attackingAndDefendingCardsPanel.add(attackingCardsPanel, BorderLayout.NORTH);
 
-        JLabel attackingCardsText = new JLabel("Attacking cards:");
+        attackingCardsText = new JLabel("Attacking cards:");
         attackingCardsPanel.add(attackingCardsText);
+        attackingCardsText.setVisible(false);
 
         attackingCardsDisplayed = new JPanel(new FlowLayout());
         attackingCardsPanel.add(attackingCardsDisplayed);
@@ -166,12 +169,13 @@ public class AttackScreen {
 
         defendingCardsPanel = new JPanel(new BorderLayout());
 //        defendingCardsPanel.setBackground(Color.YELLOW);
-        defendingCardsPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        defendingCardsPanel.setBorder(BorderFactory.createEmptyBorder(10, 70, 10, 10));
         defendingCardsPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         attackingAndDefendingCardsPanel.add(defendingCardsPanel, BorderLayout.CENTER);
 
-        JLabel defendingCardsText = new JLabel("Defending cards:");
+        defendingCardsText = new JLabel("Defending cards:");
         defendingCardsPanel.add(defendingCardsText);
+        defendingCardsText.setVisible(false);
 
         defendingCardsDisplayed = new JPanel(new FlowLayout());
         defendingCardsPanel.add(defendingCardsDisplayed);
@@ -217,6 +221,7 @@ public class AttackScreen {
     }
 
     public void updateInitialAttackingCardsPanel(Set<Card> attackingCards) {
+        attackingCardsText.setVisible(true);
 
         for (Card card : attackingCards) {
             attackingCardsDisplayed.add(new JLabel(card.toImageIcon()));
@@ -233,6 +238,7 @@ public class AttackScreen {
     }
 
     public void updateAttackingCardsPanel(Set<Card> attackingCards) {
+
         for (Card card : attackingCards) {
             attackingCardsDisplayed.add(new JLabel(card.toImageIcon()));
         }
@@ -242,12 +248,15 @@ public class AttackScreen {
     }
 
     public void updateDefendingCardsPanel(Card defendingCard) {
+        defendingCardsText.setVisible(true);
         defendingCardsDisplayed.add(new JLabel(defendingCard.toImageIcon()));
         defendingCardsPanel.revalidate();
         defendingCardsPanel.repaint();
     }
 
     public void clearAttackingAndDefendingCardsPanel() {
+        attackingCardsText.setVisible(false);
+        defendingCardsText.setVisible(false);
         attackingCardsDisplayed.removeAll();
         defendingCardsDisplayed.removeAll();
     }
