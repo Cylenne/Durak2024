@@ -195,7 +195,7 @@ public class AttackPhase {
         for (Player player : players) {
             if (!player.equals(defender)) {
                 if (player instanceof ComputerPlayer) {
-                    System.out.println("POTENTIAL ADDITIONAL ATTACKER: " + player.getName());
+//                    System.out.println("POTENTIAL ADDITIONAL ATTACKER: " + player.getName());
                     attackingCardsPerLoop.addAll(player.addAdditionalAttackingCards(
                             defendingCardsPerLoop,
                             deck,
