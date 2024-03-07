@@ -193,8 +193,9 @@ public class AttackPhase {
         subAttackCounter.incrementAndGet();
 
         for (Player player : players) {
-            if (player instanceof ComputerPlayer) {
-                if (!player.equals(defender)) {
+            if (!player.equals(defender)) {
+                if (player instanceof ComputerPlayer) {
+//                    System.out.println("POTENTIAL ADDITIONAL ATTACKER: " + player.getName());
                     attackingCardsPerLoop.addAll(player.addAdditionalAttackingCards(
                             defendingCardsPerLoop,
                             deck,
@@ -203,9 +204,9 @@ public class AttackPhase {
                             defender,
                             attackingCardsPerLoop,
                             attackScreen));
+                } else {
+                    // add human player code
                 }
-            } else {
-                // add human player code
             }
         }
 
@@ -244,6 +245,7 @@ public class AttackPhase {
 
         if (players.size() <= 1) { // in case of very last attack being defended, players size can be 0
             isGameOngoing.set(false);
+            attackScreen.closeAttackScreen();
         }
 
         attackScreen.updateComputerPlayersPanel(players);

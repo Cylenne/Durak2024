@@ -21,6 +21,7 @@ public class StartingScreen {
     private JComboBox<String> numberOfPlayersSelectionBox;
     private JTable playerTypeTable;
     private JButton startButton;
+    JPanel centerPanel;
 
     private OnPlayersReadyListener callback;
 
@@ -35,10 +36,19 @@ public class StartingScreen {
     public void setupStartingScreen() {
 
         List<Player> players = new ArrayList<>();
-
         playerCreation = new PlayerCreation();
 
-        // frame
+        createFrame();
+        createWelcomeMessageAndNumberOfPlayersSelectionBox();
+        createPlayerTypesTable();
+        createSpadesArt();
+        createButtons(players);
+        frame.setVisible(true);
+        centerFrame();
+
+    }
+
+    private void createFrame() {
         frame = new JFrame("Durak");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(750, 400);
@@ -47,8 +57,9 @@ public class StartingScreen {
         ImageIcon frameIcon = new ImageIcon("Images/clubs.png");
         Image iconImage = frameIcon.getImage();
         frame.setIconImage(iconImage);
+    }
 
-        // upper panel with welcome message and number of players selection
+    private void createWelcomeMessageAndNumberOfPlayersSelectionBox() {
         JPanel welcomePanel = new JPanel();
         welcomePanel.setLayout(new BoxLayout(welcomePanel, BoxLayout.Y_AXIS));
 
@@ -70,14 +81,15 @@ public class StartingScreen {
 
         frame.add(welcomePanel, BorderLayout.NORTH);
 
-
         numberOfPlayersSelectionBox.addActionListener(e -> {
             updatePlayerTable();
             startButton.setEnabled(true); // Enable the "Start Game" button when the number of players is selected
         });
+    }
 
+    private void createPlayerTypesTable() {
         // center panel for player types table and spades image
-        JPanel centerPanel = new JPanel();
+        centerPanel = new JPanel();
         centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
         frame.add(centerPanel, BorderLayout.CENTER);
 
@@ -86,13 +98,19 @@ public class StartingScreen {
         JScrollPane scrollPane = new JScrollPane(playerTypeTable);
         centerPanel.add(scrollPane);
 
+
+    }
+
+    private void createSpadesArt() {
         ImageIcon spadesImage = new ImageIcon("Images/coolClubs.png");
         spadesImage = resizeImageIcon(spadesImage, 100, 100);
         JLabel spadesImageLabel = new JLabel(spadesImage);
         JPanel imagePanel = new JPanel(new BorderLayout());
         imagePanel.add(spadesImageLabel, BorderLayout.CENTER);
         centerPanel.add(imagePanel, BorderLayout.CENTER);
+    }
 
+    private void createButtons(List<Player> players) {
         // bottom panel for start game and game rules buttons
         JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.Y_AXIS));
@@ -140,11 +158,6 @@ public class StartingScreen {
             frame.dispose(); // close starting screen window
         });
         bottomPanel.add(startButton);
-
-
-        frame.setVisible(true);
-        centerFrame();
-
     }
 
     private void updatePlayerTable() {
@@ -176,7 +189,7 @@ public class StartingScreen {
 
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column != 0 && column !=1; // Make only the "Type" column editable
+                return column != 0 && column != 1; // Make only the "Type" column editable
                 // REMOVE "&& column !=1" if you want to make the second column editable again!!!
             }
         };

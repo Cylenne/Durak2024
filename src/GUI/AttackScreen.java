@@ -4,6 +4,9 @@ import Player.*;
 import Card.*;
 
 import javax.swing.*;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,7 +19,7 @@ import static Card.Card.resizeImageIcon;
 public class AttackScreen {
     private JFrame frame;
     private JTextArea roundMessage; // multiline text component
-    private JTextArea attackPhaseMessage;
+    private JTextPane attackPhaseMessage;
     private JPanel humanPlayerPanel;
     private JPanel mainPanel;
     private JPanel centralPanel;
@@ -27,6 +30,7 @@ public class AttackScreen {
     private JPanel defendingCardsDisplayed;
     private JLabel attackingCardsText;
     private JLabel defendingCardsText;
+    private final int delay = 500;
 
     public void setUpAttackScreen(List<Player> players, Card trump) {
 
@@ -94,7 +98,7 @@ public class AttackScreen {
         roundMessage = new JTextArea();
         roundMessage.setEditable(false);
 //        gameMessage.append(""); // no point in adding text here as it will disappear too fast
-        roundMessage.setFont(new Font("BlackJack", Font.BOLD, 12));
+        roundMessage.setFont(new Font("BlackJack", Font.PLAIN, 12));
         roundMessage.setFocusable(false); // removes the cursor
         roundMessage.setBackground(frame.getContentPane().getBackground()); // setting the field's background color to that of the frame's
 
@@ -148,23 +152,30 @@ public class AttackScreen {
         }
     }
 
-    public void addAttackPhaseMessage(){
+    public void addAttackPhaseMessage() {
         JPanel attackPhaseMessagePanel = new JPanel();
 
-        attackPhaseMessage = new JTextArea();
+        attackPhaseMessage = new JTextPane(); // Change to JTextPane
         attackPhaseMessage.setEditable(false);
         attackPhaseMessage.setFont(new Font("BlackJack", Font.PLAIN, 12));
-        attackPhaseMessage.setFocusable(false); // removes the cursor
-        attackPhaseMessage.setBackground(frame.getContentPane().getBackground()); // setting the field's background color to that of the frame's
+        attackPhaseMessage.setFocusable(false);
+        attackPhaseMessage.setBackground(frame.getContentPane().getBackground());
 
         JScrollPane scrollPaneAttackPhaseMessage = new JScrollPane(attackPhaseMessage);
         scrollPaneAttackPhaseMessage.setPreferredSize(new Dimension(500, 100));
         scrollPaneAttackPhaseMessage.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-//        scrollPaneAttackPhaseMessage.setBackground(Color.BLUE);
 
-        attackPhaseMessagePanel.add(scrollPaneAttackPhaseMessage);
+        attackPhaseMessagePanel.setLayout(new BorderLayout());
+        attackPhaseMessagePanel.add(scrollPaneAttackPhaseMessage, BorderLayout.CENTER);
+
+        StyledDocument doc = attackPhaseMessage.getStyledDocument(); // this whole block is added to center the text within attackPhaseMessage
+        SimpleAttributeSet center = new SimpleAttributeSet();
+        StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
+        doc.setParagraphAttributes(0, doc.getLength(), center, false); // Center align text
+
         centralPanel.add(attackPhaseMessagePanel, BorderLayout.NORTH);
     }
+
 
     public void addAttackingAndDefendingCardsPanel() {
         JPanel attackingAndDefendingCardsPanel = new JPanel(new BorderLayout());
@@ -203,7 +214,7 @@ public class AttackScreen {
 
     public void updateRoundMessage(String message) {
         CountDownLatch latch = new CountDownLatch(1);
-        Timer timer = new Timer(3000, new ActionListener() {
+        Timer timer = new Timer(delay, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 SwingUtilities.invokeLater(() -> {
@@ -241,7 +252,7 @@ public class AttackScreen {
 
     public void updateAttackPhaseMessage(String message) {
         CountDownLatch latch = new CountDownLatch(1);
-        Timer timer = new Timer(3000, new ActionListener() {
+        Timer timer = new Timer(delay, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 SwingUtilities.invokeLater(() -> {
@@ -273,12 +284,6 @@ public class AttackScreen {
         attackingCardsPanel.repaint();
     }
 
-    public void updateAttackingCardsPanel(Card attackingCards) {
-        attackingCardsDisplayed.add(new JLabel(attackingCards.toImageIcon()));
-        attackingCardsPanel.revalidate();
-        attackingCardsPanel.repaint();
-    }
-
     public void updateAttackingCardsPanel(Set<Card> attackingCards) {
 
         for (Card card : attackingCards) {
@@ -301,6 +306,10 @@ public class AttackScreen {
         defendingCardsText.setVisible(false);
         attackingCardsDisplayed.removeAll();
         defendingCardsDisplayed.removeAll();
+    }
+
+    public void closeAttackScreen() {
+        frame.dispose();
     }
 
 }

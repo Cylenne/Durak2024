@@ -1,72 +1,95 @@
 package GUI;
 
-import Player.*;
-import Card.*;
 import javax.swing.*;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 import java.awt.*;
-import java.util.List;
 
-public class GameOverScreen
-{
+import static Card.Card.resizeImageIcon;
+
+public class GameOverScreen {
 
     private JFrame frame;
+    private JPanel centerPanel;
+    private JPanel southPanel;
 
-    public void setupStartingScreen(List<Player> players, Card trump, String displayMessage) {
+    public void setupGameOverScreen(String gameMessage) {
 
-        frame = new JFrame("Durak - Main Screen");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(700, 700);
+        addFrame();
+        addGameMessage(gameMessage);
+        addButton();
+        addArt();
+
+        frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+    }
+
+    private void addFrame() {
+        frame = new JFrame("Durak - Game Over");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(750, 400);
         frame.setLayout(new BorderLayout());
+        centerPanel = new JPanel(new GridBagLayout());
+        frame.add(centerPanel);
 
-        JPanel firstHumanPlayerPanel = new JPanel();
-        JPanel trumpAndMessagePanel = new JPanel();
+        ImageIcon frameIcon = new ImageIcon("Images/clubs.png");
+        Image iconImage = frameIcon.getImage();
+        frame.setIconImage(iconImage);
+    }
 
-        // add an empty border with a 10-pixel margin above
-        firstHumanPlayerPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
-        trumpAndMessagePanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+    private void addGameMessage(String gameMessage) {
+        JTextPane gameOverTextPane = new JTextPane(); // string in JTextArea could not be centered
+        gameOverTextPane.setEditable(false);
+        gameOverTextPane.setOpaque(false);
+        gameOverTextPane.setText(gameMessage);
 
-        // +30 adds a border below these panels
-        firstHumanPlayerPanel.setPreferredSize(new Dimension(100, 100 + 30));
-        trumpAndMessagePanel.setPreferredSize(new Dimension(300, 300 + 30));
+        StyledDocument doc = gameOverTextPane.getStyledDocument();
+        SimpleAttributeSet center = new SimpleAttributeSet();
+        StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
+        doc.setParagraphAttributes(0, doc.getLength(), center, false);
 
-        frame.add(firstHumanPlayerPanel, BorderLayout.SOUTH);
-        frame.add(trumpAndMessagePanel, BorderLayout.CENTER);
+        JPanel messagePanel = new JPanel(new BorderLayout());
+        messagePanel.setBorder(BorderFactory.createEmptyBorder(20, 10, 10, 10));
+        messagePanel.add(gameOverTextPane, BorderLayout.CENTER);
+        messagePanel.setPreferredSize(new Dimension(500, 200));
 
-        //-------------inner panels---------------------------
-        trumpAndMessagePanel.setLayout(new BorderLayout());
+        centerPanel.add(messagePanel);
+    }
 
-        JLabel trumpIcon = new JLabel(trump.toImageIcon(), SwingConstants.CENTER);
-        JLabel trumpText = new JLabel("Trump", SwingConstants.CENTER);
-        trumpText.setFont(new Font("Arial", Font.BOLD, 14));
+    private void addButton() {
+        southPanel = new JPanel(new BorderLayout());
+        frame.add(southPanel, BorderLayout.SOUTH);
 
-        JLabel gameMessage = new JLabel(displayMessage, SwingConstants.CENTER);
-        gameMessage.setFont(new Font("Arial", Font.PLAIN, 7));
+        JButton exitButton = new JButton("Exit");
+        exitButton.addActionListener(e -> System.exit(0));
+        southPanel.add(exitButton, BorderLayout.SOUTH);
+    }
 
-        JPanel trumpPanel = new JPanel(new BorderLayout());
-        trumpPanel.add(trumpIcon, BorderLayout.CENTER);
-        trumpPanel.add(trumpText, BorderLayout.SOUTH);
+    private void addArt() {
+        ImageIcon art = new ImageIcon("Images/skullAce.png");
+        art = resizeImageIcon(art, 100, 100);
+        JLabel artLabel = new JLabel(art);
 
-        trumpAndMessagePanel.add(trumpPanel, BorderLayout.NORTH);
-        trumpAndMessagePanel.add(gameMessage, BorderLayout.CENTER);
+        JPanel artPanel = new JPanel();
+        artPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        artPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        artPanel.add(artLabel);
 
-        //-------------first human player---------------------------
-
-        firstHumanPlayerPanel.setLayout(new FlowLayout());
-
-        List<Card> firstHumanPlayerHand = players.get(0).getHand();
-
-        for (Card card : firstHumanPlayerHand) {
-            firstHumanPlayerPanel.add(new JLabel(card.toImageIcon()));
-        }
+        southPanel.add(artPanel, BorderLayout.CENTER);
 
     }
 
-    public void close() {
-        frame.dispose();
-    }
+//    public static void main(String[] args) {
+//        GameOverScreen gameOverScreen = new GameOverScreen();
+//        String gameMessage = "Game Over: Player 2 has won the game!\n" +
+//                "Final round: 17\n\n" +
+//                "1st place: Player 1\n" +
+//                "2nd place: Player 2\n" +
+//                "3rd place: Player 3\n\n" +
+//                "The durak is Player 4";
+//        gameOverScreen.setupGameOverScreen(gameMessage);
+//    }
 
-    public JFrame getFrame() {
-        return frame;
-    }
+
 }
