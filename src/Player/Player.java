@@ -24,15 +24,16 @@ public abstract class Player {
         }
     }
 
-    public abstract Set<Card> addInitialAttackingCards(Card.Suit trumpSuit, Deck remainingDeck, Player currentDefender);
+    public abstract Set<Card> addInitialAttackingCards(Deck remainingDeck, Player currentDefender);
 
     public abstract Set<Card> addAdditionalAttackingCards(Set<Card> attackingCards,
-                                                          Deck remainingDeck, Card.Suit trumpSuit,
-                                                          Boolean isDefenderRightBeforeAdditionalAttacker, Player currentDefender,
+                                                          Deck remainingDeck,
+                                                          Boolean isDefenderRightBeforeAdditionalAttacker,
+                                                          Player currentDefender,
                                                           List<Card> attackingCardsPerLoop,
                                                           AttackScreen attackScreen);
 
-    public abstract RoundResult defenseState(List<Card> attackingCards, Card.Suit trumpSuit, Deck remainingDeck, AttackScreen attackScreen);
+    public abstract RoundResult defenseState(List<Card> attackingCards, Deck remainingDeck, AttackScreen attackScreen);
 
     public String getName() {
         return name;

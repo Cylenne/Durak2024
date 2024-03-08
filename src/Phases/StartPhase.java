@@ -10,7 +10,7 @@ import java.util.concurrent.Executors;
 
 public class StartPhase {
 
-    // SHOULD THIS BE A SINGLETON??
+    // SHOULD THIS BE A SINGLETON?? OR IS IT ALREADY ONE?
 
     private static List<Player> players;
     private static Deck deck;

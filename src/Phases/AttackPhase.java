@@ -85,7 +85,7 @@ public class AttackPhase {
     private void mainAttackersMove(Player attacker) {
 
         if (attacker instanceof ComputerPlayer) {
-            initialAttackingCards = attacker.addInitialAttackingCards(trumpSuit, deck, defender);
+            initialAttackingCards = attacker.addInitialAttackingCards(deck, defender);
         } else {
             // attacker is human -> write method for human
         }
@@ -155,7 +155,6 @@ public class AttackPhase {
                         attackingCardsPerLoop.addAll(player.addAdditionalAttackingCards(
                                 initialAttackingCards,
                                 deck,
-                                trumpSuit,
                                 PlayerManager.isDefenderRightBeforeAdditionalAttacker(players, defender, attacker),
                                 defender, attackingCardsPerLoop,
                                 attackScreen));
@@ -169,7 +168,7 @@ public class AttackPhase {
 
     private void addDefendingCards(Player defender, List<Card> attackingCardsPerLoop, Set<Card> defendingCardsPerLoop, Set<Card> allDefendingCards, AtomicBoolean roundOn) {
         if (defender instanceof ComputerPlayer) {
-            RoundResult defenseResult = defender.defenseState(attackingCardsPerLoop, trumpSuit, deck, attackScreen);
+            RoundResult defenseResult = defender.defenseState(attackingCardsPerLoop, deck, attackScreen);
             defendingCardsPerLoop.addAll(defenseResult.getDefendingCards());
             allDefendingCards.addAll(defendingCardsPerLoop);
             currentRoundDefended = defenseResult.isRoundDefended();
@@ -199,7 +198,6 @@ public class AttackPhase {
                     attackingCardsPerLoop.addAll(player.addAdditionalAttackingCards(
                             defendingCardsPerLoop,
                             deck,
-                            trumpSuit,
                             PlayerManager.isDefenderRightBeforeAdditionalAttacker(players, defender, attacker),
                             defender,
                             attackingCardsPerLoop,
