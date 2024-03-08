@@ -30,7 +30,7 @@ public class AttackScreen {
     private JPanel defendingCardsDisplayed;
     private JLabel attackingCardsText;
     private JLabel defendingCardsText;
-    private final int delay = 500;
+    private final int delay = 3000;
 
     public void setUpAttackScreen(List<Player> players, Card trump) {
 

@@ -14,7 +14,7 @@ public class ComputerPlayer extends Player {
     }
 
     @Override
-    public Set<Card> addInitialAttackingCards(Deck remainingDeck, Player defender) {
+    public Set<Card> addInitialAttackingCards(Player defender) {
 
         Set<Card> initialAttackingCards = new HashSet<>();
 
@@ -27,7 +27,7 @@ public class ComputerPlayer extends Player {
             Card additionalSmallestRankedCard = this.getHand().get(i);
 
             // if endgame, attacks are performed with trumps too and attacker has to be mindful of defender's hand's size
-            if (remainingDeck.getDeck().isEmpty()) {
+            if (AttackPhase.isDeckEmpty()) {
                 if (smallestRankedCard.getRank() == additionalSmallestRankedCard.getRank() && initialAttackingCards.size() < defender.getHand().size()) {
                     initialAttackingCards.add(additionalSmallestRankedCard);
                 }
@@ -41,6 +41,7 @@ public class ComputerPlayer extends Player {
 
         // overwritten equals and hashcode in Card to make this work
         this.getHand().removeAll(initialAttackingCards);
+        AttackPhase.getAttackScreen().updateComputerPlayersPanel(StartPhase.getPlayers());
 
 
         return initialAttackingCards;
@@ -54,11 +55,9 @@ public class ComputerPlayer extends Player {
     @Override
     public Set<Card> addAdditionalAttackingCards(
             Set<Card> cards,
-            Deck remainingDeck,
             Boolean isDefenderRightBeforeAdditionalAttacker,
             Player currentDefender,
-            List<Card> attackingCardsPerLoop,
-            AttackScreen attackScreen
+            List<Card> attackingCardsPerLoop
     ) {
 
         List<Card> additionalAttackersHand = this.getHand();
@@ -68,7 +67,7 @@ public class ComputerPlayer extends Player {
         for (Card attackingCard : cards) {
             for (Card additionalAttackersCard : additionalAttackersHand) {
                 if (attackingCard.getRank() == additionalAttackersCard.getRank()) {
-                    if (remainingDeck.getDeck().isEmpty()) { // in endgame
+                    if (AttackPhase.isDeckEmpty()) { // in endgame
                         if (isDefenderRightBeforeAdditionalAttacker || areAllCardSame(additionalAttackersHand)) {
                             // gives out all cards (trump included) if they are all the same rank or if additionalAttacker wants to skip being attacked
                             if (attackingCardsPerLoop.size() < currentDefender.getHand().size()) { // attacking cards have to be less or equal than defender's available card
@@ -77,7 +76,8 @@ public class ComputerPlayer extends Player {
                             }
                         }
                     } else { // not end game
-                        if (!additionalAttackersCard.getSuit().equals(StartPhase.getTrumpSuit()) && (attackingCardsPerLoop.size() < currentDefender.getHand().size())) {
+                        if (!additionalAttackersCard.getSuit().equals(StartPhase.getTrumpSuit()) &&
+                                (attackingCardsPerLoop.size() < currentDefender.getHand().size())) {
                             additionalAttackingCardsPerPlayer.add(additionalAttackersCard);
                         }
                     }
@@ -86,19 +86,22 @@ public class ComputerPlayer extends Player {
         }
 
         if (!additionalAttackingCardsPerPlayer.isEmpty()) {
+
             String gameMessage = this.getName() + " is also attacking with " + setToString(additionalAttackingCardsPerPlayer);
             System.out.println(gameMessage);
-            attackScreen.updateAttackPhaseMessage(gameMessage);
-            attackScreen.updateAttackingCardsPanel(additionalAttackingCardsPerPlayer);
+            AttackPhase.getAttackScreen().updateAttackPhaseMessage(gameMessage);
+            AttackPhase.getAttackScreen().updateAttackingCardsPanel(additionalAttackingCardsPerPlayer);
+
         }
         this.getHand().removeAll(additionalAttackingCardsPerPlayer);
+        AttackPhase.getAttackScreen().updateComputerPlayersPanel(StartPhase.getPlayers());
 
         return additionalAttackingCardsPerPlayer;
     }
 
     // I want this method to return multiple values, hence the RoundResult class was made
     @Override
-    public RoundResult defenseState(List<Card> attackingCards, Deck remainingDeck, AttackScreen attackScreen) {
+    public RoundResult defenseState(List<Card> attackingCards) {
 
         List<Card> defendersHand = this.getHand();
         Set<Card> defendingCards = new HashSet<>();
@@ -106,21 +109,11 @@ public class ComputerPlayer extends Player {
 
         attackingCards.sort(Card.sortRankReversedSuit(StartPhase.getTrumpSuit()));
 
-        // create a new list explicitly, otherwise the strongest cards will be removed from defendersHand
-        List<Card> defendersTemporaryHand = new ArrayList<>(defendersHand);
         // going through the attacking cards, starting with the highest ranked
         for (int i = attackingCards.size() - 1; i >= 0; i--) {
-            // if non-endgame and defender has trump Q, K and/or A
-            if (!remainingDeck.getDeck().isEmpty() && !defendersStrongestCards(this, StartPhase.getTrumpSuit()).isEmpty()) {
-                defendersTemporaryHand.removeAll(defendersStrongestCards(this, StartPhase.getTrumpSuit()));
-                if (!canBeatCard(defendersTemporaryHand, defendersHand, attackingCards.get(i), StartPhase.getTrumpSuit(), defendingCards, attackScreen)) {
-                    currentLoopRoundDefended = false;
-                    break; // if one attacking card can't be beaten, the round is lost already
-                }
-                // in every other situation
-            } else if (!canBeatCard(defendersHand, defendersHand, attackingCards.get(i), StartPhase.getTrumpSuit(), defendingCards, attackScreen)) {
+            if (!canBeatCard(defendersHand, attackingCards.get(i), defendingCards)) {
                 currentLoopRoundDefended = false;
-                break;
+                break; // if one attacking card can't be beaten, the round is lost already
             }
         }
 
@@ -130,55 +123,59 @@ public class ComputerPlayer extends Player {
     }
 
     public boolean canBeatCard
-            (List<Card> defendersTemporaryHand,
-             List<Card> defendersHand,
+            (List<Card> defendersHand,
              Card attackingCard,
-             Card.Suit trumpSuit,
-             Set<Card> defendingCards,
-             AttackScreen attackScreen) {
+             Set<Card> defendingCards) {
 
         boolean canBeatCard = false;
-
         String gameMessage;
-        for (Card defendersCard : defendersTemporaryHand) {
 
-            if (
-                    (attackingCard.getSuit().equals(trumpSuit) && defendersCard.getSuit().equals(trumpSuit)) // if both trump & defender's rank's larger
-                            && defendersCard.getRank() > attackingCard.getRank()
-                            || (!attackingCard.getSuit().equals(trumpSuit) && defendersCard.getSuit().equals(attackingCard.getSuit()) // attacking card is non-trump & same suit -> first check if non-trump can beat it
-                            && defendersCard.getRank() > attackingCard.getRank())
-                            || (!attackingCard.getSuit().equals(trumpSuit) && defendersCard.getSuit().equals(trumpSuit))) // attacking card is non-trump -> any trump beats it
-            {
-                canBeatCard = true;
-                defendersHand.remove(defendersCard);
-                attackScreen.updateComputerPlayersPanel(StartPhase.getPlayers());
-                gameMessage = ("Attacking card " + attackingCard + " was countered by " + defendersCard);
-                attackScreen.updateAttackPhaseMessage(gameMessage);
-                System.out.println(gameMessage);
-                attackScreen.updateDefendingCardsPanel(defendersCard);
-                defendingCards.add(defendersCard);
-                break; // once the smallest ranked defender's card was found to beat the attacking card, no need to search further
+        for (Card defendersCard : defendersHand) {
+
+            if (!isOneOfStrongestCards(defendersCard)) {
+                Card.Suit trumpSuit = StartPhase.getTrumpSuit();
+                if (
+                        (attackingCard.getSuit().equals(trumpSuit) && defendersCard.getSuit().equals(trumpSuit))
+                                && defendersCard.getRank() > attackingCard.getRank() // if both trump & defender's rank's larger
+                                || (!attackingCard.getSuit().equals(trumpSuit) && defendersCard.getSuit().equals(attackingCard.getSuit())
+                                && defendersCard.getRank() > attackingCard.getRank()) // attacking card is non-trump & same suit -> first check if non-trump can beat it
+                                || (!attackingCard.getSuit().equals(trumpSuit) &&
+                                defendersCard.getSuit().equals(trumpSuit))) // attacking card is non-trump -> any trump beats it
+                {
+                    canBeatCard = true;
+                    defendersHand.remove(defendersCard);
+                    defendingCards.add(defendersCard);
+
+                    gameMessage = ("Attacking card " + attackingCard + " was countered by " + defendersCard);
+                    AttackPhase.getAttackScreen().updateAttackPhaseMessage(gameMessage);
+                    AttackPhase.getAttackScreen().updateComputerPlayersPanel(StartPhase.getPlayers());
+                    System.out.println(gameMessage);
+                    AttackPhase.getAttackScreen().updateDefendingCardsPanel(defendersCard);
+
+                    break; // once the smallest ranked defender's card was found to beat the attacking card, no need to search further
+                }
+
             }
         }
 
         if (!canBeatCard) {
             gameMessage = ("Attacking card " + attackingCard + " could not be countered");
-            attackScreen.updateAttackPhaseMessage(gameMessage);
+
+            AttackPhase.getAttackScreen().updateAttackPhaseMessage(gameMessage);
             System.out.println(gameMessage);
+
         }
 
         return canBeatCard;
     }
 
-    private static List<Card> defendersStrongestCards(Player currentDefender, Card.Suit trumpSuit) {
-        List<Card> defendersStrongestCards = new ArrayList<>();
-        for (Card defenderCard : currentDefender.getHand()) {
+    // if non-endgame, defender would not defend with trump Q, K or A
+    private static boolean isOneOfStrongestCards(Card defendersCard) {
+        if (!AttackPhase.isDeckEmpty()) {
             int rankOfQueen = 12;
-            if (defenderCard.getSuit().equals(trumpSuit) && defenderCard.getRank() >= rankOfQueen) {
-                defendersStrongestCards.add(defenderCard);
-            }
+            return defendersCard.getSuit().equals(StartPhase.getTrumpSuit()) && defendersCard.getRank() >= rankOfQueen;
         }
-        return defendersStrongestCards;
+        return false;
     }
 
     // does the hand contain the same rank of cards?

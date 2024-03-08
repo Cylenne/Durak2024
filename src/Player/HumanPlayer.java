@@ -13,24 +13,22 @@ public class HumanPlayer extends Player {
     }
 
     @Override
-    public Set<Card> addInitialAttackingCards(Deck remainingDeck, Player currentDefender) {
+    public Set<Card> addInitialAttackingCards(Player currentDefender) {
         // write this code
         return null;
     }
 
     @Override
     public Set<Card> addAdditionalAttackingCards(Set<Card> attackingCards,
-                                                 Deck remainingDeck,
                                                  Boolean isDefenderRightBeforeAdditionalAttacker,
                                                  Player currentDefender,
-                                                 List<Card> attackingCardsPerLoop,
-                                                 AttackScreen attackScreen) {
+                                                 List<Card> attackingCardsPerLoop) {
         // write this code
         return null;
     }
 
     @Override
-    public RoundResult defenseState(List<Card> attackingCards, Deck remainingDeck, AttackScreen attackScreen) {
+    public RoundResult defenseState(List<Card> attackingCards) {
         // write code
         return null;
     }

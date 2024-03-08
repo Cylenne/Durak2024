@@ -12,25 +12,34 @@ import java.util.concurrent.atomic.AtomicInteger;
 // this is one attack phase called multiple times from Gameplay
 public class AttackPhase {
 
-    // Static variables are shared among all instances of a class
+    // static variables are shared among all instances of a class
     private static List<Player> players;
     private static Deck deck;
     private static Card.Suit trumpSuit;
     private static final List<Player> winners = new ArrayList<>();
     private static AttackScreen attackScreen;
 
-    // Non-static variables are specific to that instance of a class
+    // non-static variables are specific to that instance of a class
     private Boolean currentRoundDefended = false;
     private Player attacker = null;
     private Player defender = null;
     private String gameMessage;
     private Set<Card> initialAttackingCards = new HashSet<>();
 
+    // getters
+    public static boolean isDeckEmpty() {
+        return deck.getDeck().isEmpty();
+    }
+
+    public static AttackScreen getAttackScreen() {
+        return attackScreen;
+    }
 
     public static List<Player> getWinners() {
         return winners;
     }
 
+    // methods
     public void execute(AtomicInteger roundCounter, AtomicBoolean isGameOngoing) {
 
         transferAttributes();
@@ -85,7 +94,7 @@ public class AttackPhase {
     private void mainAttackersMove(Player attacker) {
 
         if (attacker instanceof ComputerPlayer) {
-            initialAttackingCards = attacker.addInitialAttackingCards(deck, defender);
+            initialAttackingCards = attacker.addInitialAttackingCards(defender);
         } else {
             // attacker is human -> write method for human
         }
@@ -154,10 +163,8 @@ public class AttackPhase {
                     if (!player.equals(defender)) { // additional cards can only be added as long as defender has enough cards
                         attackingCardsPerLoop.addAll(player.addAdditionalAttackingCards(
                                 initialAttackingCards,
-                                deck,
                                 PlayerManager.isDefenderRightBeforeAdditionalAttacker(players, defender, attacker),
-                                defender, attackingCardsPerLoop,
-                                attackScreen));
+                                defender, attackingCardsPerLoop));
                     }
                 } else {
                     // add human player code
@@ -168,7 +175,7 @@ public class AttackPhase {
 
     private void addDefendingCards(Player defender, List<Card> attackingCardsPerLoop, Set<Card> defendingCardsPerLoop, Set<Card> allDefendingCards, AtomicBoolean roundOn) {
         if (defender instanceof ComputerPlayer) {
-            RoundResult defenseResult = defender.defenseState(attackingCardsPerLoop, deck, attackScreen);
+            RoundResult defenseResult = defender.defenseState(attackingCardsPerLoop);
             defendingCardsPerLoop.addAll(defenseResult.getDefendingCards());
             allDefendingCards.addAll(defendingCardsPerLoop);
             currentRoundDefended = defenseResult.isRoundDefended();
@@ -194,14 +201,12 @@ public class AttackPhase {
         for (Player player : players) {
             if (!player.equals(defender)) {
                 if (player instanceof ComputerPlayer) {
-                    System.out.println("POTENTIAL ADDITIONAL ATTACKER: " + player.getName());
+//                    System.out.println("POTENTIAL ADDITIONAL ATTACKER: " + player.getName());
                     attackingCardsPerLoop.addAll(player.addAdditionalAttackingCards(
                             defendingCardsPerLoop,
-                            deck,
                             PlayerManager.isDefenderRightBeforeAdditionalAttacker(players, defender, attacker),
                             defender,
-                            attackingCardsPerLoop,
-                            attackScreen));
+                            attackingCardsPerLoop));
                 } else {
                     // add human player code
                 }

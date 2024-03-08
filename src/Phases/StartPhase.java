@@ -92,15 +92,8 @@ public class StartPhase {
         return trumpSuit;
     }
 
-    public static Player getStartingPlayer() {
-        return startingPlayer;
-    }
-
     public static String getGameMessage() {
         return gameMessage;
     }
 
-    public static ConfigPhase getConfigPhase() {
-        return configPhase;
-    }
 }
