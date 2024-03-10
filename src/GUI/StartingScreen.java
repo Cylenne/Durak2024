@@ -97,8 +97,6 @@ public class StartingScreen {
         playerTypeTable.setDefaultRenderer(Object.class, new CenteredCellRenderer());
         JScrollPane scrollPane = new JScrollPane(playerTypeTable);
         centerPanel.add(scrollPane);
-
-
     }
 
     private void createSpadesArt() {
@@ -173,7 +171,7 @@ public class StartingScreen {
 
         // first player is human, the rest are bots
         data[0][0] = "Player 1";
-        data[0][1] = "Computer"; // CHANGE THIS TO HUMAN AS SOON AS THE CODE FOR HUMAN PLAYER IS WRITTEN
+        data[0][1] = "Human"; // CHANGE THIS TO HUMAN AS SOON AS THE CODE FOR HUMAN PLAYER IS WRITTEN
 
         for (int i = 1; i < numPlayers; i++) {
             data[i][0] = "Player " + (i + 1);

@@ -95,9 +95,12 @@ public class AttackPhase {
         if (attacker instanceof ComputerPlayer) {
             initialAttackingCards = attacker.addInitialAttackingCards(defender);
         } else {
+            gameMessage = "Please select the cards you want to attack with";
+            attackScreen.updateAttackPhaseMessage(gameMessage);
+            attackScreen.getHumanPlayerManager().updateHumanPlayerPanelForInitialAttack(attacker);
             // attacker is human -> write method for human
         }
-        gameMessage = ("Initial attacking cards: " + setToString(initialAttackingCards));
+        gameMessage = "Initial attacking cards: " + setToString(initialAttackingCards);
         attackScreen.updateAttackPhaseMessage(gameMessage);
         System.out.println(gameMessage);
         attackScreen.updateInitialAttackingCardsPanel(initialAttackingCards);
@@ -151,7 +154,7 @@ public class AttackPhase {
 
         roundCounter.incrementAndGet();
         DeckManager.drawMissingCards(activePlayersInRound, deck, players);
-//        attackScreen.updateHumanPlayerPanel(players);
+        attackScreen.getHumanPlayerManager().updatePanelAfterRedraw();
         roundEndCheck(isGameOngoing);
     }
 

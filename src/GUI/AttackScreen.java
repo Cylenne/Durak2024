@@ -11,6 +11,8 @@ import javax.swing.text.StyledDocument;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
@@ -31,8 +33,13 @@ public class AttackScreen {
     private JPanel defendingCardsDisplayed;
     private JLabel attackingCardsText;
     private JLabel defendingCardsText;
-    private JPanel cardsPanel;
-    private final int delay = 3000;
+    private JPanel humanCardsPanel;
+    private HumanPlayerManager humanPlayerManager;
+    private final int delay = 1000;
+
+    public HumanPlayerManager getHumanPlayerManager() {
+        return humanPlayerManager;
+    }
 
     public void setUpAttackScreen(List<Player> players, Card trump) {
 
@@ -75,16 +82,23 @@ public class AttackScreen {
         JLabel label = new JLabel("Your cards:");
         humanPlayerPanel.add(label);
 
-        cardsPanel = new JPanel(new FlowLayout());
+        humanCardsPanel = new JPanel(new FlowLayout());
 
-        List<Card> humanPlayerHand = StartPhase.getPlayers().getFirst().getHand(); // THIS SHOULD BE CHANGED TO INSTANCE OF HUMANPLAYER IN THE FUTURE
+        List<Card> humanPlayerHand = Collections.emptyList();
+        for (Player player : StartPhase.getPlayers())
+            if (player instanceof HumanPlayer) {
+                humanPlayerHand = player.getHand();
+            }
+
         for (Card card : humanPlayerHand) {
-            cardsPanel.add(new JLabel(card.toImageIcon()));
+            humanCardsPanel.add(new JLabel(card.toImageIcon()));
+
         }
 
-        humanPlayerPanel.add(cardsPanel);
+        humanPlayerPanel.add(humanCardsPanel);
 
         mainPanel.add(humanPlayerPanel, BorderLayout.SOUTH);
+        humanPlayerManager = new HumanPlayerManager(humanPlayerPanel,humanCardsPanel);
     }
 
     private void addTrumpAndMessagePanel(Card trump) {
@@ -239,17 +253,6 @@ public class AttackScreen {
 
         computerPlayersPanel.revalidate(); // recalculate the layout (when you add/remove components dynamically)
         computerPlayersPanel.repaint(); // visually renders updated changes
-    }
-
-    public void updateHumanPlayerPanel(Player player) {
-//        if (player instanceof HumanPlayer) { // FOR WHEN THE HUMAN CODE IS WRITTEN
-            if (StartPhase.getPlayers().getFirst().equals(player)) // REMOVE THIS WHEN THE HUMAN CODE IS WRITTEN
-                for (Card card : player.getHand()) {
-                    cardsPanel.removeAll();
-                    cardsPanel.add(new JLabel(card.toImageIcon()));
-                }
-            computerPlayersPanel.revalidate();
-            computerPlayersPanel.repaint();
     }
 
     public void updateAttackPhaseMessage(String message) {
