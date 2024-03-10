@@ -1,7 +1,6 @@
 package Player;
 
 import Card.*;
-import GUI.AttackScreen;
 import Phases.AttackPhase;
 import Phases.StartPhase;
 
@@ -41,7 +40,7 @@ public class ComputerPlayer extends Player {
 
         // overwritten equals and hashcode in Card to make this work
         this.getHand().removeAll(initialAttackingCards);
-        AttackPhase.getAttackScreen().updateComputerPlayersPanel(StartPhase.getPlayers());
+        AttackPhase.getAttackScreen().updateComputerPlayersPanel();
 
 
         return initialAttackingCards;
@@ -94,7 +93,7 @@ public class ComputerPlayer extends Player {
 
         }
         this.getHand().removeAll(additionalAttackingCardsPerPlayer);
-        AttackPhase.getAttackScreen().updateComputerPlayersPanel(StartPhase.getPlayers());
+        AttackPhase.getAttackScreen().updateComputerPlayersPanel();
 
         return additionalAttackingCardsPerPlayer;
     }
@@ -122,7 +121,7 @@ public class ComputerPlayer extends Player {
         // should there be a preference to block with cards of the same rank (even trump) to avoid additional attacking cards?
     }
 
-    public boolean canBeatCard
+    private boolean canBeatCard
             (List<Card> defendersHand,
              Card attackingCard,
              Set<Card> defendingCards) {
@@ -148,7 +147,7 @@ public class ComputerPlayer extends Player {
 
                     gameMessage = ("Attacking card " + attackingCard + " was countered by " + defendersCard);
                     AttackPhase.getAttackScreen().updateAttackPhaseMessage(gameMessage);
-                    AttackPhase.getAttackScreen().updateComputerPlayersPanel(StartPhase.getPlayers());
+                    AttackPhase.getAttackScreen().updateComputerPlayersPanel();
                     System.out.println(gameMessage);
                     AttackPhase.getAttackScreen().updateDefendingCardsPanel(defendersCard);
 
@@ -179,7 +178,7 @@ public class ComputerPlayer extends Player {
     }
 
     // does the hand contain the same rank of cards?
-    public boolean areAllCardSame(List<Card> additionalAttackerHand) {
+    private boolean areAllCardSame(List<Card> additionalAttackerHand) {
         Card firstCard = additionalAttackerHand.getFirst();
 
         for (Card additionalAttackersCard : additionalAttackerHand) {
@@ -190,7 +189,7 @@ public class ComputerPlayer extends Player {
         return true;
     }
 
-    public static <T> StringBuilder setToString(Set<T> set) {
+    private static <T> StringBuilder setToString(Set<T> set) {
         StringBuilder stringBuilder = new StringBuilder();
         int index = 0;
         for (T element : set) {
@@ -202,4 +201,5 @@ public class ComputerPlayer extends Player {
         }
         return stringBuilder;
     }
+
 }

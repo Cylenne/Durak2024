@@ -79,7 +79,6 @@ public class AttackPhase {
         DeckManager.printDeck(deck);
         PlayerManager.printAllPlayerDetails(players);
 
-        attackScreen.updateHumanPlayerPanel(players); // MOVE THIS TO ATTACKS AND DEFENSES ONCE HUMAN PLAYER IS WRITTEN
         attackScreen.clearAttackingAndDefendingCardsPanel();
     }
 
@@ -102,6 +101,7 @@ public class AttackPhase {
         attackScreen.updateAttackPhaseMessage(gameMessage);
         System.out.println(gameMessage);
         attackScreen.updateInitialAttackingCardsPanel(initialAttackingCards);
+//        attackScreen.updateHumanPlayerPanel(StartPhase.getPlayers());
     }
 
     private void addAdditionalAttackers(Player attacker, Player defender, List<Player> activePlayersInRound) {
@@ -151,6 +151,7 @@ public class AttackPhase {
 
         roundCounter.incrementAndGet();
         DeckManager.drawMissingCards(activePlayersInRound, deck, players);
+//        attackScreen.updateHumanPlayerPanel(players);
         roundEndCheck(isGameOngoing);
     }
 
@@ -251,7 +252,7 @@ public class AttackPhase {
             attackScreen.closeAttackScreen();
         }
 
-        attackScreen.updateComputerPlayersPanel(players);
+        attackScreen.updateComputerPlayersPanel();
     }
 
     public <T> StringBuilder listToString(List<T> list) {
