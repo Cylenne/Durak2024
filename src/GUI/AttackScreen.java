@@ -12,7 +12,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
@@ -34,11 +33,11 @@ public class AttackScreen {
     private JLabel attackingCardsText;
     private JLabel defendingCardsText;
     private JPanel humanCardsPanel;
-    private HumanPlayerManager humanPlayerManager;
+    private HumanPlayerGUIManager humanPlayerGUIManager;
     private final int delay = 1000;
 
-    public HumanPlayerManager getHumanPlayerManager() {
-        return humanPlayerManager;
+    public HumanPlayerGUIManager getHumanPlayerManager() {
+        return humanPlayerGUIManager;
     }
 
     public void setUpAttackScreen(List<Player> players, Card trump) {
@@ -98,7 +97,7 @@ public class AttackScreen {
         humanPlayerPanel.add(humanCardsPanel);
 
         mainPanel.add(humanPlayerPanel, BorderLayout.SOUTH);
-        humanPlayerManager = new HumanPlayerManager(humanPlayerPanel,humanCardsPanel);
+        humanPlayerGUIManager = new HumanPlayerGUIManager(humanPlayerPanel,humanCardsPanel);
     }
 
     private void addTrumpAndMessagePanel(Card trump) {

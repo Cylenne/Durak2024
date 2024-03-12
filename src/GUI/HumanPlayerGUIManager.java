@@ -8,19 +8,17 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.HashSet;
 import java.util.Set;
 
-public class HumanPlayerManager {
+public class HumanPlayerGUIManager {
     private JPanel humanCardsPanel;
     private Set<Card> selectedCards;
     private JPanel humanPlayerPanel;
     private boolean selectButtonAdded = false;
     private JButton selectButton;
 
-    public HumanPlayerManager(JPanel humanPlayerPanel, JPanel humanCardsPanel) {
+    public HumanPlayerGUIManager(JPanel humanPlayerPanel, JPanel humanCardsPanel) {
         this.humanPlayerPanel = humanPlayerPanel;
         this.humanCardsPanel = humanCardsPanel;
     }
@@ -44,15 +42,15 @@ public class HumanPlayerManager {
 
             selectedCards = new HashSet<>();
 
-            // Create a button group to ensure only one card is selected at a time
+            // we only use ButtonGroup to show that these buttons belong together
             ButtonGroup buttonGroup = new ButtonGroup();
 
             for (Card card : player.getHand()) {
-                JToggleButton cardButton = new JToggleButton(card.toImageIcon());
-                cardButton.setPreferredSize(new Dimension(84, 104)); // Adjust the size as needed
+                JToggleButton cardButton = new JToggleButton(card.toImageIcon()); // button that can be in either an "on" or "off" state
+                cardButton.setPreferredSize(new Dimension(84, 104)); // added +4 to ensure that the selection frame won't block the image's edges
                 cardButton.setBorder(BorderFactory.createEmptyBorder());
-                cardButton.setContentAreaFilled(false);
-                cardButton.setFocusPainted(false);
+                cardButton.setContentAreaFilled(false); // allowing the background color or image of the parent container to show through
+                cardButton.setFocusPainted(false); // not painting a focus rectangle around the button when it gains focus
                 cardButton.addActionListener(new ActionListener() {
                     private boolean isSelected = false;
 
@@ -60,16 +58,16 @@ public class HumanPlayerManager {
                     public void actionPerformed(ActionEvent e) {
                         JToggleButton selectedButton = (JToggleButton) e.getSource();
                         isSelected = !isSelected; // Toggle the selected state
+                        // If isSelected was true before this line, it becomes false after the line executes.
+                        // If isSelected was false before, it becomes true after the line executes.
 
                         if (isSelected) {
                             selectedCards.add(card);
-//                            System.out.println("Button selected: " + selectedButton.getText());
-                            selectedButton.setBorder(BorderFactory.createLineBorder(Color.BLACK, 3, true)); // Add black border with thickness 2 to indicate selection
+                            selectedButton.setBorder(BorderFactory.createLineBorder(Color.BLACK, 3, true)); // add black border with thickness 2 to indicate selection
                             // true ensures that the border is painted exactly at the edge of the component
                         } else {
                             selectedCards.remove(card);
-//                            System.out.println("Button deselected: " + selectedButton.getText());
-                            selectedButton.setBorder(BorderFactory.createEmptyBorder()); // Remove border if deselected
+                            selectedButton.setBorder(BorderFactory.createEmptyBorder());
                         }
                     }
                 });
@@ -84,53 +82,42 @@ public class HumanPlayerManager {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     // Close the dialog and resume game flow
-                    // Here, you can store the selected cards in selectedCards list
                     System.out.println("Selected cards: " + selectedCards);
                     JDialog dialog = (JDialog) SwingUtilities.getWindowAncestor(humanPlayerPanel);
-                    dialog.dispose(); // Close the dialog
+                    dialog.dispose();
                 }
             });
             humanPlayerPanel.add(selectButton);
-            selectButtonAdded = true; // Update the flag to indicate that the button has been added
-
+            selectButtonAdded = true;
 
             humanPlayerPanel.revalidate();
             humanPlayerPanel.repaint();
 
-            // Create and show the modal dialog
+            // modal dialog automatically stops the game flow until user action takes place
             JDialog dialog = new JDialog((Frame) null, "Select Cards", true); // true for modal
             dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-            dialog.getContentPane().add(humanPlayerPanel);
-            dialog.pack();
-            dialog.setLocationRelativeTo(null); // Center the dialog on the screen
+
+            JPanel centerPanel = new JPanel(new GridBagLayout());
+            centerPanel.add(new JLabel("Your Cards"), createConstraints(0, 0, 1, 1, GridBagConstraints.CENTER)); // center the text
+            centerPanel.add(humanCardsPanel, createConstraints(0, 1, 1, 1, GridBagConstraints.CENTER));
+            centerPanel.add(selectButton, createConstraints(0, 2, 1, 1, GridBagConstraints.CENTER));
+            dialog.getContentPane().add(centerPanel, BorderLayout.CENTER);
+
+            dialog.pack(); // sets the size of the dialog to be just large enough to accommodate all of its components
+            dialog.setLocationRelativeTo(null); // center the dialog on the screen
             dialog.setVisible(true);
         }
     }
 
-
-    private void addCardSelectionListener(Card card, JLabel cardLabel) {
-        cardLabel.addMouseListener(new CardSelectionListener(card, selectedCards));
-    }
-
-    private class CardSelectionListener extends MouseAdapter {
-        private Card card;
-        private Set<Card> selectedCards;
-
-        public CardSelectionListener(Card card, Set<Card> selectedCards) {
-            this.card = card;
-            this.selectedCards = selectedCards;
-        }
-
-        @Override
-        public void mouseClicked(MouseEvent e) {
-            if (!selectedCards.contains(card)) {
-                // Mark the card as selected
-                selectedCards.add(card);
-                // Update the visual state of the card to indicate selection
-                JLabel cardLabel = (JLabel) e.getSource();
-                cardLabel.setBorder(BorderFactory.createLineBorder(Color.RED));
-            }
-        }
+    private GridBagConstraints createConstraints(int gridx, int gridy, int gridwidth, int gridheight, int anchor) {
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.gridx = gridx;
+        constraints.gridy = gridy;
+        constraints.gridwidth = gridwidth;
+        constraints.gridheight = gridheight;
+        constraints.anchor = anchor;
+        constraints.insets = new Insets(5, 5, 5, 5); // Optional: Add some padding
+        return constraints;
     }
 
 
