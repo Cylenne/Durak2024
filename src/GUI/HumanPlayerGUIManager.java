@@ -109,6 +109,7 @@ public class HumanPlayerGUIManager {
         }
     }
 
+    // used for centering
     private GridBagConstraints createConstraints(int gridx, int gridy, int gridwidth, int gridheight, int anchor) {
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.gridx = gridx;
