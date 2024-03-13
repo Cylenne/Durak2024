@@ -33,11 +33,11 @@ public class AttackScreen {
     private JLabel attackingCardsText;
     private JLabel defendingCardsText;
     private JPanel humanCardsPanel;
-    private HumanPlayerGUIManager humanPlayerGUIManager;
+    private HumanPlayerScreenManager humanPlayerScreenManager;
     private final int delay = 1000;
 
-    public HumanPlayerGUIManager getHumanPlayerManager() {
-        return humanPlayerGUIManager;
+    public HumanPlayerScreenManager getHumanPlayerScreenManager() {
+        return humanPlayerScreenManager;
     }
 
     public void setUpAttackScreen(List<Player> players, Card trump) {
@@ -97,7 +97,7 @@ public class AttackScreen {
         humanPlayerPanel.add(humanCardsPanel);
 
         mainPanel.add(humanPlayerPanel, BorderLayout.SOUTH);
-        humanPlayerGUIManager = new HumanPlayerGUIManager(humanPlayerPanel,humanCardsPanel);
+        humanPlayerScreenManager = new HumanPlayerScreenManager(humanPlayerPanel,humanCardsPanel);
     }
 
     private void addTrumpAndMessagePanel(Card trump) {

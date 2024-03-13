@@ -1,7 +1,7 @@
 package Player;
 
 import Card.*;
-import GUI.AttackScreen;
+import Phases.AttackPhase;
 
 import java.util.List;
 import java.util.Set;
@@ -14,8 +14,9 @@ public class HumanPlayer extends Player {
 
     @Override
     public Set<Card> addInitialAttackingCards(Player currentDefender) {
-        // write this code
-        return null;
+        Set<Card> selectedCards = AttackPhase.getAttackScreen().getHumanPlayerScreenManager().getSelectedCards();
+        this.getHand().removeAll(selectedCards);
+        return selectedCards;
     }
 
     @Override

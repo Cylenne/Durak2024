@@ -13,7 +13,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class HumanPlayerGUIManager {
+public class HumanPlayerScreenManager {
     private JPanel humanCardsPanel;
     private Set<Card> selectedCards;
     private JPanel humanPlayerPanel;
@@ -22,7 +22,11 @@ public class HumanPlayerGUIManager {
     private Map<JToggleButton, Card> buttonToCardMap = new HashMap<>();
     private JDialog dialog;
 
-    public HumanPlayerGUIManager(JPanel humanPlayerPanel, JPanel humanCardsPanel) {
+    public Set<Card> getSelectedCards() {
+        return selectedCards;
+    }
+
+    public HumanPlayerScreenManager(JPanel humanPlayerPanel, JPanel humanCardsPanel) {
         this.humanPlayerPanel = humanPlayerPanel;
         this.humanCardsPanel = humanCardsPanel;
     }

@@ -97,14 +97,13 @@ public class AttackPhase {
         } else {
             gameMessage = "Please select the cards you want to attack with";
             attackScreen.updateAttackPhaseMessage(gameMessage);
-            attackScreen.getHumanPlayerManager().updateHumanPlayerPanelForInitialAttack(attacker);
-            // attacker is human -> write method for human
+            attackScreen.getHumanPlayerScreenManager().updateHumanPlayerPanelForInitialAttack(attacker);
+            initialAttackingCards = attacker.addInitialAttackingCards(defender); // DEFENDER PARAMETER IS NEVER USED, IS THIS BAD DESIGN WITH THE INTERFACE?
         }
         gameMessage = "Initial attacking cards: " + setToString(initialAttackingCards);
         attackScreen.updateAttackPhaseMessage(gameMessage);
         System.out.println(gameMessage);
         attackScreen.updateInitialAttackingCardsPanel(initialAttackingCards);
-//        attackScreen.updateHumanPlayerPanel(StartPhase.getPlayers());
     }
 
     private void addAdditionalAttackers(Player attacker, Player defender, List<Player> activePlayersInRound) {
@@ -154,7 +153,7 @@ public class AttackPhase {
 
         roundCounter.incrementAndGet();
         DeckManager.drawMissingCards(activePlayersInRound, deck, players);
-        attackScreen.getHumanPlayerManager().updatePanelAfterRedraw();
+        attackScreen.getHumanPlayerScreenManager().updatePanelAfterRedraw();
         roundEndCheck(isGameOngoing);
     }
 
