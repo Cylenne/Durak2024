@@ -56,6 +56,7 @@ public class AttackScreen {
 
     private void createFrame() {
         frame = new JFrame("Durak - Attack Phase");
+        frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH); // full screen
         frame.setLayout(new BorderLayout());

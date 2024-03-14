@@ -27,6 +27,7 @@ public class GameOverScreen {
 
     private void addFrame() {
         frame = new JFrame("Durak - Game Over");
+        frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(750, 400);
         frame.setLayout(new BorderLayout());

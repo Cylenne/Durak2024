@@ -44,7 +44,7 @@ public class HumanPlayerScreenManager {
         humanCardsPanel.repaint();
     }
 
-    public void updateHumanPlayerPanelForInitialAttack(Player player) {
+    public void humanInitialAttackDialog(Player player) {
         if (player instanceof HumanPlayer) {
             humanCardsPanel.removeAll();
 
@@ -56,11 +56,11 @@ public class HumanPlayerScreenManager {
             ButtonGroup buttonGroup = new ButtonGroup();
 
             for (Card card : player.getHand()) {
-                JToggleButton cardButton = new JToggleButton(card.toImageIcon()); // button that can be in either an "on" or "off" state
+                JToggleButton cardButton = new JToggleButton(card.toImageIcon()); // button can be either "on" or "off"
                 associateCardWithButton(card, cardButton);
-                cardButton.setPreferredSize(new Dimension(84, 104)); // added +4 to ensure that the selection frame won't block the image's edges
+                cardButton.setPreferredSize(new Dimension(84, 104)); // +=4 to ensure that the selection frame won't block the image's edges
                 cardButton.setBorder(BorderFactory.createEmptyBorder());
-                cardButton.setContentAreaFilled(false); // allowing the background color or image of the parent container to show through
+                cardButton.setContentAreaFilled(false); // allows background image to show through
                 cardButton.setFocusPainted(false); // not painting a focus rectangle around the button when it gains focus
                 cardButton.addActionListener(new ActionListener() {
                     private boolean isSelected = false;
@@ -68,21 +68,21 @@ public class HumanPlayerScreenManager {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         JToggleButton selectedButton = (JToggleButton) e.getSource();
-                        isSelected = !isSelected; // Toggle the selected state
+                        isSelected = !isSelected; // toggle selected state
                         Card selectedCard = getCardFromButton(selectedButton);
-                        // If isSelected was true before this line, it becomes false after the line executes.
-                        // If isSelected was false before, it becomes true after the line executes.
 
-                        if (selectedRank[0] == -1 || selectedCard.getRank() == selectedRank[0]) {
+                        if (selectedRank[0] == -1 || selectedCard.getRank() == selectedRank[0]) { // if no rank's selected rank or same rank's selected
                             if (isSelected) {
                                 selectedCards.add(card);
-                                selectedButton.setBorder(BorderFactory.createLineBorder(Color.BLACK, 3, true)); // add black border with thickness 2 to indicate selection
+                                selectedButton.setBorder(BorderFactory.createLineBorder(Color.BLACK, 3, true));
                                 // true ensures that the border is painted exactly at the edge of the component
                                 selectedRank[0] = selectedCard.getRank();
                             } else {
                                 selectedCards.remove(card);
                                 selectedButton.setBorder(BorderFactory.createEmptyBorder());
-                                selectedRank[0] = -1;
+                                if (selectedCards.isEmpty()) {
+                                    selectedRank[0] = -1;
+                                }
                             }
                         } else {
                             isSelected = !isSelected; // Revert the toggle
@@ -116,7 +116,7 @@ public class HumanPlayerScreenManager {
             dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
             JPanel centerPanel = new JPanel(new GridBagLayout());
-            centerPanel.add(new JLabel("Your Cards"), createConstraints(0, 0, 1, 1, GridBagConstraints.CENTER)); // center the text
+            centerPanel.add(new JLabel("Your cards:"), createConstraints(0, 0, 1, 1, GridBagConstraints.CENTER)); // center the text
             centerPanel.add(humanCardsPanel, createConstraints(0, 1, 1, 1, GridBagConstraints.CENTER));
             centerPanel.add(selectButton, createConstraints(0, 2, 1, 1, GridBagConstraints.CENTER));
             dialog.getContentPane().add(centerPanel, BorderLayout.CENTER);
@@ -139,10 +139,10 @@ public class HumanPlayerScreenManager {
         return constraints;
     }
 
-    public Card getCardFromButton(JToggleButton button) {
+    private Card getCardFromButton(JToggleButton button) {
         return buttonToCardMap.get(button);
     }
-    public void associateCardWithButton(Card card, JToggleButton button) {
+    private void associateCardWithButton(Card card, JToggleButton button) {
         buttonToCardMap.put(button, card);
     }
 

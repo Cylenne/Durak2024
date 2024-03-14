@@ -97,7 +97,7 @@ public class AttackPhase {
         } else {
             gameMessage = "Please select the cards you want to attack with";
             attackScreen.updateAttackPhaseMessage(gameMessage);
-            attackScreen.getHumanPlayerScreenManager().updateHumanPlayerPanelForInitialAttack(attacker);
+            attackScreen.getHumanPlayerScreenManager().humanInitialAttackDialog(attacker);
             initialAttackingCards = attacker.addInitialAttackingCards(defender); // DEFENDER PARAMETER IS NEVER USED, IS THIS BAD DESIGN WITH THE INTERFACE?
         }
         gameMessage = "Initial attacking cards: " + setToString(initialAttackingCards);

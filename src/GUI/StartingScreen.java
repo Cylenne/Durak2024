@@ -50,6 +50,7 @@ public class StartingScreen {
 
     private void createFrame() {
         frame = new JFrame("Durak");
+        frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(750, 400);
         frame.setLayout(new BorderLayout());
