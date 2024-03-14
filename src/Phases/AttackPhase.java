@@ -99,6 +99,7 @@ public class AttackPhase {
             attackScreen.updateAttackPhaseMessage(gameMessage);
             attackScreen.getHumanPlayerScreenManager().humanInitialAttackDialog(attacker);
             initialAttackingCards = attacker.addInitialAttackingCards(defender); // DEFENDER PARAMETER IS NEVER USED, IS THIS BAD DESIGN WITH THE INTERFACE?
+            attackScreen.getHumanPlayerScreenManager().updateHumanPanelWithRemainingCards();
         }
         gameMessage = "Initial attacking cards: " + setToString(initialAttackingCards);
         attackScreen.updateAttackPhaseMessage(gameMessage);
@@ -153,7 +154,7 @@ public class AttackPhase {
 
         roundCounter.incrementAndGet();
         DeckManager.drawMissingCards(activePlayersInRound, deck, players);
-        attackScreen.getHumanPlayerScreenManager().updatePanelAfterRedraw();
+        attackScreen.getHumanPlayerScreenManager().updateHumanPanelAfterRedraw();
         roundEndCheck(isGameOngoing);
     }
 

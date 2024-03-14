@@ -34,7 +34,7 @@ public class AttackScreen {
     private JLabel defendingCardsText;
     private JPanel humanCardsPanel;
     private HumanPlayerScreenManager humanPlayerScreenManager;
-    private final int delay = 1000;
+    private final int delay = 2000;
 
     public HumanPlayerScreenManager getHumanPlayerScreenManager() {
         return humanPlayerScreenManager;
@@ -92,7 +92,6 @@ public class AttackScreen {
 
         for (Card card : humanPlayerHand) {
             humanCardsPanel.add(new JLabel(card.toImageIcon()));
-
         }
 
         humanPlayerPanel.add(humanCardsPanel);

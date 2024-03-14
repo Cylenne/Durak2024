@@ -8,10 +8,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.List;
 
 public class HumanPlayerScreenManager {
     private JPanel humanCardsPanel;
@@ -31,7 +29,7 @@ public class HumanPlayerScreenManager {
         this.humanCardsPanel = humanCardsPanel;
     }
 
-    public void updatePanelAfterRedraw() {
+    public void updateHumanPanelAfterRedraw() {
         for (Player player : StartPhase.getPlayers())
             if (player instanceof HumanPlayer) {
                 humanCardsPanel.removeAll();
@@ -43,6 +41,30 @@ public class HumanPlayerScreenManager {
         humanCardsPanel.revalidate();
         humanCardsPanel.repaint();
     }
+
+    public void updateHumanPanelWithRemainingCards() { // rebuilding humanPlayerPanel after dialog
+        humanPlayerPanel.removeAll();
+        humanPlayerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        humanPlayerPanel.setLayout(new BoxLayout(humanPlayerPanel, BoxLayout.Y_AXIS));
+
+        JLabel label = new JLabel("Your cards:");
+        humanPlayerPanel.add(label);
+
+        humanCardsPanel = new JPanel(new FlowLayout());
+
+        List<Card> humanPlayerHand = Collections.emptyList(); // this part could be shortened with a parameter?
+        for (Player player : StartPhase.getPlayers())
+            if (player instanceof HumanPlayer) {
+                humanPlayerHand = player.getHand();
+            }
+
+        for (Card card : humanPlayerHand) {
+            humanCardsPanel.add(new JLabel(card.toImageIcon()));
+        }
+
+        humanPlayerPanel.add(humanCardsPanel);
+    }
+
 
     public void humanInitialAttackDialog(Player player) {
         if (player instanceof HumanPlayer) {
@@ -101,7 +123,7 @@ public class HumanPlayerScreenManager {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     // Close the dialog and resume game flow
-                    System.out.println("Selected cards: " + selectedCards);
+//                    System.out.println("Selected cards: " + selectedCards); // REMOVE WHEN APP IS READY
                     dialog.dispose();
                 }
             });
@@ -114,6 +136,13 @@ public class HumanPlayerScreenManager {
             // modal dialog automatically stops the game flow until user action takes place
             dialog = new JDialog((Frame) null, "Select Cards", true); // true for modal
             dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+
+            ImageIcon frameIcon = new ImageIcon("Images/clubs.png");
+            Image iconImage = frameIcon.getImage();
+            dialog.setIconImage(iconImage);
+
+//            dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE); // prevent the player from not selecting any cards by closing the dialog box
+            // UNCOMMENT THE ABOVE WHEN THE APP IS ALMOST READY
 
             JPanel centerPanel = new JPanel(new GridBagLayout());
             centerPanel.add(new JLabel("Your cards:"), createConstraints(0, 0, 1, 1, GridBagConstraints.CENTER)); // center the text
@@ -142,6 +171,7 @@ public class HumanPlayerScreenManager {
     private Card getCardFromButton(JToggleButton button) {
         return buttonToCardMap.get(button);
     }
+
     private void associateCardWithButton(Card card, JToggleButton button) {
         buttonToCardMap.put(button, card);
     }
