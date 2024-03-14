@@ -13,8 +13,8 @@ public class HumanPlayer extends Player {
     }
 
     @Override
-    public Set<Card> addInitialAttackingCards(Player currentDefender) {
-        Set<Card> selectedCards = AttackPhase.getAttackScreen().getHumanPlayerScreenManager().getSelectedCards();
+    public Set<Card> addInitialAttackingCards(Player defender) {
+        Set<Card> selectedCards = AttackPhase.getAttackScreen().getHumanPlayerScreenManager().humanInitialAttackDialog(this, defender);
         this.getHand().removeAll(selectedCards);
         return selectedCards;
     }
