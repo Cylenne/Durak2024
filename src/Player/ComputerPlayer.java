@@ -133,8 +133,7 @@ public class ComputerPlayer extends Player {
 
             if (!isOneOfStrongestCards(defendersCard)) {
                 Card.Suit trumpSuit = StartPhase.getTrumpSuit();
-                if (
-                        (attackingCard.getSuit().equals(trumpSuit) && defendersCard.getSuit().equals(trumpSuit))
+                if ((attackingCard.getSuit().equals(trumpSuit) && defendersCard.getSuit().equals(trumpSuit))
                                 && defendersCard.getRank() > attackingCard.getRank() // if both trump & defender's rank's larger
                                 || (!attackingCard.getSuit().equals(trumpSuit) && defendersCard.getSuit().equals(attackingCard.getSuit())
                                 && defendersCard.getRank() > attackingCard.getRank()) // attacking card is non-trump & same suit -> first check if non-trump can beat it

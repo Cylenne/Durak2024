@@ -1,4 +1,6 @@
 package Card;
+import Phases.StartPhase;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
@@ -102,6 +104,21 @@ public static Comparator<Card> sortRankReversedSuit(Card.Suit trumpSuit) {
         Image image = originalIcon.getImage();
         Image resizedImage = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
         return new ImageIcon(resizedImage);
+    }
+
+    public Boolean canBeat(Card attackingCard) {
+        Card.Suit trumpSuit = StartPhase.getTrumpSuit();
+        if ((attackingCard.getSuit().equals(trumpSuit) && this.getSuit().equals(trumpSuit))
+                && this.getRank() > attackingCard.getRank() // if both trump & defender's rank's larger
+                || (!attackingCard.getSuit().equals(trumpSuit) && this.getSuit().equals(attackingCard.getSuit())
+                && this.getRank() > attackingCard.getRank()) // attacking card is non-trump & same suit -> first check if non-trump can beat it
+                || (!attackingCard.getSuit().equals(trumpSuit) &&
+                this.getSuit().equals(trumpSuit))) // attacking card is non-trump -> any trump beats it
+        {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override // overridden to ensure that cards with the same rank and suit produce the same hash code

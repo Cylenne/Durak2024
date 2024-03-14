@@ -11,18 +11,15 @@ import java.awt.event.ActionListener;
 import java.util.*;
 import java.util.List;
 
+// SHOULD I WRITE THIS CLASS AS 3 IMPLEMENTING A COMMON DIALOG INTERFACE?
+
 public class HumanPlayerScreenManager {
     private JPanel humanCardsPanel;
-    //    private Set<Card> selectedCards;
     private JPanel humanPlayerPanel;
     private boolean selectButtonAdded = false;
     private JButton selectButton;
     private Map<JToggleButton, Card> buttonToCardMap = new HashMap<>();
     private JDialog dialog;
-
-//    public Set<Card> getSelectedCards() {
-//        return selectedCards;
-//    }
 
     public HumanPlayerScreenManager(JPanel humanPlayerPanel, JPanel humanCardsPanel) {
         this.humanPlayerPanel = humanPlayerPanel;
@@ -65,27 +62,52 @@ public class HumanPlayerScreenManager {
         humanPlayerPanel.add(humanCardsPanel);
     }
 
-
     public Set<Card> humanInitialAttackDialog(Player attacker, Player defender) {
         Set<Card> selectedCards = new HashSet<>();
-        initializeHumanCardsPanel(attacker, selectedCards, defender);
+        final int[] selectedRank = {-1}; // -1 represents no selected rank,
+        // and it was transformed into a final one element array so that the inner class can refer to it
+        initializeHumanCardsPanel(attacker, selectedCards, defender, selectedRank);
         initializeSelectButton();
         createAndShowDialog();
 
         return selectedCards;
     }
 
-    private void initializeHumanCardsPanel(Player attacker, Set<Card> selectedCards, Player defender) {
-        humanCardsPanel.removeAll();
+    public Set<Card> humanDefenseDialog(Player defender, List<Card> attackingCards) {
+        Set<Card> selectedCards = new HashSet<>();
+        initializeHumanCardsPanel(defender, selectedCards, attackingCards);
+        createAndShowDialog();
+        initializeSelectButton(attackingCards, selectedCards, centerPanel, message);
 
-        final int[] selectedRank = {-1}; // -1 represents no selected rank,
-        // and it was transformed into a final one element array so that the inner class can refer to it
+
+        return selectedCards;
+
+    }
+
+    private void initializeHumanCardsPanel(Player attacker, Set<Card> selectedCards, Player defender, int[] selectedRank) {
+        humanCardsPanel.removeAll();
 
         // we only use ButtonGroup to show that these buttons belong together
         ButtonGroup buttonGroup = new ButtonGroup();
 
         for (Card card : attacker.getHand()) {
             JToggleButton cardButton = createCardButton(card, selectedRank, selectedCards, defender);
+            buttonGroup.add(cardButton);
+            humanCardsPanel.add(cardButton);
+        }
+
+        humanPlayerPanel.revalidate();
+        humanPlayerPanel.repaint();
+    }
+
+    // overloaded method for defense
+    private void initializeHumanCardsPanel(Player defender, Set<Card> selectedCards, List<Card> attackingCards) {
+        humanCardsPanel.removeAll();
+
+        ButtonGroup buttonGroup = new ButtonGroup();
+
+        for (Card card : defender.getHand()) {
+            JToggleButton cardButton = createCardButton(card, attackingCards, selectedCards);
             buttonGroup.add(cardButton);
             humanCardsPanel.add(cardButton);
         }
@@ -104,6 +126,19 @@ public class HumanPlayerScreenManager {
         cardButton.setContentAreaFilled(false); // allows background image to show through
         cardButton.setFocusPainted(false); // not painting a focus rectangle around the button when it gains focus
         cardButton.addActionListener(createCardButtonActionListener(card, selectedRank, selectedCards, defender));
+        return cardButton;
+    }
+
+    // overloaded method for defense
+    private JToggleButton createCardButton(Card card, List<Card> attackingCards, Set<Card> selectedCards) {
+
+        JToggleButton cardButton = new JToggleButton(card.toImageIcon());
+
+        cardButton.setPreferredSize(new Dimension(84, 104));
+        cardButton.setBorder(BorderFactory.createEmptyBorder());
+        cardButton.setContentAreaFilled(false);
+        cardButton.setFocusPainted(false);
+        cardButton.addActionListener(createCardButtonActionListener(card, attackingCards, selectedCards));
         return cardButton;
     }
 
@@ -138,6 +173,34 @@ public class HumanPlayerScreenManager {
         };
     }
 
+    // overloaded method for defense
+    private ActionListener createCardButtonActionListener(Card defendingCard, List<Card> attackingCards, Set<Card> selectedCards) {
+        return new ActionListener() {
+
+            private boolean isSelected = false;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JToggleButton selectedButton = (JToggleButton) e.getSource();
+                isSelected = !isSelected; // toggle selected state
+
+                for (Card attackingCard : attackingCards) {
+                    if (defendingCard.canBeat(attackingCard)) { // THIS IS SUCH AN ELEGANT SOLUTION, MAYBE I COULD DO MORE OF THESE??
+                        selectedCards.add(defendingCard);
+                        selectedButton.setBorder(BorderFactory.createLineBorder(Color.BLACK, 3, true));
+
+                    } else {
+                        selectedCards.remove(defendingCard);
+                        selectedButton.setBorder(BorderFactory.createEmptyBorder());
+                    }
+                }
+                isSelected = !isSelected;
+                selectedButton.setSelected(false);
+
+            }
+        };
+    }
+
     private void initializeSelectButton() {
         if (!selectButtonAdded) {
             selectButton = new JButton("Select Cards");
@@ -145,6 +208,29 @@ public class HumanPlayerScreenManager {
         selectButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+//              System.out.println("Selected cards: " + selectedCards); // REMOVE WHEN APP IS READY
+                dialog.dispose(); // close the dialog and resume game flow
+            }
+        });
+        humanPlayerPanel.add(selectButton);
+        selectButtonAdded = true;
+    }
+
+    // overloaded method for humanDefense
+    private void initializeSelectButton(List<Card> attackingCards, Set<Card> defendingCards, JPanel centerPanel, JLabel message) {
+        if (!selectButtonAdded) {
+            selectButton = new JButton("Select Cards");
+        }
+        selectButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (attackingCards.size() != defendingCards.size()) {
+                    centerPanel.remove(message);
+                    centerPanel.add(new JLabel("You need to select as many defending cards as there are attacking cards:"),
+                            createConstraints(0, 0, 1, 1, GridBagConstraints.CENTER)); // center the text
+                    centerPanel.revalidate();
+                    centerPanel.repaint();
+                }
 //              System.out.println("Selected cards: " + selectedCards); // REMOVE WHEN APP IS READY
                 dialog.dispose(); // close the dialog and resume game flow
             }
@@ -166,7 +252,8 @@ public class HumanPlayerScreenManager {
         // UNCOMMENT THE ABOVE WHEN THE APP IS ALMOST READY
 
         JPanel centerPanel = new JPanel(new GridBagLayout());
-        centerPanel.add(new JLabel("Your cards:"), createConstraints(0, 0, 1, 1, GridBagConstraints.CENTER)); // center the text
+        JLabel message = new JLabel("Your cards:");
+        centerPanel.add(message, createConstraints(0, 0, 1, 1, GridBagConstraints.CENTER)); // center the text
         centerPanel.add(humanCardsPanel, createConstraints(0, 1, 1, 1, GridBagConstraints.CENTER));
         centerPanel.add(selectButton, createConstraints(0, 2, 1, 1, GridBagConstraints.CENTER));
         dialog.getContentPane().add(centerPanel, BorderLayout.CENTER);
