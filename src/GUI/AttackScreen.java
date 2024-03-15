@@ -22,7 +22,6 @@ public class AttackScreen {
     private JFrame frame;
     private JTextArea roundMessage; // multiline text component
     private JTextPane attackPhaseMessage;
-    private JPanel humanPlayerPanel;
     private JPanel mainPanel;
     private JPanel centralPanel;
     private JPanel computerPlayersPanel;
@@ -32,12 +31,21 @@ public class AttackScreen {
     private JPanel defendingCardsDisplayed;
     private JLabel attackingCardsText;
     private JLabel defendingCardsText;
-    private JPanel humanCardsPanel;
-    private HumanPlayerScreenManager humanPlayerScreenManager;
+    private HumanPlayerPanelUpdater humanPlayerPanelUpdater;
+    private HumanInitialAttackDialog humanInitialAttackDialog;
+    private HumanDefenseDialog humanDefenseDialog;
     private final int delay = 2000;
 
-    public HumanPlayerScreenManager getHumanPlayerScreenManager() {
-        return humanPlayerScreenManager;
+    public HumanInitialAttackDialog getHumanInitialAttackDialog() {
+        return humanInitialAttackDialog;
+    }
+
+    public HumanDefenseDialog getHumanDefenseDialog() {
+        return humanDefenseDialog;
+    }
+
+    public HumanPlayerPanelUpdater getHumanPlayerPanelUpdater() {
+        return humanPlayerPanelUpdater;
     }
 
     public void setUpAttackScreen(List<Player> players, Card trump) {
@@ -75,14 +83,14 @@ public class AttackScreen {
     }
 
     private void addHumanPlayerPanel() {
-        humanPlayerPanel = new JPanel();
+        JPanel humanPlayerPanel = new JPanel();
         humanPlayerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         humanPlayerPanel.setLayout(new BoxLayout(humanPlayerPanel, BoxLayout.Y_AXIS));
 
         JLabel label = new JLabel("Your cards:");
         humanPlayerPanel.add(label);
 
-        humanCardsPanel = new JPanel(new FlowLayout());
+        JPanel humanCardsPanel = new JPanel(new FlowLayout());
 
         List<Card> humanPlayerHand = Collections.emptyList();
         for (Player player : StartPhase.getPlayers())
@@ -97,7 +105,10 @@ public class AttackScreen {
         humanPlayerPanel.add(humanCardsPanel);
 
         mainPanel.add(humanPlayerPanel, BorderLayout.SOUTH);
-        humanPlayerScreenManager = new HumanPlayerScreenManager(humanPlayerPanel,humanCardsPanel);
+
+        humanPlayerPanelUpdater = new HumanPlayerPanelUpdater(humanPlayerPanel, humanCardsPanel);
+        humanInitialAttackDialog = new HumanInitialAttackDialog(humanPlayerPanel, humanCardsPanel);
+        humanDefenseDialog = new HumanDefenseDialog(humanCardsPanel, humanPlayerPanel);
     }
 
     private void addTrumpAndMessagePanel(Card trump) {

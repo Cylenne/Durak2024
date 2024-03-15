@@ -15,7 +15,7 @@ public class HumanPlayer extends Player {
 
     @Override
     public Set<Card> addInitialAttackingCards(Player defender) {
-        Set<Card> selectedCards = AttackPhase.getAttackScreen().getHumanPlayerScreenManager().humanInitialAttackDialog(this, defender);
+        Set<Card> selectedCards = AttackPhase.getAttackScreen().getHumanInitialAttackDialog().execute(this, defender);
         this.getHand().removeAll(selectedCards);
         return selectedCards;
     }
@@ -37,7 +37,7 @@ public class HumanPlayer extends Player {
         if (!testHumanDefender.defenseState(attackingCards).getDefendingCards().isEmpty()) {
             return new RoundResult(false, defendingCards);
         } else { // if defense is possible, humanPlayer may select defendingCards manually
-            return new RoundResult(true, AttackPhase.getAttackScreen().getHumanPlayerScreenManager().humanDefenseDialog(this,attackingCards));
+            return new RoundResult(true, AttackPhase.getAttackScreen().getHumanDefenseDialog().execute(this,attackingCards));
         }
 
     }

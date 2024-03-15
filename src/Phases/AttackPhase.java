@@ -98,7 +98,7 @@ public class AttackPhase {
             gameMessage = "Please select the cards you want to attack with";
             attackScreen.updateAttackPhaseMessage(gameMessage);
             initialAttackingCards = attacker.addInitialAttackingCards(defender);
-            attackScreen.getHumanPlayerScreenManager().updateHumanPanelWithRemainingCards();
+            attackScreen.getHumanPlayerPanelUpdater().updateHumanPanelWithRemainingCards();
         }
         gameMessage = "Initial attacking cards: " + setToString(initialAttackingCards);
         attackScreen.updateAttackPhaseMessage(gameMessage);
@@ -153,7 +153,7 @@ public class AttackPhase {
 
         roundCounter.incrementAndGet();
         DeckManager.drawMissingCards(activePlayersInRound, deck, players);
-        attackScreen.getHumanPlayerScreenManager().updateHumanPanelAfterRedraw();
+        attackScreen.getHumanPlayerPanelUpdater().updateHumanPanelAfterRedraw();
         roundEndCheck(isGameOngoing);
     }
 
@@ -177,21 +177,17 @@ public class AttackPhase {
     }
 
     private void addDefendingCards(Player defender, List<Card> attackingCardsPerLoop, Set<Card> defendingCardsPerLoop, Set<Card> allDefendingCards, AtomicBoolean roundOn) {
-        if (defender instanceof ComputerPlayer) {
-            RoundResult defenseResult = defender.defenseState(attackingCardsPerLoop);
-            defendingCardsPerLoop.addAll(defenseResult.getDefendingCards());
-            allDefendingCards.addAll(defendingCardsPerLoop);
-            currentRoundDefended = defenseResult.isRoundDefended();
-            gameMessage = (currentRoundDefended ? "Successful defense so far" : "Unsuccessful defense");
-            attackScreen.updateAttackPhaseMessage(gameMessage);
-            System.out.println(gameMessage);
+        RoundResult defenseResult = defender.defenseState(attackingCardsPerLoop); // doesn't need to separate into human and computerPlayer, this is automatically detected
 
-            if (!currentRoundDefended) {
-                roundOn.set(false);
-            }
+        defendingCardsPerLoop.addAll(defenseResult.getDefendingCards());
+        allDefendingCards.addAll(defendingCardsPerLoop);
+        currentRoundDefended = defenseResult.isRoundDefended();
+        gameMessage = (currentRoundDefended ? "Successful defense so far" : "Unsuccessful defense");
+        attackScreen.updateAttackPhaseMessage(gameMessage);
+        System.out.println(gameMessage);
 
-        } else {
-            // human defender -> write this code
+        if (!currentRoundDefended) {
+            roundOn.set(false);
         }
 
     }
