@@ -20,12 +20,18 @@ public class GameOverPhase {
             };
             leaderboard += i + suffix + " place: " + winners.get(i - 1).getName() + "\n";
         }
-        String durak = players.getFirst().getName();
 
         String gameMessage = "Game Over: " + winners.getFirst().getName() + " has won the game!" + "\n"
                 + "Final round: " + roundCounter + "\n\n"
-                + leaderboard + "\n"
-                + "The durak is " + durak;
+                + leaderboard + "\n";
+
+        String durak = "";
+        if (!players.isEmpty()) {
+            durak = players.getFirst().getName();
+            gameMessage += "The durak is " + durak;
+        } else {
+            gameMessage += "There is no durak because two players finished in the last round! :O";
+        }
 
         System.out.println(gameMessage);
 

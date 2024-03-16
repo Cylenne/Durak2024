@@ -13,7 +13,7 @@ public class HumanInitialAttackDialog {
     private boolean selectButtonAdded = false;
     private JButton selectButton;
     private Map<JToggleButton, Card> buttonToCardMap = new HashMap<>();
-    private JDialog dialog = new JDialog((Frame) null, "Select Cards", true); // true for modal;
+    private JDialog dialog = new JDialog((Frame) null, "Select Attacking Cards", true); // true for modal;
     private DialogUtils dialogUtils;
     private JPanel dialogPanel = new JPanel();
     private JPanel humanCardsPanel = new JPanel();;
@@ -36,7 +36,7 @@ public class HumanInitialAttackDialog {
         dialogPanel.add(humanCardsPanel);
         humanCardsPanel.setLayout(new FlowLayout());
 
-        // we only use ButtonGroup to show that these buttons belong together
+        // we use ButtonGroup because at first, only one card can be chosen, and all consecutively chosen cards depend on this one card
         ButtonGroup buttonGroup = new ButtonGroup();
 
         for (Card card : attacker.getHand()) {
@@ -69,7 +69,7 @@ public class HumanInitialAttackDialog {
                 isSelected = !isSelected; // toggle selected state
                 Card selectedCard = getCardFromButton(selectedButton);
 
-                if (selectedRank[0] == -1 || selectedCard.getRank() == selectedRank[0]) { // if no rank's selected rank or same rank's selected
+                if (selectedRank[0] == -1 || selectedCard.getRank() == selectedRank[0]) { // if no rank's selected or same rank's selected
                     if (isSelected && selectedCards.size() < defender.getHand().size()) {
                         selectedCards.add(card);
                         selectedButton.setBorder(BorderFactory.createLineBorder(Color.BLACK, 3, true));

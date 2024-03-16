@@ -14,16 +14,13 @@ import java.util.Set;
 public class HumanDefenseDialog {
     private JPanel humanCardsPanel = new JPanel();
     private JPanel dialogPanel = new JPanel();
-    private JDialog dialog = new JDialog((Frame) null, "Select Cards", true);
+    private JDialog dialog = new JDialog((Frame) null, "Select Defending Cards", true);
     private JButton selectButton;
     private boolean selectButtonAdded = false;
-    private JPanel centerPanel;
-    private JLabel message;
     private Set<Card> selectedCards = new HashSet<>();
     private DialogUtils dialogUtils;
 
     public Set<Card> execute(Player defender, List<Card> attackingCards) {
-
         initializeHumanCardsPanel(defender, attackingCards);
         initializeSelectButton(attackingCards);
 
@@ -37,20 +34,14 @@ public class HumanDefenseDialog {
         dialogPanel.add(humanCardsPanel);
         humanCardsPanel.setLayout(new FlowLayout());
 
-        ButtonGroup buttonGroup = new ButtonGroup();
-
         for (Card card : defender.getHand()) {
             JToggleButton cardButton = createCardButton(card, attackingCards);
-            buttonGroup.add(cardButton);
             humanCardsPanel.add(cardButton);
         }
-
     }
 
     private JToggleButton createCardButton(Card card, List<Card> attackingCards) {
-
         JToggleButton cardButton = new JToggleButton(card.toImageIcon());
-
         cardButton.setPreferredSize(new Dimension(84, 104));
         cardButton.setBorder(BorderFactory.createEmptyBorder());
         cardButton.setContentAreaFilled(false);
@@ -61,51 +52,44 @@ public class HumanDefenseDialog {
 
     private ActionListener createCardButtonActionListener(Card defendingCard, List<Card> attackingCards) {
         return new ActionListener() {
-
-            private boolean isSelected = false;
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 JToggleButton selectedButton = (JToggleButton) e.getSource();
-                isSelected = !isSelected;
-
-                for (Card attackingCard : attackingCards) {
-                    if (defendingCard.canBeat(attackingCard)) {
+                if (selectedButton.isSelected()) {
+                    // Check if the defending card can beat any of the attacking cards
+                    boolean canBeatAny = attackingCards.stream().anyMatch(attackingCard -> defendingCard.canBeat(attackingCard));
+                    if (canBeatAny) {
                         selectedCards.add(defendingCard);
                         selectedButton.setBorder(BorderFactory.createLineBorder(Color.BLACK, 3, true));
-
+                        dialog.setTitle("Select defending cards");
                     } else {
-                        selectedCards.remove(defendingCard);
-                        selectedButton.setBorder(BorderFactory.createEmptyBorder());
+                        // If the defending card cannot beat any attacking card, prevent selection
+                        selectedButton.setSelected(false);
+                        dialog.setTitle("This card cannot beat any of the attacking cards!");
                     }
+                } else {
+                    selectedCards.remove(defendingCard);
+                    selectedButton.setBorder(BorderFactory.createEmptyBorder());
                 }
-                isSelected = !isSelected;
-                selectedButton.setSelected(false);
-
             }
         };
     }
 
     private void initializeSelectButton(List<Card> attackingCards) {
-        if (!selectButtonAdded) {
-            selectButton = new JButton("Select Cards");
-        }
+        selectButton = new JButton("Select Cards");
         selectButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (attackingCards.size() != selectedCards.size()) {
-                    centerPanel.remove(message);
-                    centerPanel.add(new JLabel("You need to select as many defending cards as there are attacking cards:"),
-                            dialogUtils.createConstraints(0, 0, 1, 1, GridBagConstraints.CENTER)); // center the text
-                    centerPanel.revalidate();
-                    centerPanel.repaint();
+                boolean isValidSelection = (attackingCards.size() == selectedCards.size());
+                if (!isValidSelection) {
+                    dialog.setTitle("You need to select exactly as many defending cards as there are attacking cards!");
+                } else {
+                    dialog.setTitle("Select defending cards");
+                    dialog.dispose();
                 }
-              System.out.println("Selected cards: " + selectedCards); // REMOVE WHEN APP IS READY
-                dialog.dispose();
             }
         });
         dialogPanel.add(selectButton);
         selectButtonAdded = true;
     }
-
 }
