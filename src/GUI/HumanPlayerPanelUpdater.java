@@ -56,18 +56,10 @@ public class HumanPlayerPanelUpdater  {
         }
 
         humanPlayerPanel.add(humanCardsPanel);
+
+        humanPlayerPanel.revalidate();
+        humanPlayerPanel.repaint();
     }
-
-
-
-
-
-
-
-
-
-
-
 
 }
 

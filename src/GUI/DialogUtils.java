@@ -17,7 +17,6 @@ public class DialogUtils {
 
     public void createAndShowDialog() {
         // modal dialog automatically stops the game flow until user action takes place
-        dialog = new JDialog((Frame) null, "Select Cards", true); // true for modal
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
         ImageIcon frameIcon = new ImageIcon("Images/clubs.png");

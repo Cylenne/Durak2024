@@ -32,17 +32,8 @@ public class AttackScreen {
     private JLabel attackingCardsText;
     private JLabel defendingCardsText;
     private HumanPlayerPanelUpdater humanPlayerPanelUpdater;
-    private HumanInitialAttackDialog humanInitialAttackDialog;
-    private HumanDefenseDialog humanDefenseDialog;
-    private final int delay = 2000;
+    private final int delay = 500;
 
-    public HumanInitialAttackDialog getHumanInitialAttackDialog() {
-        return humanInitialAttackDialog;
-    }
-
-    public HumanDefenseDialog getHumanDefenseDialog() {
-        return humanDefenseDialog;
-    }
 
     public HumanPlayerPanelUpdater getHumanPlayerPanelUpdater() {
         return humanPlayerPanelUpdater;
@@ -105,10 +96,7 @@ public class AttackScreen {
         humanPlayerPanel.add(humanCardsPanel);
 
         mainPanel.add(humanPlayerPanel, BorderLayout.SOUTH);
-
         humanPlayerPanelUpdater = new HumanPlayerPanelUpdater(humanPlayerPanel, humanCardsPanel);
-        humanInitialAttackDialog = new HumanInitialAttackDialog(humanPlayerPanel, humanCardsPanel);
-        humanDefenseDialog = new HumanDefenseDialog(humanCardsPanel, humanPlayerPanel);
     }
 
     private void addTrumpAndMessagePanel(Card trump) {

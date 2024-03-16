@@ -10,50 +10,43 @@ import java.awt.event.ActionListener;
 import java.util.*;
 
 public class HumanInitialAttackDialog {
-    private JPanel humanCardsPanel;
-    private JPanel humanPlayerPanel;
     private boolean selectButtonAdded = false;
     private JButton selectButton;
     private Map<JToggleButton, Card> buttonToCardMap = new HashMap<>();
-    private JDialog dialog = new JDialog();
+    private JDialog dialog = new JDialog((Frame) null, "Select Cards", true); // true for modal;
     private DialogUtils dialogUtils;
-
-    public HumanInitialAttackDialog(JPanel humanCardsPanel, JPanel humanPlayerPanel) {
-        this.humanCardsPanel = humanCardsPanel;
-        this.humanPlayerPanel = humanPlayerPanel;
-    }
+    private JPanel dialogPanel = new JPanel();
+    private JPanel humanCardsPanel = new JPanel();;
+    private Set<Card> selectedCards = new HashSet<>();
+    private final int[] selectedRank = {-1}; // -1 represents no selected rank,
+    // and it was transformed into a final one element array so that the inner class can refer to it
 
     public Set<Card> execute(Player attacker, Player defender) {
-        Set<Card> selectedCards = new HashSet<>();
-        final int[] selectedRank = {-1}; // -1 represents no selected rank,
-        // and it was transformed into a final one element array so that the inner class can refer to it
-        initializeHumanCardsPanel(attacker, selectedCards, defender, selectedRank);
+
+        initializeHumanCardsPanel(attacker, defender);
         initializeSelectButton();
+
         dialogUtils = new DialogUtils(dialog, humanCardsPanel, selectButton);
         dialogUtils.createAndShowDialog();
 
         return selectedCards;
     }
 
-    private void initializeHumanCardsPanel(Player attacker, Set<Card> selectedCards, Player defender, int[] selectedRank) {
-        humanCardsPanel.removeAll();
-
-        humanCardsPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+    private void initializeHumanCardsPanel(Player attacker, Player defender) {
+        dialogPanel.add(humanCardsPanel);
+        humanCardsPanel.setLayout(new FlowLayout());
 
         // we only use ButtonGroup to show that these buttons belong together
         ButtonGroup buttonGroup = new ButtonGroup();
 
         for (Card card : attacker.getHand()) {
-            JToggleButton cardButton = createCardButton(card, selectedRank, selectedCards, defender);
+            JToggleButton cardButton = createCardButton(card, defender);
             buttonGroup.add(cardButton);
             humanCardsPanel.add(cardButton);
         }
-
-        humanPlayerPanel.revalidate();
-        humanPlayerPanel.repaint();
     }
 
-    private JToggleButton createCardButton(Card card, int[] selectedRank, Set<Card> selectedCards, Player defender) {
+    private JToggleButton createCardButton(Card card, Player defender) {
 
         JToggleButton cardButton = new JToggleButton(card.toImageIcon()); // button can be either "on" or "off"
 
@@ -62,11 +55,11 @@ public class HumanInitialAttackDialog {
         cardButton.setBorder(BorderFactory.createEmptyBorder());
         cardButton.setContentAreaFilled(false); // allows background image to show through
         cardButton.setFocusPainted(false); // not painting a focus rectangle around the button when it gains focus
-        cardButton.addActionListener(createCardButtonActionListener(card, selectedRank, selectedCards, defender));
+        cardButton.addActionListener(createCardButtonActionListener(card, defender));
         return cardButton;
     }
 
-    private ActionListener createCardButtonActionListener(Card card, int[] selectedRank, Set<Card> selectedCards, Player defender) {
+    private ActionListener createCardButtonActionListener(Card card, Player defender) {
         return new ActionListener() {
             private boolean isSelected = false;
 
@@ -104,11 +97,11 @@ public class HumanInitialAttackDialog {
         selectButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-//              System.out.println("Selected cards: " + selectedCards); // REMOVE WHEN APP IS READY
+              System.out.println("Selected cards: " + selectedCards); // REMOVE WHEN APP IS READY
                 dialog.dispose(); // close the dialog and resume game flow
             }
         });
-        humanPlayerPanel.add(selectButton);
+        dialogPanel.add(selectButton);
         selectButtonAdded = true;
     }
 
