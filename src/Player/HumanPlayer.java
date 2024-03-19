@@ -53,6 +53,7 @@ public class HumanPlayer extends Player {
     @Override
     public RoundResult defenseState(List<Card> attackingCards) {
         RoundResult roundResult;
+
         if (preliminaryDefenseCheck(attackingCards).isRoundDefended()) { // if defense is possible, humanPlayer may select defendingCards manually
 
             HumanDefenseDialog humanDefenseDialog = new HumanDefenseDialog(); // round is only defended if enough cards were selected
