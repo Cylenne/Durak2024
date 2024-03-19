@@ -32,7 +32,7 @@ public class AttackScreen {
     private JLabel attackingCardsText;
     private JLabel defendingCardsText;
     private HumanPlayerPanelUpdater humanPlayerPanelUpdater;
-    private final int delay = 500;
+    private final int delay = 1000;
 
 
     public HumanPlayerPanelUpdater getHumanPlayerPanelUpdater() {

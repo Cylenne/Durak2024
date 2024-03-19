@@ -139,6 +139,7 @@ public class AttackPhase {
                 roundOn.set(false);
                 gameMessage = ("No additional attacking cards, the attack has finished");
                 attackScreen.updateAttackPhaseMessage(gameMessage);
+                roundEndMessage(defender, allDefendingCards, allAttackingCards);
                 if (!deck.getDeck().isEmpty()) {
                     gameMessage = ("Players are redrawing cards");
                     attackScreen.updateAttackPhaseMessage(gameMessage);
@@ -149,7 +150,7 @@ public class AttackPhase {
             allAttackingCards.addAll(attackingCardsPerLoop);
         }
 
-        roundEndMessage(defender, allDefendingCards, allAttackingCards);
+//        roundEndMessage(defender, allDefendingCards, allAttackingCards);
 
         roundCounter.incrementAndGet();
         DeckManager.drawMissingCards(activePlayersInRound, deck, players);

@@ -83,7 +83,7 @@ public class HumanAdditionalAttackDialog {
         selectButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                boolean isValidSelection = (attackingCards.size() + selectedCards.size() <= defender.getHand().size());
+                boolean isValidSelection = (attackingCards.size() + selectedCards.size() <= defender.getHand().size()); // this is only valid if it's an initial attack, otherwise no need to add attackingCards.size()!!!!
                 if (!isValidSelection) {
                     dialog.setTitle("The total number of attacking cards can't exceed the number of cards in the defender's hand! Please choose less cards.");
                 } else {
