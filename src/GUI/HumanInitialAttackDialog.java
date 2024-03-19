@@ -97,8 +97,12 @@ public class HumanInitialAttackDialog {
         selectButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-              System.out.println("Selected cards: " + selectedCards); // REMOVE WHEN APP IS READY
-                dialog.dispose(); // close the dialog and resume game flow
+                boolean isValidSelection = !selectedCards.isEmpty();
+                if (isValidSelection) {
+                    dialog.dispose(); // close the dialog and resume game flow
+                } else {
+                    dialog.setTitle("You must choose at least one card to attack with!");
+                }
             }
         });
         dialogPanel.add(selectButton);

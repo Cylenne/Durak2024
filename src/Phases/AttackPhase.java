@@ -108,7 +108,13 @@ public class AttackPhase {
         }
     }
 
-    private void round(AtomicInteger roundCounter, Player attacker, Player defender, Set<Card> initialAttackingCards, List<Player> activePlayersInRound, AtomicBoolean isGameOngoing) {
+    private void round(
+            AtomicInteger roundCounter,
+            Player attacker,
+            Player defender,
+            Set<Card> initialAttackingCards,
+            List<Player> activePlayersInRound,
+            AtomicBoolean isGameOngoing) {
 
         Set<Card> allDefendingCards = new HashSet<>();
         Set<Card> allAttackingCards = new HashSet<>(initialAttackingCards);
@@ -151,23 +157,33 @@ public class AttackPhase {
         roundEndCheck(isGameOngoing);
     }
 
-    private void addAdditionalAttackingCards(Player attacker, Player defender, Set<Card> initialAttackingCards, AtomicInteger subAttackCounter, List<Card> attackingCardsPerLoop) {
+    private void addAdditionalAttackingCards(
+            Player attacker,
+            Player defender,
+            Set<Card> initialAttackingCards,
+            AtomicInteger subAttackCounter,
+            List<Card> attackingCardsPerLoop) {
 
         if (subAttackCounter.get() == 1) {
             attackingCardsPerLoop.addAll(initialAttackingCards);
             for (Player player : players) {
-                    if (!player.equals(defender)) { // additional cards can only be added as long as defender has enough cards
-                        attackingCardsPerLoop.addAll(player.addAdditionalAttackingCards(
-                                initialAttackingCards,
-                                PlayerManager.isDefenderRightBeforeAdditionalAttacker(players, defender, attacker),
-                                defender,
-                                attackingCardsPerLoop));
-                    }
+                if (!player.equals(defender) && !player.equals(attacker)) {
+                    attackingCardsPerLoop.addAll(player.addAdditionalAttackingCards(
+                            initialAttackingCards,
+                            PlayerManager.isDefenderRightBeforeAdditionalAttacker(players, defender, attacker),
+                            defender,
+                            attackingCardsPerLoop));
+                }
             }
         }
     }
 
-    private void addDefendingCards(Player defender, List<Card> attackingCardsPerLoop, Set<Card> defendingCardsPerLoop, Set<Card> allDefendingCards, AtomicBoolean roundOn) {
+    private void addDefendingCards(
+            Player defender,
+            List<Card> attackingCardsPerLoop,
+            Set<Card> defendingCardsPerLoop,
+            Set<Card> allDefendingCards,
+            AtomicBoolean roundOn) {
         RoundResult defenseResult;
         defenseResult = defender.defenseState(attackingCardsPerLoop);
 
@@ -183,29 +199,34 @@ public class AttackPhase {
         }
     }
 
-    public void checkForAdditionalAttack(Set<Card> allAttackingCards, List<Card> attackingCardsPerLoop, AtomicInteger subAttackCounter, Player defender, Set<Card> defendingCardsPerLoop, Player attacker) {
+    public void checkForAdditionalAttack(
+            Set<Card> allAttackingCards,
+            List<Card> attackingCardsPerLoop,
+            AtomicInteger subAttackCounter,
+            Player defender,
+            Set<Card> defendingCardsPerLoop,
+            Player attacker) {
         allAttackingCards.addAll(attackingCardsPerLoop);
         attackingCardsPerLoop.clear();
         subAttackCounter.incrementAndGet();
 
         for (Player player : players) {
             if (!player.equals(defender)) {
-                if (player instanceof ComputerPlayer) {
-//                    System.out.println("POTENTIAL ADDITIONAL ATTACKER: " + player.getName());
-                    attackingCardsPerLoop.addAll(player.addAdditionalAttackingCards(
-                            defendingCardsPerLoop,
-                            PlayerManager.isDefenderRightBeforeAdditionalAttacker(players, defender, attacker),
-                            defender,
-                            attackingCardsPerLoop));
-                } else {
-                    // add human player code
-                }
+//              System.out.println("POTENTIAL ADDITIONAL ATTACKER: " + player.getName());
+                attackingCardsPerLoop.addAll(player.addAdditionalAttackingCards(
+                        defendingCardsPerLoop,
+                        PlayerManager.isDefenderRightBeforeAdditionalAttacker(players, defender, attacker),
+                        defender,
+                        attackingCardsPerLoop));
             }
         }
 
     }
 
-    public void roundEndMessage(Player defender, Set<Card> allDefendingCards, Set<Card> allAttackingCards) {
+    public void roundEndMessage(
+            Player defender,
+            Set<Card> allDefendingCards,
+            Set<Card> allAttackingCards) {
         if (currentRoundDefended) {
             defender.getHand().removeAll(allDefendingCards);
             gameMessage = (defender.getName() + " has successfully countered the attack");

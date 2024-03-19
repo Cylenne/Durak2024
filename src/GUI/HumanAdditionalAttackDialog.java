@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class HumanAdditionalAttackDialog {
 
@@ -59,7 +60,8 @@ public class HumanAdditionalAttackDialog {
             public void actionPerformed(ActionEvent e) {
                 JToggleButton selectedButton = (JToggleButton) e.getSource();
                 if (selectedButton.isSelected()) {
-                    boolean sameRank = attackingCards.stream().findFirst().get().getRank() == additionalAttackingCard.getRank();
+                    Set<Integer> attackingCardRanks = attackingCards.stream().map(Card::getRank).collect(Collectors.toSet());
+                    boolean sameRank = attackingCardRanks.contains(additionalAttackingCard.getRank());
                     if (sameRank) {
                         selectedCards.add(additionalAttackingCard);
                         selectedButton.setBorder(BorderFactory.createLineBorder(Color.BLACK, 3, true));

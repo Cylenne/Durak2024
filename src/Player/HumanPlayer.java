@@ -8,6 +8,7 @@ import Phases.AttackPhase;
 import Phases.StartPhase;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class HumanPlayer extends Player {
 
@@ -24,17 +25,27 @@ public class HumanPlayer extends Player {
     }
 
     @Override
-    public Set<Card> addAdditionalAttackingCards(Set<Card> attackingCards,
+    public Set<Card> addAdditionalAttackingCards(Set<Card> cards,
                                                  Boolean isDefenderRightBeforeAdditionalAttacker,
                                                  Player defender,
                                                  List<Card> attackingCardsPerLoop) {
 
-        boolean rankMatch = attackingCards.stream().anyMatch(additionalAttackCard -> additionalAttackCard.getRank() == attackingCards.stream().findFirst().get().getRank());
+        Set<Integer> cardRanks = cards.stream().map(Card::getRank).collect(Collectors.toSet()); // set of the ranks of all cards in cards
+        boolean rankMatch = this.getHand().stream().map(Card::getRank).anyMatch(cardRanks::contains); // checking if any ranks match in additional attacker's hand
+
         Set<Card> selectedCards = Collections.emptySet();
 
         if (rankMatch) {
             HumanAdditionalAttackDialog humanAdditionalAttackDialog = new HumanAdditionalAttackDialog();
-            selectedCards =humanAdditionalAttackDialog.execute(this, attackingCards, defender);
+            selectedCards = humanAdditionalAttackDialog.execute(this, cards, defender);
+            this.getHand().removeAll(selectedCards);
+
+            String gameMessage = this.getName() + " is also attacking with " + setToString(selectedCards);
+            AttackPhase.getAttackScreen().updateAttackPhaseMessage(gameMessage);
+            System.out.println(gameMessage);
+            AttackPhase.getAttackScreen().updateAttackingCardsPanel(selectedCards);
+
+
         }
         return selectedCards;
     }
@@ -116,6 +127,19 @@ public class HumanPlayer extends Player {
         }
 
         return false;
+    }
+
+    public static <T> StringBuilder setToString(Set<T> set) { // this also in AttackPhase, maybe move it to a Utils class?
+        StringBuilder stringBuilder = new StringBuilder();
+        int index = 0;
+        for (T element : set) {
+            stringBuilder.append(element);
+            if (index < set.size() - 1) {
+                stringBuilder.append(", ");
+            }
+            index++;
+        }
+        return stringBuilder;
     }
 
 }
