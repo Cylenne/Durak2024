@@ -52,6 +52,7 @@ public class HumanPlayer extends Player {
 
     @Override
     public RoundResult defenseState(List<Card> attackingCards) {
+
         RoundResult roundResult;
 
         if (preliminaryDefenseCheck(attackingCards).isRoundDefended()) { // if defense is possible, humanPlayer may select defendingCards manually
@@ -85,6 +86,7 @@ public class HumanPlayer extends Player {
         } else {
             roundResult = new RoundResult(false, Collections.emptySet());
         }
+
         return roundResult;
     }
 
