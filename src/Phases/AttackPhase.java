@@ -156,16 +156,13 @@ public class AttackPhase {
         if (subAttackCounter.get() == 1) {
             attackingCardsPerLoop.addAll(initialAttackingCards);
             for (Player player : players) {
-                if (player instanceof ComputerPlayer) {
                     if (!player.equals(defender)) { // additional cards can only be added as long as defender has enough cards
                         attackingCardsPerLoop.addAll(player.addAdditionalAttackingCards(
                                 initialAttackingCards,
                                 PlayerManager.isDefenderRightBeforeAdditionalAttacker(players, defender, attacker),
-                                defender, attackingCardsPerLoop));
+                                defender,
+                                attackingCardsPerLoop));
                     }
-                } else {
-                    // add human player code
-                }
             }
         }
     }

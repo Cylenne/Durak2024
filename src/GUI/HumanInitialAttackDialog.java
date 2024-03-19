@@ -13,7 +13,7 @@ public class HumanInitialAttackDialog {
     private boolean selectButtonAdded = false;
     private JButton selectButton;
     private Map<JToggleButton, Card> buttonToCardMap = new HashMap<>();
-    private JDialog dialog = new JDialog((Frame) null, "Select Attacking Cards", true); // true for modal;
+    private JDialog dialog = new JDialog((Frame) null, "Select attacking cards", true); // true for modal;
     private DialogUtils dialogUtils;
     private JPanel dialogPanel = new JPanel();
     private JPanel humanCardsPanel = new JPanel();;

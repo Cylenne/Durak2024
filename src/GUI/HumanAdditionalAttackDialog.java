@@ -11,36 +11,39 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class HumanDefenseDialog {
+public class HumanAdditionalAttackDialog {
+
     private JPanel humanCardsPanel = new JPanel();
     private JPanel dialogPanel = new JPanel();
-    private JDialog dialog = new JDialog((Frame) null, "Select defending cards", true);
+    private JDialog dialog = new JDialog((Frame) null, "Select additional attacking cards", true);
     private JButton selectButton;
     private boolean selectButtonAdded = false;
     private Set<Card> selectedCards = new HashSet<>();
     private DialogUtils dialogUtils;
 
-    public Set<Card> execute(Player defender, List<Card> attackingCards) {
-        initializeHumanCardsPanel(defender, attackingCards);
-        initializeSelectButton(attackingCards);
+    public Set<Card> execute(Player additionalAttacker, Set<Card> attackingCards, Player defender) {
 
-        dialogUtils = new DialogUtils(dialog, humanCardsPanel, selectButton);
-        dialogUtils.createAndShowDialog();
+            initializeHumanCardsPanel(additionalAttacker, attackingCards);
+            initializeSelectButton(attackingCards, defender);
 
-        return selectedCards;
+            dialogUtils = new DialogUtils(dialog, humanCardsPanel, selectButton);
+            dialogUtils.createAndShowDialog();
+
+            return selectedCards;
+
     }
 
-    private void initializeHumanCardsPanel(Player defender, List<Card> attackingCards) {
+    private void initializeHumanCardsPanel(Player additionalAttacker, Set<Card> attackingCards) {
         dialogPanel.add(humanCardsPanel);
         humanCardsPanel.setLayout(new FlowLayout());
 
-        for (Card card : defender.getHand()) {
+        for (Card card : additionalAttacker.getHand()) {
             JToggleButton cardButton = createCardButton(card, attackingCards);
             humanCardsPanel.add(cardButton);
         }
     }
 
-    private JToggleButton createCardButton(Card card, List<Card> attackingCards) {
+    private JToggleButton createCardButton(Card card, Set<Card> attackingCards) { // same code as in HumanDefenseDialog -> reuse that one,or put it in util?
         JToggleButton cardButton = new JToggleButton(card.toImageIcon());
         cardButton.setPreferredSize(new Dimension(84, 104));
         cardButton.setBorder(BorderFactory.createEmptyBorder());
@@ -50,42 +53,39 @@ public class HumanDefenseDialog {
         return cardButton;
     }
 
-    private ActionListener createCardButtonActionListener(Card defendingCard, List<Card> attackingCards) {
+    private ActionListener createCardButtonActionListener(Card additionalAttackingCard, Set<Card> attackingCards) {
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JToggleButton selectedButton = (JToggleButton) e.getSource();
                 if (selectedButton.isSelected()) {
-                    // Check if the defending card can beat any of the attacking cards
-                    boolean canBeatAny = attackingCards.stream().anyMatch(attackingCard -> defendingCard.canBeat(attackingCard));
-                    if (canBeatAny) {
-                        selectedCards.add(defendingCard);
+                    boolean sameRank = attackingCards.stream().findFirst().get().getRank() == additionalAttackingCard.getRank();
+                    if (sameRank) {
+                        selectedCards.add(additionalAttackingCard);
                         selectedButton.setBorder(BorderFactory.createLineBorder(Color.BLACK, 3, true));
-                        dialog.setTitle("Select defending cards");
+                        dialog.setTitle("Select additional attacking cards");
                     } else {
-                        // If the defending card cannot beat any attacking card, prevent selection
                         selectedButton.setSelected(false);
-                        dialog.setTitle("This card cannot beat any of the attacking cards!");
+                        dialog.setTitle("You can only choose cards with the same rank!");
                     }
                 } else {
-                    selectedCards.remove(defendingCard);
+                    selectedCards.remove(additionalAttackingCard);
                     selectedButton.setBorder(BorderFactory.createEmptyBorder());
                 }
             }
         };
     }
 
-    private void initializeSelectButton(List<Card> attackingCards) {
+    private void initializeSelectButton(Set<Card> attackingCards, Player defender) {
         selectButton = new JButton("Select Cards");
         selectButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                boolean isValidSelection = (attackingCards.size() >= selectedCards.size()); // defender has the option to attack with fewer cards, to preserve valuable trumps for later
+                boolean isValidSelection = (attackingCards.size() + selectedCards.size() <= defender.getHand().size());
                 if (!isValidSelection) {
-                    dialog.setTitle("You need to select at most as many defending cards as there are attacking cards!");
-                    dialog.repaint();
+                    dialog.setTitle("The total number of attacking cards can't exceed the number of cards in the defender's hand! Please choose less cards.");
                 } else {
-                    dialog.setTitle("Select defending cards");
+                    dialog.setTitle("Select additional attacking cards");
                     dialog.dispose();
                 }
             }
@@ -93,4 +93,6 @@ public class HumanDefenseDialog {
         dialogPanel.add(selectButton);
         selectButtonAdded = true;
     }
+
+
 }
