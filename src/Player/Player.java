@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class Player {
     private String name;
@@ -29,7 +30,8 @@ public abstract class Player {
     public abstract Set<Card> addAdditionalAttackingCards(Set<Card> attackingCards,
                                                           Boolean isDefenderRightBeforeAdditionalAttacker,
                                                           Player currentDefender,
-                                                          List<Card> attackingCardsPerLoop);
+                                                          List<Card> attackingCardsPerLoop,
+                                                          AtomicInteger subAttackCounter);
 
     public abstract RoundResult defenseState(List<Card> attackingCards);
 

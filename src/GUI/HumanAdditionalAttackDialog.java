@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class HumanAdditionalAttackDialog {
@@ -22,10 +23,10 @@ public class HumanAdditionalAttackDialog {
     private Set<Card> selectedCards = new HashSet<>();
     private DialogUtils dialogUtils;
 
-    public Set<Card> execute(Player additionalAttacker, Set<Card> attackingCards, Player defender) {
+    public Set<Card> execute(Player additionalAttacker, Set<Card> attackingCards, Player defender, AtomicInteger subAttackCounter) {
 
             initializeHumanCardsPanel(additionalAttacker, attackingCards);
-            initializeSelectButton(attackingCards, defender);
+            initializeSelectButton(attackingCards, defender, subAttackCounter);
 
             dialogUtils = new DialogUtils(dialog, humanCardsPanel, selectButton);
             dialogUtils.createAndShowDialog();
@@ -78,12 +79,18 @@ public class HumanAdditionalAttackDialog {
         };
     }
 
-    private void initializeSelectButton(Set<Card> attackingCards, Player defender) {
+    private void initializeSelectButton(Set<Card> attackingCards, Player defender, AtomicInteger subAttackCounter) {
         selectButton = new JButton("Select Cards");
         selectButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                boolean isValidSelection = (attackingCards.size() + selectedCards.size() <= defender.getHand().size()); // this is only valid if it's an initial attack, otherwise no need to add attackingCards.size()!!!!
+                boolean isValidSelection;
+                if (subAttackCounter.get() == 1) { // if initial attack, initial attacking cards have to be added
+                    isValidSelection = (attackingCards.size() + selectedCards.size() <= defender.getHand().size());
+                } else { // all subsequent additional attacks
+                    isValidSelection = selectedCards.size() <= defender.getHand().size();
+                }
+
                 if (!isValidSelection) {
                     dialog.setTitle("The total number of attacking cards can't exceed the number of cards in the defender's hand! Please choose less cards.");
                 } else {

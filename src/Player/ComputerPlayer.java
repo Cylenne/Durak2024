@@ -5,6 +5,7 @@ import Phases.AttackPhase;
 import Phases.StartPhase;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ComputerPlayer extends Player {
 
@@ -56,8 +57,8 @@ public class ComputerPlayer extends Player {
             Set<Card> cards,
             Boolean isDefenderRightBeforeAdditionalAttacker,
             Player currentDefender,
-            List<Card> attackingCardsPerLoop
-    ) {
+            List<Card> attackingCardsPerLoop,
+            AtomicInteger subAttackCounter) {
 
         List<Card> additionalAttackersHand = this.getHand();
         Set<Card> additionalAttackingCardsPerPlayer = new HashSet<>();
@@ -134,11 +135,11 @@ public class ComputerPlayer extends Player {
             if (!isOneOfStrongestCards(defendersCard)) {
                 Card.Suit trumpSuit = StartPhase.getTrumpSuit();
                 if ((attackingCard.getSuit().equals(trumpSuit) && defendersCard.getSuit().equals(trumpSuit))
-                                && defendersCard.getRank() > attackingCard.getRank() // if both trump & defender's rank's larger
-                                || (!attackingCard.getSuit().equals(trumpSuit) && defendersCard.getSuit().equals(attackingCard.getSuit())
-                                && defendersCard.getRank() > attackingCard.getRank()) // attacking card is non-trump & same suit -> first check if non-trump can beat it
-                                || (!attackingCard.getSuit().equals(trumpSuit) &&
-                                defendersCard.getSuit().equals(trumpSuit))) // attacking card is non-trump -> any trump beats it
+                        && defendersCard.getRank() > attackingCard.getRank() // if both trump & defender's rank's larger
+                        || (!attackingCard.getSuit().equals(trumpSuit) && defendersCard.getSuit().equals(attackingCard.getSuit())
+                        && defendersCard.getRank() > attackingCard.getRank()) // attacking card is non-trump & same suit -> first check if non-trump can beat it
+                        || (!attackingCard.getSuit().equals(trumpSuit) &&
+                        defendersCard.getSuit().equals(trumpSuit))) // attacking card is non-trump -> any trump beats it
                 {
                     canBeatCard = true;
                     defendersHand.remove(defendersCard);

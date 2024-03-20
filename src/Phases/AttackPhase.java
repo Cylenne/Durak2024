@@ -150,8 +150,6 @@ public class AttackPhase {
             allAttackingCards.addAll(attackingCardsPerLoop);
         }
 
-//        roundEndMessage(defender, allDefendingCards, allAttackingCards);
-
         roundCounter.incrementAndGet();
         DeckManager.drawMissingCards(activePlayersInRound, deck, players);
         attackScreen.getHumanPlayerPanelUpdater().updateHumanPanelAfterRedraw();
@@ -173,7 +171,7 @@ public class AttackPhase {
                             initialAttackingCards,
                             PlayerManager.isDefenderRightBeforeAdditionalAttacker(players, defender, attacker),
                             defender,
-                            attackingCardsPerLoop));
+                            attackingCardsPerLoop, subAttackCounter));
                 }
             }
         }
@@ -213,12 +211,12 @@ public class AttackPhase {
 
         for (Player player : players) {
             if (!player.equals(defender)) {
-//              System.out.println("POTENTIAL ADDITIONAL ATTACKER: " + player.getName());
                 attackingCardsPerLoop.addAll(player.addAdditionalAttackingCards(
                         defendingCardsPerLoop,
                         PlayerManager.isDefenderRightBeforeAdditionalAttacker(players, defender, attacker),
                         defender,
-                        attackingCardsPerLoop));
+                        attackingCardsPerLoop,
+                        subAttackCounter));
             }
         }
 

@@ -8,6 +8,7 @@ import Phases.AttackPhase;
 import Phases.StartPhase;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class HumanPlayer extends Player {
@@ -28,7 +29,8 @@ public class HumanPlayer extends Player {
     public Set<Card> addAdditionalAttackingCards(Set<Card> cards,
                                                  Boolean isDefenderRightBeforeAdditionalAttacker,
                                                  Player defender,
-                                                 List<Card> attackingCardsPerLoop) {
+                                                 List<Card> attackingCardsPerLoop,
+                                                 AtomicInteger subAttackCounter) {
 
         Set<Integer> cardRanks = cards.stream().map(Card::getRank).collect(Collectors.toSet()); // set of the ranks of all cards in cards
         boolean rankMatch = this.getHand().stream().map(Card::getRank).anyMatch(cardRanks::contains); // checking if any ranks match in additional attacker's hand
@@ -37,14 +39,15 @@ public class HumanPlayer extends Player {
 
         if (rankMatch) {
             HumanAdditionalAttackDialog humanAdditionalAttackDialog = new HumanAdditionalAttackDialog();
-            selectedCards = humanAdditionalAttackDialog.execute(this, cards, defender);
+            selectedCards = humanAdditionalAttackDialog.execute(this, cards, defender, subAttackCounter);
             this.getHand().removeAll(selectedCards);
 
-            String gameMessage = this.getName() + " is also attacking with " + setToString(selectedCards);
-            AttackPhase.getAttackScreen().updateAttackPhaseMessage(gameMessage);
-            System.out.println(gameMessage);
-            AttackPhase.getAttackScreen().updateAttackingCardsPanel(selectedCards);
-
+            if (!selectedCards.isEmpty()) {
+                String gameMessage = this.getName() + " is also attacking with " + setToString(selectedCards);
+                AttackPhase.getAttackScreen().updateAttackPhaseMessage(gameMessage);
+                System.out.println(gameMessage);
+                AttackPhase.getAttackScreen().updateAttackingCardsPanel(selectedCards);
+            }
 
         }
         return selectedCards;
