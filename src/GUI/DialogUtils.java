@@ -23,8 +23,7 @@ public class DialogUtils {
         Image iconImage = frameIcon.getImage();
         dialog.setIconImage(iconImage);
 
-//            dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE); // prevent the player from not selecting any cards by closing the dialog box
-        // UNCOMMENT THE ABOVE WHEN THE APP IS ALMOST READY
+        dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE); // prevent the player from not selecting any cards by closing the dialog box
 
         JPanel centerPanel = new JPanel(new GridBagLayout());
         JLabel message = new JLabel("Your cards:");
@@ -34,8 +33,10 @@ public class DialogUtils {
         dialog.getContentPane().add(centerPanel, BorderLayout.CENTER);
 
         dialog.pack(); // sets the size of the dialog to be just large enough to accommodate all of its components
+        dialog.setMinimumSize(new Dimension(600, 200));
         dialog.setLocationRelativeTo(null); // center the dialog on the screen
         dialog.setVisible(true);
+
     }
 
     // used for centering

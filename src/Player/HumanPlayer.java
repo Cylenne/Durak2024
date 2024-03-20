@@ -37,7 +37,7 @@ public class HumanPlayer extends Player {
 
         Set<Card> selectedCards = Collections.emptySet();
 
-        if (rankMatch) {
+        if (rankMatch && !defender.getHand().isEmpty()) {
             HumanAdditionalAttackDialog humanAdditionalAttackDialog = new HumanAdditionalAttackDialog();
             selectedCards = humanAdditionalAttackDialog.execute(this, cards, defender, subAttackCounter);
             this.getHand().removeAll(selectedCards);
@@ -66,14 +66,8 @@ public class HumanPlayer extends Player {
             if (selectedDefendingCards.size() == attackingCards.size()) {
                 roundResult = new RoundResult(true, selectedDefendingCards);
 
-                StringBuilder gameMessage = new StringBuilder();
-                for (Card attackingCard : attackingCards) {
-                    for (Card defendingCard : roundResult.getDefendingCards())
-                        if (defendingCard.canBeat(attackingCard)) {
-                            gameMessage.append("Attacking card ").append(attackingCard).append(" was countered by ").append(defendingCard);
-                        }
-                }
-                AttackPhase.getAttackScreen().updateAttackPhaseMessage(gameMessage.toString());
+                String gameMessage = "Attacking cards " + listToString(attackingCards) + " have been countered by " + setToString(roundResult.getDefendingCards());
+                AttackPhase.getAttackScreen().updateAttackPhaseMessage(gameMessage);
                 AttackPhase.getAttackScreen().updateComputerPlayersPanel();
                 System.out.println(gameMessage);
                 for (Card defendingCard : roundResult.getDefendingCards()) {
@@ -144,6 +138,17 @@ public class HumanPlayer extends Player {
                 stringBuilder.append(", ");
             }
             index++;
+        }
+        return stringBuilder;
+    }
+
+    public <T> StringBuilder listToString(List<T> list) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (T element : list) {
+            stringBuilder.append(element);
+            if (list.indexOf(element) < list.size() - 1) {
+                stringBuilder.append(", ");
+            }
         }
         return stringBuilder;
     }

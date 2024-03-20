@@ -13,11 +13,11 @@ import java.util.List;
 
 // SHOULD I WRITE THIS CLASS AS 3 IMPLEMENTING A COMMON DIALOG INTERFACE?
 
-public class HumanPlayerPanelUpdater  {
+public class HumanPlayerPanelUpdater {
     private JPanel humanCardsPanel;
     private JPanel humanPlayerPanel;
 
-    public HumanPlayerPanelUpdater (JPanel humanPlayerPanel, JPanel humanCardsPanel) {
+    public HumanPlayerPanelUpdater(JPanel humanPlayerPanel, JPanel humanCardsPanel) {
         this.humanPlayerPanel = humanPlayerPanel;
         this.humanCardsPanel = humanCardsPanel;
     }
@@ -37,13 +37,6 @@ public class HumanPlayerPanelUpdater  {
 
     public void updateHumanPanelWithRemainingCards() { // rebuilding humanPlayerPanel after dialog
         humanPlayerPanel.removeAll();
-        humanPlayerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        humanPlayerPanel.setLayout(new BoxLayout(humanPlayerPanel, BoxLayout.Y_AXIS));
-
-        JLabel label = new JLabel("Your cards:");
-        humanPlayerPanel.add(label);
-
-        humanCardsPanel = new JPanel(new FlowLayout());
 
         List<Card> humanPlayerHand = Collections.emptyList(); // this part could be shortened with a parameter?
         for (Player player : StartPhase.getPlayers())
@@ -51,11 +44,22 @@ public class HumanPlayerPanelUpdater  {
                 humanPlayerHand = player.getHand();
             }
 
-        for (Card card : humanPlayerHand) {
-            humanCardsPanel.add(new JLabel(card.toImageIcon()));
-        }
+        if (!humanPlayerHand.isEmpty()) {
 
-        humanPlayerPanel.add(humanCardsPanel);
+            humanPlayerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+            humanPlayerPanel.setLayout(new BoxLayout(humanPlayerPanel, BoxLayout.Y_AXIS));
+
+            JLabel label = new JLabel("Your cards:");
+            humanPlayerPanel.add(label);
+
+            humanCardsPanel = new JPanel(new FlowLayout());
+
+            for (Card card : humanPlayerHand) {
+                humanCardsPanel.add(new JLabel(card.toImageIcon()));
+            }
+
+            humanPlayerPanel.add(humanCardsPanel);
+        }
 
         humanPlayerPanel.revalidate();
         humanPlayerPanel.repaint();

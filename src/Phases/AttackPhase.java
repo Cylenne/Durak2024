@@ -264,17 +264,6 @@ public class AttackPhase {
         attackScreen.updateComputerPlayersPanel();
     }
 
-    public <T> StringBuilder listToString(List<T> list) {
-        StringBuilder stringBuilder = new StringBuilder();
-        for (T element : list) {
-            stringBuilder.append(element);
-            if (list.indexOf(element) < list.size() - 1) {
-                stringBuilder.append(", ");
-            }
-        }
-        return stringBuilder;
-    }
-
     public static <T> StringBuilder setToString(Set<T> set) {
         StringBuilder stringBuilder = new StringBuilder();
         int index = 0;
