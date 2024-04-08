@@ -28,7 +28,7 @@ public class DeckManager {
         }
     }
 
-    public static void drawMissingCards(List<Player> activePlayersInRound, Deck deck, List<Player> players) {
+    public static void drawMissingCards(List<Player> activePlayersInRound, Deck deck) {
         // activePlayers list was created so that first attacker, then additional attackers, then defender redraws
         for (Player player : activePlayersInRound) {
             int missingCards = 6 - player.getHand().size();

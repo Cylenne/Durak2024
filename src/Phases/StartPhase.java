@@ -25,8 +25,8 @@ public class StartPhase {
         CountDownLatch latch = new CountDownLatch(1); // we are waiting for 1 event
 
         executor.execute(() -> ConfigPhase.ConfigPhaseBuilder.newInstance() // event we are waiting for = ConfigPhase creation
-                .setPlayers(players -> {
-                    configPhase = players;
+                .setPlayers(configPhase -> {
+                    StartPhase.configPhase = configPhase;
                     latch.countDown();
                 })
                 .setDeck()

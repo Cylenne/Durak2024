@@ -151,7 +151,7 @@ public class AttackPhase {
         }
 
         roundCounter.incrementAndGet();
-        DeckManager.drawMissingCards(activePlayersInRound, deck, players);
+        DeckManager.drawMissingCards(activePlayersInRound, deck);
         attackScreen.getHumanPlayerPanelUpdater().updateHumanPanelAfterRedraw();
         roundEndCheck(isGameOngoing);
     }

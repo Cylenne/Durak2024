@@ -37,26 +37,17 @@ public class ConfigPhase {
     }
 
     //Builder Class
-    public static class ConfigPhaseBuilder{
+    public static class ConfigPhaseBuilder {
         private List<Player> players;
         private Deck deck;
-
         private Card trump;
         private Card.Suit trumpSuit;
 
-        public static ConfigPhaseBuilder newInstance()
-        {
+        public static ConfigPhaseBuilder newInstance() {
             return new ConfigPhaseBuilder();
         }
 
-        private ConfigPhaseBuilder() {}
-
-
-        public ConfigPhaseBuilder(List<Player> players, Deck deck, Card trump, Card.Suit trumpSuit) {
-            this.players = players;
-            this.deck = deck;
-            this.trump = trump;
-            this.trumpSuit = trumpSuit;
+        private ConfigPhaseBuilder() {
         }
 
         public ConfigPhaseBuilder setPlayers(Consumer<ConfigPhase> callback) {
@@ -82,7 +73,7 @@ public class ConfigPhase {
             return this;
         }
 
-        public void build(){
+        public void build() {
         }
 
         // this is a callback method we'll call in main in order to ensure that only AFTER the user has selected the
@@ -91,7 +82,7 @@ public class ConfigPhase {
             void onPlayersReady(List<Player> allPlayers);
         }
 
-        void onPlayersReady(List<Player> players) {
+        public void onPlayersReady(List<Player> players) {
             this.players = players;// config comes here
         }
 
@@ -106,7 +97,6 @@ public class ConfigPhase {
 
             startingScreen.setupStartingScreen();
         }
-
     }
 }
 
