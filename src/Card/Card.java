@@ -10,10 +10,15 @@ import java.util.Objects;
 public class Card {
 
     public enum Suit {
-        CLUB, DIAMOND, HEART, SPADE;
+        CLUB(9827), DIAMOND(9830), HEART(9829), SPADE(9824);
+        final int imageReference;
 
-        public char getImage() {
-            return (new char[]{9827, 9830, 9829, 9824}[this.ordinal()]);
+        Suit(int imageReference) {
+            this.imageReference = imageReference;
+        }
+
+        public int getImage() {
+            return imageReference;
         }
     }
 
@@ -55,16 +60,8 @@ public static Comparator<Card> sortRankReversedSuit(Card.Suit trumpSuit) {
         return rank;
     }
 
-    public void setRank(int rank) {
-        this.rank = rank;
-    }
-
     public Suit getSuit() {
         return suit;
-    }
-
-    public void setSuit(Suit suit) {
-        this.suit = suit;
     }
 
     public ImageIcon toImageIcon() {
@@ -108,12 +105,23 @@ public static Comparator<Card> sortRankReversedSuit(Card.Suit trumpSuit) {
 
     public Boolean canBeat(Card attackingCard) {
         Card.Suit trumpSuit = StartPhase.getTrumpSuit();
-        // attacking card is non-trump -> any trump beats it
-        return (attackingCard.getSuit().equals(trumpSuit) && this.getSuit().equals(trumpSuit))
-                && this.getRank() > attackingCard.getRank() // if both trump & defender's rank's larger
-                || (!attackingCard.getSuit().equals(trumpSuit) && this.getSuit().equals(attackingCard.getSuit())
-                && this.getRank() > attackingCard.getRank()) // attacking card is non-trump & same suit -> first check if non-trump can beat it
-                || (!attackingCard.getSuit().equals(trumpSuit) &&
+        return ( bothTrumpAndDefendersRankLarger(attackingCard, trumpSuit)
+                || nonTrumpAttackingSameSuitAndDefendersRankLarger(attackingCard, trumpSuit)
+                || nonTrumpAttackingAndDefendingCardIsTrump(attackingCard, trumpSuit));
+    }
+
+    private boolean bothTrumpAndDefendersRankLarger(Card attackingCard, Card.Suit trumpSuit) {
+        return attackingCard.getSuit().equals(trumpSuit) && this.getSuit().equals(trumpSuit)
+                && this.getRank() > attackingCard.getRank();
+    }
+
+    private boolean nonTrumpAttackingSameSuitAndDefendersRankLarger(Card attackingCard, Card.Suit trumpSuit) { // first check if non-trump can beat it
+        return (!attackingCard.getSuit().equals(trumpSuit) && this.getSuit().equals(attackingCard.getSuit())
+                && this.getRank() > attackingCard.getRank());
+    }
+
+    private boolean nonTrumpAttackingAndDefendingCardIsTrump(Card attackingCard, Card.Suit trumpSuit){
+        return (!attackingCard.getSuit().equals(trumpSuit) &&
                 this.getSuit().equals(trumpSuit));
     }
 
