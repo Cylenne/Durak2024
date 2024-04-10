@@ -56,34 +56,57 @@ public class ComputerPlayer extends Player {
     public Set<Card> addAdditionalAttackingCards(
             Set<Card> cards,
             Boolean isDefenderRightBeforeAdditionalAttacker,
-            Player currentDefender,
-            List<Card> attackingCardsPerLoop,
+            Player defender,
+            List<Card> attackingCardsPerSubAttack,
             AtomicInteger subAttackCounter) {
 
         List<Card> additionalAttackersHand = this.getHand();
         Set<Card> additionalAttackingCardsPerPlayer = new HashSet<>();
 
+        for (Card additionalAttackersCard : additionalAttackersHand) {
+            if (cards.stream().anyMatch(card -> card.getRank() == additionalAttackersCard.getRank())) {
+                if (AttackPhase.isDeckEmpty() && (isDefenderRightBeforeAdditionalAttacker || areAllCardSame(additionalAttackersHand))) {
+                    if (attackingCardsPerSubAttack.size() <= defender.getHand().size()) {
+                        additionalAttackingCardsPerPlayer.add(additionalAttackersCard);
 
-        for (Card attackingCard : cards) {
-            for (Card additionalAttackersCard : additionalAttackersHand) {
-                if (attackingCard.getRank() == additionalAttackersCard.getRank()) {
-                    if (AttackPhase.isDeckEmpty()) { // in endgame
-                        if (isDefenderRightBeforeAdditionalAttacker || areAllCardSame(additionalAttackersHand)) {
-                            // gives out all cards (trump included) if they are all the same rank or if additionalAttacker wants to skip being attacked
-                            if (attackingCardsPerLoop.size() < currentDefender.getHand().size()) { // attacking cards have to be less or equal than defender's available card
-                                additionalAttackingCardsPerPlayer.add(additionalAttackersCard);
 
-                            }
-                        }
-                    } else { // not end game
-                        if (!additionalAttackersCard.getSuit().equals(StartPhase.getTrumpSuit()) &&
-                                (attackingCardsPerLoop.size() < currentDefender.getHand().size())) {
-                            additionalAttackingCardsPerPlayer.add(additionalAttackersCard);
-                        }
+                        System.out.println("ATTACKING CARDS PER LOOP: " + attackingCardsPerSubAttack.size() + ": " + attackingCardsPerSubAttack);
+                        System.out.println("DEFENDER'S HAND: " + defender.getHand().size());
                     }
+                } else if (!additionalAttackersCard.getSuit().equals(StartPhase.getTrumpSuit()) &&
+                        (attackingCardsPerSubAttack.size() < defender.getHand().size())) {
+                    additionalAttackingCardsPerPlayer.add(additionalAttackersCard);
+                    System.out.println("ATTACKING CARDS PER LOOP: " + attackingCardsPerSubAttack.size() + ": " + attackingCardsPerSubAttack);
+                    System.out.println("DEFENDER'S HAND: " + defender.getHand().size());
                 }
             }
         }
+
+
+//        for (Card card : cards) {
+//            for (Card additionalAttackersCard : additionalAttackersHand) {
+//                if (card.getRank() == additionalAttackersCard.getRank()) {
+//                    if (AttackPhase.isDeckEmpty()) { // in endgame
+//                        if (isDefenderRightBeforeAdditionalAttacker || areAllCardSame(additionalAttackersHand)) {
+//                            // gives out all cards (trump included) if they are all the same rank or if additionalAttacker wants to skip being attacked
+//                            if (attackingCardsPerSubAttack.size() <= defender.getHand().size()) { // attacking cards have to be less or equal than defender's available card
+//                                System.out.println("ATTACKING CARDS PER LOOP: " + attackingCardsPerSubAttack.size());
+//                                System.out.println("DEFENDER'S HAND: " + defender.getHand().size());
+//                                additionalAttackingCardsPerPlayer.add(additionalAttackersCard);
+//
+//                            }
+//                        }
+//                    } else { // not end game
+//                        if (!additionalAttackersCard.getSuit().equals(StartPhase.getTrumpSuit()) &&
+//                                (attackingCardsPerSubAttack.size() <= defender.getHand().size())) {
+//                            System.out.println("ATTACKING CARDS PER LOOP: " + attackingCardsPerSubAttack.size() + ": " + attackingCardsPerSubAttack);
+//                            System.out.println("DEFENDER'S HAND: " + defender.getHand().size());
+//                            additionalAttackingCardsPerPlayer.add(additionalAttackersCard);
+//                        }
+//                    }
+//                }
+//            }
+//        }
 
         if (!additionalAttackingCardsPerPlayer.isEmpty()) {
 

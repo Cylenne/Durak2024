@@ -22,6 +22,7 @@ public class HumanPlayer extends Player {
         HumanInitialAttackDialog humanInitialAttackDialog = new HumanInitialAttackDialog();
         Set<Card> selectedCards = humanInitialAttackDialog.execute(this, defender);
         this.getHand().removeAll(selectedCards);
+        AttackPhase.getAttackScreen().getHumanPlayerPanelUpdater().updateHumanPanelWithRemainingCards();
         return selectedCards;
     }
 
@@ -47,6 +48,7 @@ public class HumanPlayer extends Player {
                 AttackPhase.getAttackScreen().updateAttackPhaseMessage(gameMessage);
                 System.out.println(gameMessage);
                 AttackPhase.getAttackScreen().updateAttackingCardsPanel(selectedCards);
+                AttackPhase.getAttackScreen().getHumanPlayerPanelUpdater().updateHumanPanelWithRemainingCards();
             }
 
         }
@@ -75,6 +77,7 @@ public class HumanPlayer extends Player {
                 }
 
                 this.getHand().removeAll(roundResult.getDefendingCards());
+                AttackPhase.getAttackScreen().getHumanPlayerPanelUpdater().updateHumanPanelWithRemainingCards();
 
             } else { // if fewer cards are selected, the round is automatically lost
                 roundResult = new RoundResult(false, selectedDefendingCards);

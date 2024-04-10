@@ -25,6 +25,7 @@ public class AttackPhase {
     private Player defender = null;
     private String gameMessage;
     private Set<Card> initialAttackingCards = new HashSet<>();
+    private Set<Card> allAttackingCards;
 
     // getters
     public static boolean isDeckEmpty() {
@@ -72,7 +73,7 @@ public class AttackPhase {
         mainAttackersMove(attacker);
         addAdditionalAttackers(attacker, defender, activePlayersInRound);
 
-        round(roundCounter, attacker, defender, initialAttackingCards, activePlayersInRound, isGameOngoing);
+        subAttack(roundCounter, attacker, defender, initialAttackingCards, activePlayersInRound, isGameOngoing);
 
         attackScreen.updateAttackPhaseMessage(gameMessage);
 
@@ -93,7 +94,6 @@ public class AttackPhase {
     private void mainAttackersMove(Player attacker) {
 
         initialAttackingCards = attacker.addInitialAttackingCards(defender);
-        attackScreen.getHumanPlayerPanelUpdater().updateHumanPanelWithRemainingCards();
         gameMessage = "Initial attacking cards: " + setToString(initialAttackingCards);
         attackScreen.updateAttackPhaseMessage(gameMessage);
         System.out.println(gameMessage);
@@ -108,7 +108,7 @@ public class AttackPhase {
         }
     }
 
-    private void round(
+    private void subAttack(
             AtomicInteger roundCounter,
             Player attacker,
             Player defender,
@@ -117,7 +117,7 @@ public class AttackPhase {
             AtomicBoolean isGameOngoing) {
 
         Set<Card> allDefendingCards = new HashSet<>();
-        Set<Card> allAttackingCards = new HashSet<>(initialAttackingCards);
+        allAttackingCards = new HashSet<>(initialAttackingCards);
 
         AtomicInteger subAttackCounter = new AtomicInteger();
         subAttackCounter.set(1);
@@ -127,19 +127,21 @@ public class AttackPhase {
 
         while (roundOn.get()) {
 
+            int defendersStartingHandSize = defender.getHand().size();
+
             addAdditionalAttackingCards(attacker, defender, initialAttackingCards, subAttackCounter, attackingCardsPerLoop);
 
             Set<Card> defendingCardsPerLoop = new HashSet<>();
 
             addDefendingCards(defender, attackingCardsPerLoop, defendingCardsPerLoop, allDefendingCards, roundOn);
 
-            checkForAdditionalAttack(allAttackingCards, attackingCardsPerLoop, subAttackCounter, defender, defendingCardsPerLoop, attacker);
+            checkForAdditionalAttack(attackingCardsPerLoop, subAttackCounter, defender, defendingCardsPerLoop, attacker);
 
             if (attackingCardsPerLoop.isEmpty()) {
                 roundOn.set(false);
                 gameMessage = ("No additional attacking cards, the attack has finished");
                 attackScreen.updateAttackPhaseMessage(gameMessage);
-                roundEndMessage(defender, allDefendingCards, allAttackingCards);
+                roundEndMessage(defender, allDefendingCards);
                 if (!deck.getDeck().isEmpty()) {
                     gameMessage = ("Players are redrawing cards");
                     attackScreen.updateAttackPhaseMessage(gameMessage);
@@ -179,15 +181,15 @@ public class AttackPhase {
 
     private void addDefendingCards(
             Player defender,
-            List<Card> attackingCardsPerLoop,
-            Set<Card> defendingCardsPerLoop,
+            List<Card> attackingCardsPerSubAttack,
+            Set<Card> defendingCardsPerSubAttack,
             Set<Card> allDefendingCards,
             AtomicBoolean roundOn) {
         RoundResult defenseResult;
-        defenseResult = defender.defenseState(attackingCardsPerLoop);
+        defenseResult = defender.defenseState(attackingCardsPerSubAttack);
 
-        defendingCardsPerLoop.addAll(defenseResult.getDefendingCards());
-        allDefendingCards.addAll(defendingCardsPerLoop);
+        defendingCardsPerSubAttack.addAll(defenseResult.getDefendingCards());
+        allDefendingCards.addAll(defendingCardsPerSubAttack);
         currentRoundDefended = defenseResult.isRoundDefended();
         gameMessage = (currentRoundDefended ? "Successful defense so far" : "Unsuccessful defense");
         attackScreen.updateAttackPhaseMessage(gameMessage);
@@ -199,23 +201,22 @@ public class AttackPhase {
     }
 
     public void checkForAdditionalAttack(
-            Set<Card> allAttackingCards,
-            List<Card> attackingCardsPerLoop,
+            List<Card> attackingCardsPerSubAttack,
             AtomicInteger subAttackCounter,
             Player defender,
             Set<Card> defendingCardsPerLoop,
             Player attacker) {
-        allAttackingCards.addAll(attackingCardsPerLoop);
-        attackingCardsPerLoop.clear();
+        allAttackingCards.addAll(attackingCardsPerSubAttack);
+        attackingCardsPerSubAttack.clear();
         subAttackCounter.incrementAndGet();
 
         for (Player player : players) {
             if (!player.equals(defender)) {
-                attackingCardsPerLoop.addAll(player.addAdditionalAttackingCards(
+                attackingCardsPerSubAttack.addAll(player.addAdditionalAttackingCards(
                         defendingCardsPerLoop,
                         PlayerManager.isDefenderRightBeforeAdditionalAttacker(players, defender, attacker),
                         defender,
-                        attackingCardsPerLoop,
+                        attackingCardsPerSubAttack,
                         subAttackCounter));
             }
         }
@@ -224,8 +225,7 @@ public class AttackPhase {
 
     public void roundEndMessage(
             Player defender,
-            Set<Card> allDefendingCards,
-            Set<Card> allAttackingCards) {
+            Set<Card> allDefendingCards) {
         if (currentRoundDefended) {
             defender.getHand().removeAll(allDefendingCards);
             gameMessage = (defender.getName() + " has successfully countered the attack");
@@ -256,7 +256,7 @@ public class AttackPhase {
             }
         }
 
-        if (players.size() <= 1) { // in case of very last attack being defended, players size can be 0
+        if (players.size() <= 1) { // if the very last attack is defended, players size can be 0
             isGameOngoing.set(false);
             attackScreen.closeAttackScreen();
         }
