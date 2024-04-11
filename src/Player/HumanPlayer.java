@@ -29,18 +29,17 @@ public class HumanPlayer extends Player {
     @Override
     public Set<Card> addAdditionalAttackingCards(Set<Card> cards,
                                                  Boolean isDefenderRightBeforeAdditionalAttacker,
-                                                 Player defender,
-                                                 List<Card> attackingCardsPerLoop,
-                                                 AtomicInteger subAttackCounter) {
+                                                 int defendersStartingHandSize,
+                                                 Set<Card> allAttackingCards) {
 
         Set<Integer> cardRanks = cards.stream().map(Card::getRank).collect(Collectors.toSet()); // set of the ranks of all cards in cards
         boolean rankMatch = this.getHand().stream().map(Card::getRank).anyMatch(cardRanks::contains); // checking if any ranks match in additional attacker's hand
 
         Set<Card> selectedCards = Collections.emptySet();
 
-        if (rankMatch && !defender.getHand().isEmpty()) {
+        if (rankMatch && (allAttackingCards.size() < defendersStartingHandSize)) {
             HumanAdditionalAttackDialog humanAdditionalAttackDialog = new HumanAdditionalAttackDialog();
-            selectedCards = humanAdditionalAttackDialog.execute(this, cards, defender, subAttackCounter);
+            selectedCards = humanAdditionalAttackDialog.execute(this, cards, defendersStartingHandSize, allAttackingCards);
             this.getHand().removeAll(selectedCards);
 
             if (!selectedCards.isEmpty()) {

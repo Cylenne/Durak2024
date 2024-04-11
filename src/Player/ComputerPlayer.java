@@ -56,9 +56,8 @@ public class ComputerPlayer extends Player {
     public Set<Card> addAdditionalAttackingCards(
             Set<Card> cards,
             Boolean isDefenderRightBeforeAdditionalAttacker,
-            Player defender,
-            List<Card> attackingCardsPerSubAttack,
-            AtomicInteger subAttackCounter) {
+            int defendersStartingHandSize,
+            Set<Card> allAttackingCards) {
 
         List<Card> additionalAttackersHand = this.getHand();
         Set<Card> additionalAttackingCardsPerPlayer = new HashSet<>();
@@ -66,47 +65,17 @@ public class ComputerPlayer extends Player {
         for (Card additionalAttackersCard : additionalAttackersHand) {
             if (cards.stream().anyMatch(card -> card.getRank() == additionalAttackersCard.getRank())) {
                 if (AttackPhase.isDeckEmpty() && (isDefenderRightBeforeAdditionalAttacker || areAllCardSame(additionalAttackersHand))) {
-                    if (attackingCardsPerSubAttack.size() <= defender.getHand().size()) {
+                    if (allAttackingCards.size() < defendersStartingHandSize) {
                         additionalAttackingCardsPerPlayer.add(additionalAttackersCard);
-
-
-                        System.out.println("ATTACKING CARDS PER LOOP: " + attackingCardsPerSubAttack.size() + ": " + attackingCardsPerSubAttack);
-                        System.out.println("DEFENDER'S HAND: " + defender.getHand().size());
+                        allAttackingCards.add(additionalAttackersCard);
                     }
                 } else if (!additionalAttackersCard.getSuit().equals(StartPhase.getTrumpSuit()) &&
-                        (attackingCardsPerSubAttack.size() < defender.getHand().size())) {
+                        (allAttackingCards.size() < defendersStartingHandSize)) {
                     additionalAttackingCardsPerPlayer.add(additionalAttackersCard);
-                    System.out.println("ATTACKING CARDS PER LOOP: " + attackingCardsPerSubAttack.size() + ": " + attackingCardsPerSubAttack);
-                    System.out.println("DEFENDER'S HAND: " + defender.getHand().size());
+                    allAttackingCards.add(additionalAttackersCard);
                 }
             }
         }
-
-
-//        for (Card card : cards) {
-//            for (Card additionalAttackersCard : additionalAttackersHand) {
-//                if (card.getRank() == additionalAttackersCard.getRank()) {
-//                    if (AttackPhase.isDeckEmpty()) { // in endgame
-//                        if (isDefenderRightBeforeAdditionalAttacker || areAllCardSame(additionalAttackersHand)) {
-//                            // gives out all cards (trump included) if they are all the same rank or if additionalAttacker wants to skip being attacked
-//                            if (attackingCardsPerSubAttack.size() <= defender.getHand().size()) { // attacking cards have to be less or equal than defender's available card
-//                                System.out.println("ATTACKING CARDS PER LOOP: " + attackingCardsPerSubAttack.size());
-//                                System.out.println("DEFENDER'S HAND: " + defender.getHand().size());
-//                                additionalAttackingCardsPerPlayer.add(additionalAttackersCard);
-//
-//                            }
-//                        }
-//                    } else { // not end game
-//                        if (!additionalAttackersCard.getSuit().equals(StartPhase.getTrumpSuit()) &&
-//                                (attackingCardsPerSubAttack.size() <= defender.getHand().size())) {
-//                            System.out.println("ATTACKING CARDS PER LOOP: " + attackingCardsPerSubAttack.size() + ": " + attackingCardsPerSubAttack);
-//                            System.out.println("DEFENDER'S HAND: " + defender.getHand().size());
-//                            additionalAttackingCardsPerPlayer.add(additionalAttackersCard);
-//                        }
-//                    }
-//                }
-//            }
-//        }
 
         if (!additionalAttackingCardsPerPlayer.isEmpty()) {
 
@@ -116,6 +85,10 @@ public class ComputerPlayer extends Player {
             AttackPhase.getAttackScreen().updateAttackingCardsPanel(additionalAttackingCardsPerPlayer);
 
         }
+
+        System.out.println("allAttackingCards: " + allAttackingCards.size() + ": " + allAttackingCards);
+        System.out.println("defendersStartingHandSize: " + defendersStartingHandSize);
+
         this.getHand().removeAll(additionalAttackingCardsPerPlayer);
         AttackPhase.getAttackScreen().updateComputerPlayersPanel();
 

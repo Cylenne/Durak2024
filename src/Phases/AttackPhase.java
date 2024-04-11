@@ -26,6 +26,7 @@ public class AttackPhase {
     private String gameMessage;
     private Set<Card> initialAttackingCards = new HashSet<>();
     private Set<Card> allAttackingCards;
+    private int defendersStartingHandSize;
 
     // getters
     public static boolean isDeckEmpty() {
@@ -70,6 +71,8 @@ public class AttackPhase {
 
         PlayerManager.sortEachPlayersHand(players, trumpSuit);
 
+        allAttackingCards = new HashSet<>();
+
         mainAttackersMove(attacker);
         addAdditionalAttackers(attacker, defender, activePlayersInRound);
 
@@ -94,6 +97,7 @@ public class AttackPhase {
     private void mainAttackersMove(Player attacker) {
 
         initialAttackingCards = attacker.addInitialAttackingCards(defender);
+        allAttackingCards.addAll(initialAttackingCards);
         gameMessage = "Initial attacking cards: " + setToString(initialAttackingCards);
         attackScreen.updateAttackPhaseMessage(gameMessage);
         System.out.println(gameMessage);
@@ -117,17 +121,15 @@ public class AttackPhase {
             AtomicBoolean isGameOngoing) {
 
         Set<Card> allDefendingCards = new HashSet<>();
-        allAttackingCards = new HashSet<>(initialAttackingCards);
-
         AtomicInteger subAttackCounter = new AtomicInteger();
         subAttackCounter.set(1);
         AtomicBoolean roundOn = new AtomicBoolean();
         roundOn.set(true);
         List<Card> attackingCardsPerLoop = new ArrayList<>();
 
-        while (roundOn.get()) {
+        defendersStartingHandSize = defender.getHand().size();
 
-            int defendersStartingHandSize = defender.getHand().size();
+        while (roundOn.get()) {
 
             addAdditionalAttackingCards(attacker, defender, initialAttackingCards, subAttackCounter, attackingCardsPerLoop);
 
@@ -139,6 +141,7 @@ public class AttackPhase {
 
             if (attackingCardsPerLoop.isEmpty()) {
                 roundOn.set(false);
+                System.out.println("ALL ATTACKING CARDS AFTER CLEARING " + allAttackingCards);
                 gameMessage = ("No additional attacking cards, the attack has finished");
                 attackScreen.updateAttackPhaseMessage(gameMessage);
                 roundEndMessage(defender, allDefendingCards);
@@ -149,7 +152,6 @@ public class AttackPhase {
                 }
             }
 
-            allAttackingCards.addAll(attackingCardsPerLoop);
         }
 
         roundCounter.incrementAndGet();
@@ -172,8 +174,8 @@ public class AttackPhase {
                     attackingCardsPerLoop.addAll(player.addAdditionalAttackingCards(
                             initialAttackingCards,
                             PlayerManager.isDefenderRightBeforeAdditionalAttacker(players, defender, attacker),
-                            defender,
-                            attackingCardsPerLoop, subAttackCounter));
+                            defendersStartingHandSize,
+                            allAttackingCards));
                 }
             }
         }
@@ -206,7 +208,6 @@ public class AttackPhase {
             Player defender,
             Set<Card> defendingCardsPerLoop,
             Player attacker) {
-        allAttackingCards.addAll(attackingCardsPerSubAttack);
         attackingCardsPerSubAttack.clear();
         subAttackCounter.incrementAndGet();
 
@@ -215,9 +216,8 @@ public class AttackPhase {
                 attackingCardsPerSubAttack.addAll(player.addAdditionalAttackingCards(
                         defendingCardsPerLoop,
                         PlayerManager.isDefenderRightBeforeAdditionalAttacker(players, defender, attacker),
-                        defender,
-                        attackingCardsPerSubAttack,
-                        subAttackCounter));
+                        defendersStartingHandSize,
+                        allAttackingCards));
             }
         }
 

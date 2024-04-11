@@ -29,9 +29,8 @@ public abstract class Player {
 
     public abstract Set<Card> addAdditionalAttackingCards(Set<Card> attackingCards,
                                                           Boolean isDefenderRightBeforeAdditionalAttacker,
-                                                          Player currentDefender,
-                                                          List<Card> attackingCardsPerLoop,
-                                                          AtomicInteger subAttackCounter);
+                                                          int defendersStartingHandSize,
+                                                          Set<Card> allAttackingCards);
 
     public abstract RoundResult defenseState(List<Card> attackingCards);
 
