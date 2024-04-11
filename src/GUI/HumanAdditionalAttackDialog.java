@@ -86,13 +86,6 @@ public class HumanAdditionalAttackDialog {
             public void actionPerformed(ActionEvent e) {
                 boolean isValidSelection;
                 isValidSelection =  ((allAttackingCards.size() + selectedCards.size()) <= defendersStartingHandSize);
-//                if (subAttackCounter.get() == 1) { // if initial attack, initial attacking cards have to be added
-//                    allAttackingCards.size() += selectedCards.size();
-//                    isValidSelection = (attackingCards.size() + selectedCards.size() <= defendersStartingHandSize);
-//                } else { // all subsequent additional attacks
-//                    isValidSelection = selectedCards.size() <= defendersStartingHandSize;
-//                }
-
                 if (!isValidSelection) {
                     dialog.setTitle("The total number of attacking cards can't exceed the number of cards in the defender's hand! Please choose less cards.");
                 } else {

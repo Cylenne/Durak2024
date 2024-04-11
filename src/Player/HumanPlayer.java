@@ -67,7 +67,9 @@ public class HumanPlayer extends Player {
             if (selectedDefendingCards.size() == attackingCards.size()) {
                 roundResult = new RoundResult(true, selectedDefendingCards);
 
-                String gameMessage = "Attacking cards " + listToString(attackingCards) + " have been countered by " + setToString(roundResult.getDefendingCards());
+                String gameMessage = (attackingCards.size() > 1) ?
+                        "Attacking cards " + listToString(attackingCards) + " have been countered by " + setToString(roundResult.getDefendingCards()) :
+                        "Attacking card " + listToString(attackingCards) + " has been countered by " + setToString(roundResult.getDefendingCards());
                 AttackPhase.getAttackScreen().updateAttackPhaseMessage(gameMessage);
                 AttackPhase.getAttackScreen().updateComputerPlayersPanel();
                 System.out.println(gameMessage);
