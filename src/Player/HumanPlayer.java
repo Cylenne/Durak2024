@@ -111,19 +111,10 @@ public class HumanPlayer extends Player {
         return new RoundResult(currentLoopRoundDefended, defendingCards);
     }
 
-    private boolean canBeatCard // VERY SIMILAR TO COMPUTERPLAYER
-    (List<Card> defendersHand,
-     Card attackingCard,
-     Set<Card> defendingCards) {
+    private boolean canBeatCard (List<Card> defendersHand, Card attackingCard, Set<Card> defendingCards) {
 
         for (Card defendersCard : defendersHand) {
-            Card.Suit trumpSuit = StartPhase.getTrumpSuit();
-            if ((attackingCard.getSuit().equals(trumpSuit) && defendersCard.getSuit().equals(trumpSuit))
-                    && defendersCard.getRank() > attackingCard.getRank()
-                    || (!attackingCard.getSuit().equals(trumpSuit) && defendersCard.getSuit().equals(attackingCard.getSuit())
-                    && defendersCard.getRank() > attackingCard.getRank())
-                    || (!attackingCard.getSuit().equals(trumpSuit) &&
-                    defendersCard.getSuit().equals(trumpSuit))) {
+            if (defendersCard.canBeat(attackingCard)) {
                 defendersHand.remove(defendersCard);
                 defendingCards.add(defendersCard);
                 return true;

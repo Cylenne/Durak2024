@@ -141,7 +141,6 @@ public class AttackPhase {
 
             if (attackingCardsPerLoop.isEmpty()) {
                 roundOn.set(false);
-                System.out.println("ALL ATTACKING CARDS AFTER CLEARING " + allAttackingCards);
                 gameMessage = ("No additional attacking cards, the attack has finished");
                 attackScreen.updateAttackPhaseMessage(gameMessage);
                 roundEndMessage(defender, allDefendingCards);
