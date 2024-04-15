@@ -1,27 +1,21 @@
 package Player;
 
 import Card.*;
+import Phases.StartPhase;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class PlayerManager {
 
     public static boolean isDefenderRightBeforeAdditionalAttacker(List<Player> players, Player defender, Player attacker) {
 
-        boolean isDefenderRightBeforeAdditionalAttacker = false;
         if (players.indexOf(defender) != players.size()) {
-            if (players.indexOf(defender) < players.indexOf(attacker)) {
-                isDefenderRightBeforeAdditionalAttacker = true;
-            }
+            return players.indexOf(defender) < players.indexOf(attacker);
         } else {
-            if (players.indexOf(defender) > players.indexOf(attacker)) {
-                isDefenderRightBeforeAdditionalAttacker = true;
-            }
+            return players.indexOf(defender) > players.indexOf(attacker);
         }
-        return isDefenderRightBeforeAdditionalAttacker;
     }
 
     public static void printAllPlayerDetails(List<Player> allPlayers) {
@@ -36,73 +30,73 @@ public class PlayerManager {
         System.out.println();
     }
 
-    public static Player determineStartingPlayer(List<Player> players, Card.Suit trumpSuit) {
+    public static Player determineStartingPlayer() {
+
         List<Card> allPlayersHands = new ArrayList<>();
 
         // Collect all cards from all players' hands
-        for (Player player : players) {
+        for (Player player : StartPhase.getPlayers()) {
             allPlayersHands.addAll(player.getHand());
         }
 
-        allPlayersHands.sort(Card.sortRankReversedSuit(trumpSuit));
-//        System.out.println("All players' hands sorted from lowest to highest: " + allPlayersHands);
+        allPlayersHands.sort(Card.sortRankReversedSuit(StartPhase.getTrumpSuit()));
 
         Card smallestTrump = new Card();
         for (Card card : allPlayersHands) {
-            if (card.getSuit() == trumpSuit) {
+            if (card.getSuit() == StartPhase.getTrumpSuit()) {
                 smallestTrump = card;
-//                System.out.println("The smallest trump card is: " + smallestTrump);
                 break;
             }
         }
 
         // determine the player whose card comes first in the sorted list
-        for (Player player : players) {
+        for (Player player : StartPhase.getPlayers()) {
             if (player.getHand().contains(smallestTrump)) {
                 return player;
             }
         }
 
         // default case (should not happen in a well-formed game)
-        return players.getFirst();
+        return StartPhase.getPlayers().getFirst();
     }
 
     public static Player determineAttacker(
             AtomicInteger roundCounter,
-            Player attacker, // included due to last attacker
+            Player previousAttacker, // included due to last attacker
             Player defender,
-            List<Player> players,
-            Card.Suit trumpSuit,
             boolean currentRoundDefended) {
+
+        List<Player> players = StartPhase.getPlayers();
+
         if (roundCounter.get() == 1) {
-            attacker = PlayerManager.determineStartingPlayer(players, trumpSuit);
-        } else {
-            if (currentRoundDefended) {
-                if (defender.getHand().isEmpty()) { // if the last defender is out of the game
-                    if (!players.isEmpty()) { // if there are still players in game*
-                        int lastAttackerIndex = players.indexOf(attacker);
-                        if (lastAttackerIndex == players.size() - 1) { // if attacker is last in (the new) players list
-                            return players.getFirst(); // go to the beginning of the list
-                        }
-                        return players.get(lastAttackerIndex + 1);
-                    } else { // all players are out of the game*
-                        return null;
-                    }
-                } else {
-                    return defender;
-                }
-            } else {
-                int defenderIndex = players.indexOf(defender);
-                if (defenderIndex == players.size() - 1) {
-                    return players.getFirst(); // if defender is last in list, go to the beginning of the list
-                }
-                return players.get(defenderIndex + 1); // if defender lost in previous round, the player after him/her attacks in the next round
-            }
+            return PlayerManager.determineStartingPlayer();
         }
-        return attacker;
+
+        if (currentRoundDefended && (defender.getHand().isEmpty())) { // if the last defender is out of the game
+            if (!players.isEmpty()) { // if there are still players in game*
+                int previousAttackerIndex = players.indexOf(previousAttacker);
+                if (previousAttackerIndex == players.size() - 1) { // if attacker is last in (the new) players list
+                    return players.getFirst(); // go to the beginning of the list
+                }
+                return players.get(previousAttackerIndex + 1);
+            } else { // all players are out of the game*
+                return null;
+            }
+        } else if (currentRoundDefended) {
+            return defender;
+        }
+
+        int defenderIndex = players.indexOf(defender);
+        if (defenderIndex == players.size() - 1) {
+            return players.getFirst(); // if defender is last in list, go to the beginning of the list
+        }
+
+        return players.get(defenderIndex + 1); // if defender lost in previous round, the player after him/her attacks in the next round
     }
 
-    public static Player determineDefender(Player currentAttacker, List<Player> players) {
+    public static Player determineDefender(Player currentAttacker) {
+        List <Player> players = StartPhase.getPlayers();
+
         int attackerIndex = players.indexOf(currentAttacker);
         if (attackerIndex == players.size() - 1) { // if attacker is last in players, he attacks the first in players
             if (players.getFirst() != null) {
@@ -117,10 +111,10 @@ public class PlayerManager {
         }
     }
 
-    public static void sortEachPlayersHand(List<Player> players, Card.Suit trumpSuit) {
-        for (Player player : players) {
-            if (trumpSuit != null) {
-                player.getHand().sort(Card.sortRankReversedSuit(trumpSuit));
+    public static void sortEachPlayersHand() {
+        for (Player player : StartPhase.getPlayers()) {
+            if (StartPhase.getTrumpSuit() != null) {
+                player.getHand().sort(Card.sortRankReversedSuit(StartPhase.getTrumpSuit()));
             } else {
                 System.out.println("Error: trump suit has not been determined yet!");
             }

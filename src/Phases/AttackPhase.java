@@ -21,8 +21,8 @@ public class AttackPhase {
 
     // non-static variables are specific to that instance of a class
     private Boolean currentRoundDefended = false;
-    private Player attacker = null;
-    private Player defender = null;
+    private Player attacker;
+    private Player defender;
     private String gameMessage;
     private Set<Card> initialAttackingCards = new HashSet<>();
     private Set<Card> allAttackingCards;
@@ -47,8 +47,8 @@ public class AttackPhase {
         transferAttributes();
         List<Player> activePlayersInRound = new ArrayList<>();
 
-        attacker = PlayerManager.determineAttacker(roundCounter, attacker, defender, players, trumpSuit, currentRoundDefended);
-        defender = PlayerManager.determineDefender(attacker, players);
+        attacker = PlayerManager.determineAttacker(roundCounter, attacker, defender, currentRoundDefended);
+        defender = PlayerManager.determineDefender(attacker);
 
         if (attackScreen == null) {
             attackScreen = new AttackScreen();
@@ -69,7 +69,7 @@ public class AttackPhase {
         activePlayersInRound.add(attacker);
         activePlayersInRound.add(defender);
 
-        PlayerManager.sortEachPlayersHand(players, trumpSuit);
+        PlayerManager.sortEachPlayersHand();
 
         allAttackingCards = new HashSet<>();
 

@@ -61,11 +61,11 @@ public class StartPhase {
 
         PlayerManager.printAllPlayerDetails(players);
 
-        PlayerManager.sortEachPlayersHand(players, trumpSuit);
+        PlayerManager.sortEachPlayersHand();
 
         deck.getDeck().add(trump);
 
-        startingPlayer = PlayerManager.determineStartingPlayer(players, trumpSuit);
+        startingPlayer = PlayerManager.determineStartingPlayer();
 
         printCurrentGameState();
     }

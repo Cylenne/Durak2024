@@ -8,7 +8,6 @@ import Phases.AttackPhase;
 import Phases.StartPhase;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class HumanPlayer extends Player {
