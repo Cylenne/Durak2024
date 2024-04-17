@@ -8,8 +8,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class GameOverPhase {
 
-    public static void gameOver(List<Player> players, List<Player> winners, AtomicInteger roundCounter) {
+    public static void gameOver(AtomicInteger roundCounter) {
 
+        List<Player> players = StartPhase.getPlayers();
+
+        List<Player> winners = AttackPhase.getWinners();
+        
         String leaderboard = "";
         for (int i = 1; i <= winners.size(); i++) {
             String suffix = switch (i) {

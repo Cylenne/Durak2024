@@ -19,7 +19,7 @@ public class Gameplay {
             attackPhase.execute(roundCounter, isGameOngoing);
         }
 
-        GameOverPhase.gameOver(StartPhase.getPlayers(), AttackPhase.getWinners(), roundCounter);
+        GameOverPhase.gameOver(roundCounter);
     }
 
 
