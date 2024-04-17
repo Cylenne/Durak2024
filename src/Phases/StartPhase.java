@@ -59,7 +59,7 @@ public class StartPhase {
         // the players list is assumed to be already set with choices from the GUI
         DeckManager.dealCards(players, deck);
 
-        PlayerManager.printAllPlayerDetails(players);
+        PlayerManager.printAllPlayerDetails();
 
         PlayerManager.sortEachPlayersHand();
 

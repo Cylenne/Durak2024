@@ -9,7 +9,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class PlayerManager {
 
-    public static boolean isDefenderRightBeforeAdditionalAttacker(List<Player> players, Player defender, Player attacker) {
+    public static boolean isDefenderRightBeforeAdditionalAttacker(Player defender, Player attacker) {
+
+        List<Player> players = StartPhase.getPlayers();
 
         if (players.indexOf(defender) != players.size()) {
             return players.indexOf(defender) < players.indexOf(attacker);
@@ -18,7 +20,8 @@ public class PlayerManager {
         }
     }
 
-    public static void printAllPlayerDetails(List<Player> allPlayers) {
+    public static void printAllPlayerDetails() {
+        List<Player> allPlayers = StartPhase.getPlayers();
         System.out.println();
         for (Player player : allPlayers) {
             System.out.print(player.getName() + "'s hand: ");
