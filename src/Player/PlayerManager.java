@@ -11,7 +11,7 @@ public class PlayerManager {
 
     public static boolean isDefenderRightBeforeAdditionalAttacker(Player defender, Player attacker) {
 
-        List<Player> players = StartPhase.getPlayers();
+        List<Player> players = StartPhase.getInstance().getPlayers();
 
         if (players.indexOf(defender) != players.size()) {
             return players.indexOf(defender) < players.indexOf(attacker);
@@ -21,7 +21,7 @@ public class PlayerManager {
     }
 
     public static void printAllPlayerDetails() {
-        List<Player> allPlayers = StartPhase.getPlayers();
+        List<Player> allPlayers = StartPhase.getInstance().getPlayers();
         System.out.println();
         for (Player player : allPlayers) {
             System.out.print(player.getName() + "'s hand: ");
@@ -38,29 +38,29 @@ public class PlayerManager {
         List<Card> allPlayersHands = new ArrayList<>();
 
         // Collect all cards from all players' hands
-        for (Player player : StartPhase.getPlayers()) {
+        for (Player player : StartPhase.getInstance().getPlayers()) {
             allPlayersHands.addAll(player.getHand());
         }
 
-        allPlayersHands.sort(Card.sortRankReversedSuit(StartPhase.getTrumpSuit()));
+        allPlayersHands.sort(Card.sortRankReversedSuit(StartPhase.getInstance().getTrumpSuit()));
 
         Card smallestTrump = new Card();
         for (Card card : allPlayersHands) {
-            if (card.getSuit() == StartPhase.getTrumpSuit()) {
+            if (card.getSuit() == StartPhase.getInstance().getTrumpSuit()) {
                 smallestTrump = card;
                 break;
             }
         }
 
         // determine the player whose card comes first in the sorted list
-        for (Player player : StartPhase.getPlayers()) {
+        for (Player player : StartPhase.getInstance().getPlayers()) {
             if (player.getHand().contains(smallestTrump)) {
                 return player;
             }
         }
 
         // default case (should not happen in a well-formed game)
-        return StartPhase.getPlayers().getFirst();
+        return StartPhase.getInstance().getPlayers().getFirst();
     }
 
     public static Player determineAttacker(
@@ -69,7 +69,7 @@ public class PlayerManager {
             Player defender,
             boolean currentRoundDefended) {
 
-        List<Player> players = StartPhase.getPlayers();
+        List<Player> players = StartPhase.getInstance().getPlayers();
 
         if (roundCounter.get() == 1) {
             return PlayerManager.determineStartingPlayer();
@@ -98,7 +98,7 @@ public class PlayerManager {
     }
 
     public static Player determineDefender(Player currentAttacker) {
-        List <Player> players = StartPhase.getPlayers();
+        List <Player> players = StartPhase.getInstance().getPlayers();
 
         int attackerIndex = players.indexOf(currentAttacker);
         if (attackerIndex == players.size() - 1) { // if attacker is last in players, he attacks the first in players
@@ -115,9 +115,9 @@ public class PlayerManager {
     }
 
     public static void sortEachPlayersHand() {
-        for (Player player : StartPhase.getPlayers()) {
-            if (StartPhase.getTrumpSuit() != null) {
-                player.getHand().sort(Card.sortRankReversedSuit(StartPhase.getTrumpSuit()));
+        for (Player player : StartPhase.getInstance().getPlayers()) {
+            if (StartPhase.getInstance().getTrumpSuit() != null) {
+                player.getHand().sort(Card.sortRankReversedSuit(StartPhase.getInstance().getTrumpSuit()));
             } else {
                 System.out.println("Error: trump suit has not been determined yet!");
             }

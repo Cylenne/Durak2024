@@ -84,7 +84,7 @@ public class AttackScreen {
         JPanel humanCardsPanel = new JPanel(new FlowLayout());
 
         List<Card> humanPlayerHand = Collections.emptyList();
-        for (Player player : StartPhase.getPlayers())
+        for (Player player : StartPhase.getInstance().getPlayers())
             if (player instanceof HumanPlayer) {
                 humanPlayerHand = player.getHand();
             }
@@ -145,7 +145,7 @@ public class AttackScreen {
         centralPanel.add(computerPlayersPanel, BorderLayout.WEST);
 
         // creating as many player icons as there are players in game
-        for (Player player : StartPhase.getPlayers()) {
+        for (Player player : StartPhase.getInstance().getPlayers()) {
 
             if (player instanceof ComputerPlayer) {
 

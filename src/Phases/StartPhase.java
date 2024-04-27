@@ -9,24 +9,34 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class StartPhase {
+    // SINGLETON
 
-    // SHOULD THIS BE A SINGLETON?? OR IS IT ALREADY ONE?
+    private List<Player> players;
+    private Deck deck;
+    private Card trump;
+    private Card.Suit trumpSuit;
+    private Player startingPlayer;
+    private String gameMessage;
+    private ConfigPhase configPhase;
+    private static StartPhase startPhaseInstance;
 
-    private static List<Player> players;
-    private static Deck deck;
-    private static Card trump;
-    private static Card.Suit trumpSuit;
-    private static Player startingPlayer;
-    private static String gameMessage;
-    private static ConfigPhase configPhase;
+    public StartPhase() {
+    }
 
-    public static void execute() {
+    public static StartPhase getInstance() {
+        if (startPhaseInstance == null) {
+            startPhaseInstance = new StartPhase();
+        }
+        return startPhaseInstance;
+    }
+
+    public void execute() {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         CountDownLatch latch = new CountDownLatch(1); // we are waiting for 1 event
 
         executor.execute(() -> ConfigPhase.ConfigPhaseBuilder.newInstance() // event we are waiting for = ConfigPhase creation
                 .setPlayers(configPhase -> {
-                    StartPhase.configPhase = configPhase;
+                    this.configPhase = configPhase;
                     latch.countDown();
                 })
                 .setDeck()
@@ -44,7 +54,7 @@ public class StartPhase {
         executor.shutdown();
     }
 
-    private static void transferAttributes(){
+    private void transferAttributes() {
         if (configPhase != null) {
             players = configPhase.getPlayers();
             deck = configPhase.getDeck();
@@ -55,7 +65,7 @@ public class StartPhase {
         }
     }
 
-    private static void initiateStartPhase() {
+    private void initiateStartPhase() {
         // the players list is assumed to be already set with choices from the GUI
         DeckManager.dealCards(players, deck);
 
@@ -70,29 +80,29 @@ public class StartPhase {
         printCurrentGameState();
     }
 
-    public static void printCurrentGameState() {
+    public void printCurrentGameState() {
         gameMessage = "The trump is: " + trump + "\n" + startingPlayer.getName() + " starts the game";
         System.out.println(gameMessage);
         DeckManager.printDeck(deck);
     }
 
-    public static List<Player> getPlayers() {
+    public  List<Player> getPlayers() {
         return players;
     }
 
-    public static Deck getDeck() {
+    public  Deck getDeck() {
         return deck;
     }
 
-    public static Card getTrump() {
+    public  Card getTrump() {
         return trump;
     }
 
-    public static Card.Suit getTrumpSuit() {
+    public  Card.Suit getTrumpSuit() {
         return trumpSuit;
     }
 
-    public static String getGameMessage() {
+    public  String getGameMessage() {
         return gameMessage;
     }
 

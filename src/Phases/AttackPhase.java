@@ -13,8 +13,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class AttackPhase {
 
     // static variables are shared among all instances of a class
-    private static List<Player> players = StartPhase.getPlayers();
-    private static Deck deck = StartPhase.getDeck();
+    private static List<Player> players = StartPhase.getInstance().getPlayers();
+    private static Deck deck = StartPhase.getInstance().getDeck();
     private static final List<Player> winners = new ArrayList<>();
     private static AttackScreen attackScreen;
 
@@ -51,9 +51,9 @@ public class AttackPhase {
 
         if (attackScreen == null) {
             attackScreen = new AttackScreen();
-            attackScreen.setUpAttackScreen(StartPhase.getPlayers(), StartPhase.getTrump());
+            attackScreen.setUpAttackScreen(StartPhase.getInstance().getPlayers(), StartPhase.getInstance().getTrump());
 
-            gameMessage = StartPhase.getGameMessage();
+            gameMessage = StartPhase.getInstance().getGameMessage();
             attackScreen.updateAttackPhaseMessage(gameMessage);
         }
 

@@ -10,7 +10,7 @@ public class GameOverPhase {
 
     public static void gameOver(AtomicInteger roundCounter) {
 
-        List<Player> players = StartPhase.getPlayers();
+        List<Player> players = StartPhase.getInstance().getPlayers();
 
         List<Player> winners = AttackPhase.getWinners();
         

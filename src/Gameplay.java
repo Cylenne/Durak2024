@@ -9,7 +9,7 @@ public class Gameplay {
 
 
     private void gameFlow() {
-        StartPhase.execute();
+        StartPhase.getInstance().execute();
 
         roundCounter.set(1);
         isGameOngoing.set(true);

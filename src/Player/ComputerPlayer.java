@@ -33,7 +33,7 @@ public class ComputerPlayer extends Player {
                 }
 
             } else if (smallestRankedCard.getRank() == additionalSmallestRankedCard.getRank() &&
-                    !additionalSmallestRankedCard.getSuit().equals(StartPhase.getTrumpSuit())) { // otherwise trumps are saved for later
+                    !additionalSmallestRankedCard.getSuit().equals(StartPhase.getInstance().getTrumpSuit())) { // otherwise trumps are saved for later
                     initialAttackingCards.add(additionalSmallestRankedCard);
             }
         }
@@ -90,7 +90,7 @@ public class ComputerPlayer extends Player {
     }
 
     private boolean canDoEarlyStageAttack(Card additionalAttackersCard, Set<Card> allAttackingCards, int defendersStartingHandSize) {
-        return !additionalAttackersCard.getSuit().equals(StartPhase.getTrumpSuit()) &&
+        return !additionalAttackersCard.getSuit().equals(StartPhase.getInstance().getTrumpSuit()) &&
                 (allAttackingCards.size() < defendersStartingHandSize);
     }
 
@@ -108,7 +108,7 @@ public class ComputerPlayer extends Player {
         Set<Card> defendingCards = new HashSet<>();
         boolean currentLoopRoundDefended = true;
 
-        attackingCards.sort(Card.sortRankReversedSuit(StartPhase.getTrumpSuit()));
+        attackingCards.sort(Card.sortRankReversedSuit(StartPhase.getInstance().getTrumpSuit()));
 
         // going through the attacking cards, starting with the highest ranked
         for (int i = attackingCards.size() - 1; i >= 0; i--) {
@@ -164,7 +164,7 @@ public class ComputerPlayer extends Player {
     private static boolean isOneOfStrongestCards(Card defendersCard) {
         if (!AttackPhase.isDeckEmpty()) {
             int rankOfQueen = 12;
-            return defendersCard.getSuit().equals(StartPhase.getTrumpSuit()) && defendersCard.getRank() >= rankOfQueen;
+            return defendersCard.getSuit().equals(StartPhase.getInstance().getTrumpSuit()) && defendersCard.getRank() >= rankOfQueen;
         }
         return false;
     }

@@ -23,7 +23,7 @@ public class HumanPlayerPanelUpdater {
     }
 
     public void updateHumanPanelAfterRedraw() {
-        for (Player player : StartPhase.getPlayers())
+        for (Player player : StartPhase.getInstance().getPlayers())
             if (player instanceof HumanPlayer) {
                 humanCardsPanel.removeAll();
                 for (Card card : player.getHand()) {
@@ -39,7 +39,7 @@ public class HumanPlayerPanelUpdater {
         humanPlayerPanel.removeAll();
 
         List<Card> humanPlayerHand = Collections.emptyList(); // this part could be shortened with a parameter?
-        for (Player player : StartPhase.getPlayers())
+        for (Player player : StartPhase.getInstance().getPlayers())
             if (player instanceof HumanPlayer) {
                 humanPlayerHand = player.getHand();
             }

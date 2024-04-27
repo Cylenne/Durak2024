@@ -104,7 +104,7 @@ public static Comparator<Card> sortRankReversedSuit(Card.Suit trumpSuit) {
     }
 
     public Boolean canBeat(Card attackingCard) {
-        Card.Suit trumpSuit = StartPhase.getTrumpSuit();
+        Card.Suit trumpSuit = StartPhase.getInstance().getTrumpSuit();
         return ( bothTrumpAndDefendersRankLarger(attackingCard, trumpSuit)
                 || nonTrumpAttackingSameSuitAndDefendersRankLarger(attackingCard, trumpSuit)
                 || nonTrumpAttackingAndDefendingCardIsTrump(attackingCard, trumpSuit));

@@ -98,7 +98,7 @@ public class HumanPlayer extends Player {
         Set<Card> defendingCards = new HashSet<>();
         boolean currentLoopRoundDefended = true;
 
-        attackingCards.sort(Card.sortRankReversedSuit(StartPhase.getTrumpSuit()));
+        attackingCards.sort(Card.sortRankReversedSuit(StartPhase.getInstance().getTrumpSuit()));
 
         for (int i = attackingCards.size() - 1; i >= 0; i--) {
             if (!canBeatCard(defendersHand, attackingCards.get(i), defendingCards)) {
