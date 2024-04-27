@@ -10,7 +10,6 @@ import java.util.concurrent.Executors;
 
 public class StartPhase {
     // SINGLETON
-
     private List<Player> players;
     private Deck deck;
     private Card trump;
