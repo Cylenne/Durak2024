@@ -22,7 +22,7 @@ public class StartPhase {
     public StartPhase() {
     }
 
-    public static StartPhase getInstance() {
+    public static synchronized StartPhase getInstance() { // lazy method uses synchronized to prevent issues with multithreading
         if (startPhaseInstance == null) {
             startPhaseInstance = new StartPhase();
         }
