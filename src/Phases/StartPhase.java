@@ -29,6 +29,32 @@ public class StartPhase {
         return startPhaseInstance;
     }
 
+    public void printCurrentGameState() {
+        gameMessage = "The trump is: " + trump + "\n" + startingPlayer.getName() + " starts the game";
+        System.out.println(gameMessage);
+        DeckManager.printDeck(deck);
+    }
+
+    public  List<Player> getPlayers() {
+        return players;
+    }
+
+    public  Deck getDeck() {
+        return deck;
+    }
+
+    public  Card getTrump() {
+        return trump;
+    }
+
+    public  Card.Suit getTrumpSuit() {
+        return trumpSuit;
+    }
+
+    public  String getGameMessage() {
+        return gameMessage;
+    }
+
     public void execute() {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         CountDownLatch latch = new CountDownLatch(1); // we are waiting for 1 event
@@ -79,30 +105,6 @@ public class StartPhase {
         printCurrentGameState();
     }
 
-    public void printCurrentGameState() {
-        gameMessage = "The trump is: " + trump + "\n" + startingPlayer.getName() + " starts the game";
-        System.out.println(gameMessage);
-        DeckManager.printDeck(deck);
-    }
 
-    public  List<Player> getPlayers() {
-        return players;
-    }
-
-    public  Deck getDeck() {
-        return deck;
-    }
-
-    public  Card getTrump() {
-        return trump;
-    }
-
-    public  Card.Suit getTrumpSuit() {
-        return trumpSuit;
-    }
-
-    public  String getGameMessage() {
-        return gameMessage;
-    }
 
 }
