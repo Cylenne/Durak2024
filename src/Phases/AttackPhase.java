@@ -90,7 +90,7 @@ public class AttackPhase {
         gameMessage = "Initial attacking cards: " + setToString(initialAttackingCards);
         attackScreen.updateAttackPhaseMessage(gameMessage);
         System.out.println(gameMessage);
-        attackScreen.updateInitialAttackingCardsPanel(initialAttackingCards);
+        attackScreen.updateAttackingCardsPanel(initialAttackingCards);
     }
 
     private void addAdditionalAttackers() {

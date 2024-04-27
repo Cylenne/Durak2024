@@ -266,18 +266,8 @@ public class AttackScreen {
         }
     }
 
-    public void updateInitialAttackingCardsPanel(Set<Card> attackingCards) {
-        attackingCardsText.setVisible(true);
-
-        for (Card card : attackingCards) {
-            attackingCardsDisplayed.add(new JLabel(card.toImageIcon()));
-        }
-
-        attackingCardsPanel.revalidate();
-        attackingCardsPanel.repaint();
-    }
-
     public void updateAttackingCardsPanel(Set<Card> attackingCards) {
+        attackingCardsText.setVisible(true);
 
         for (Card card : attackingCards) {
             attackingCardsDisplayed.add(new JLabel(card.toImageIcon()));
