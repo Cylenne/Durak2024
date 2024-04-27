@@ -51,7 +51,7 @@ public class AttackPhase {
 
         if (attackScreen == null) {
             attackScreen = new AttackScreen();
-            attackScreen.setUpAttackScreen(StartPhase.getInstance().getPlayers(), StartPhase.getInstance().getTrump());
+            attackScreen.setUpAttackScreen();
 
             gameMessage = StartPhase.getInstance().getGameMessage();
             attackScreen.updateAttackPhaseMessage(gameMessage);

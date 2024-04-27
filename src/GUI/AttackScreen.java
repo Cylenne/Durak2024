@@ -39,12 +39,12 @@ public class AttackScreen {
         return humanPlayerPanelUpdater;
     }
 
-    public void setUpAttackScreen(List<Player> players, Card trump) {
+    public void setUpAttackScreen() {
 
         createFrame();
         mainPanel = createMainPanel();
         addHumanPlayerPanel();
-        addTrumpAndMessagePanel(trump);
+        addTrumpAndMessagePanel();
         centralPanel = addCentralPanel();
         addComputerPlayersPanel();
         addAttackPhaseMessage();
@@ -99,13 +99,13 @@ public class AttackScreen {
         humanPlayerPanelUpdater = new HumanPlayerPanelUpdater(humanPlayerPanel, humanCardsPanel);
     }
 
-    private void addTrumpAndMessagePanel(Card trump) {
+    private void addTrumpAndMessagePanel() {
         JPanel trumpAndMessagePanel = new JPanel();
         trumpAndMessagePanel.setLayout(new BorderLayout());
         trumpAndMessagePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         trumpAndMessagePanel.setPreferredSize(new Dimension(100, 110 + 30));
 
-        JLabel trumpIcon = new JLabel(trump.toImageIcon(), SwingConstants.CENTER);
+        JLabel trumpIcon = new JLabel(StartPhase.getInstance().getTrump().toImageIcon(), SwingConstants.CENTER);
         JLabel trumpText = new JLabel("Trump", SwingConstants.CENTER);
         trumpText.setFont(new Font("Arial", Font.BOLD, 14));
 
@@ -224,17 +224,12 @@ public class AttackScreen {
 
     public void updateRoundMessage(String message) {
         CountDownLatch latch = new CountDownLatch(1);
-        Timer timer = new Timer(delay, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                SwingUtilities.invokeLater(() -> {
-                    roundMessage.setText(message);
-                    roundMessage.setCaretPosition(roundMessage.getDocument().getLength());
-                    roundMessage.repaint();
-                    latch.countDown(); // callback to countdown latch
-                });
-            }
-        });
+        Timer timer = new Timer(delay, e -> SwingUtilities.invokeLater(() -> {
+            roundMessage.setText(message);
+            roundMessage.setCaretPosition(roundMessage.getDocument().getLength());
+            roundMessage.repaint();
+            latch.countDown(); // callback to countdown latch
+        }));
         timer.setRepeats(false); // execute the action only once
         timer.start();
 
@@ -255,17 +250,12 @@ public class AttackScreen {
 
     public void updateAttackPhaseMessage(String message) {
         CountDownLatch latch = new CountDownLatch(1);
-        Timer timer = new Timer(delay, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                SwingUtilities.invokeLater(() -> {
-                    attackPhaseMessage.setText(message);
-                    attackPhaseMessage.setCaretPosition(attackPhaseMessage.getDocument().getLength());
-                    attackPhaseMessage.repaint();
-                    latch.countDown(); // callback to countdown latch
-                });
-            }
-        });
+        Timer timer = new Timer(delay, e -> SwingUtilities.invokeLater(() -> {
+            attackPhaseMessage.setText(message);
+            attackPhaseMessage.setCaretPosition(attackPhaseMessage.getDocument().getLength());
+            attackPhaseMessage.repaint();
+            latch.countDown(); // callback to countdown latch
+        }));
         timer.setRepeats(false); // execute the action only once
         timer.start();
 
