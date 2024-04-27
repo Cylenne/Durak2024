@@ -73,9 +73,6 @@ public class ComputerPlayer extends Player {
             AttackPhase.getAttackScreen().updateAttackingCardsPanel(additionalAttackingCardsPerPlayer);
         }
 
-//        System.out.println("allAttackingCards: " + allAttackingCards.size() + ": " + allAttackingCards);
-//        System.out.println("defendersStartingHandSize: " + defendersStartingHandSize);
-
         this.getHand().removeAll(additionalAttackingCardsPerPlayer);
         AttackPhase.getAttackScreen().updateComputerPlayersPanel();
 

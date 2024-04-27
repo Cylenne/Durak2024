@@ -2,6 +2,8 @@ package Player;
 
 import javax.swing.JOptionPane;
 
+// use Factory method for this
+
 public class PlayerCreation {
     public HumanPlayer createHumanPlayer(int i) {
         // creating a brand-new window for prompting for the players' name

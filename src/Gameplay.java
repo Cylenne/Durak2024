@@ -4,8 +4,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Gameplay {
-    private AtomicInteger roundCounter = new AtomicInteger();
-    private AtomicBoolean isGameOngoing = new AtomicBoolean();
+    private final AtomicInteger roundCounter = new AtomicInteger();
+    private final AtomicBoolean isGameOngoing = new AtomicBoolean();
 
 
     private void gameFlow() {

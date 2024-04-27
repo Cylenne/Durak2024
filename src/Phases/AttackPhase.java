@@ -77,7 +77,7 @@ public class AttackPhase {
 
         attackScreen.updateAttackPhaseMessage(gameMessage);
 
-        DeckManager.printDeck(deck);
+        DeckManager.getInstance().printDeck(deck);
         PlayerManager.printAllPlayerDetails();
 
         attackScreen.clearAttackingAndDefendingCardsPanel();
@@ -143,7 +143,7 @@ public class AttackPhase {
         }
 
         roundCounter.incrementAndGet();
-        DeckManager.drawMissingCards(activePlayersInRound, deck);
+        DeckManager.getInstance().drawMissingCards(activePlayersInRound, deck);
         attackScreen.getHumanPlayerPanelUpdater().updateHumanPanelAfterRedraw();
         roundEndCheck(isGameOngoing);
     }

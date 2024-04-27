@@ -1,10 +1,24 @@
 package Card;
+
 import Player.*;
+
 import java.util.List;
 
+// singleton
 public class DeckManager {
+    private static DeckManager deckManagerInstance;
 
-    public static Card dealTrump(Deck deck) {
+    private DeckManager() {
+    }
+
+    public static synchronized DeckManager getInstance() { // lazy method uses synchronized to prevent issues with multithreading
+        if (deckManagerInstance == null) {
+            deckManagerInstance = new DeckManager();
+        }
+        return deckManagerInstance;
+    }
+
+    public Card dealTrump(Deck deck) {
         List<Card> deckList = deck.getDeck();
 
         if (!deckList.isEmpty()) {
@@ -17,18 +31,18 @@ public class DeckManager {
         }
     }
 
-    public static void printDeck(Deck deck) {
+    public void printDeck(Deck deck) {
         System.out.print("\nThe remaining deck is: ");
         deck.printDeck();
     }
 
-    public static void dealCards(List<Player> allPlayers, Deck deck) {
+    public void dealCards(List<Player> allPlayers, Deck deck) {
         for (Player player : allPlayers) {
             player.initialDeal(deck);
         }
     }
 
-    public static void drawMissingCards(List<Player> activePlayersInRound, Deck deck) {
+    public void drawMissingCards(List<Player> activePlayersInRound, Deck deck) {
         // activePlayers list was created so that first attacker, then additional attackers, then defender redraws
         for (Player player : activePlayersInRound) {
             int missingCards = 6 - player.getHand().size();

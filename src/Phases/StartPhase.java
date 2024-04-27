@@ -32,7 +32,7 @@ public class StartPhase {
     public void printCurrentGameState() {
         gameMessage = "The trump is: " + trump + "\n" + startingPlayer.getName() + " starts the game";
         System.out.println(gameMessage);
-        DeckManager.printDeck(deck);
+        DeckManager.getInstance().printDeck(deck);
     }
 
     public  List<Player> getPlayers() {
@@ -92,7 +92,7 @@ public class StartPhase {
 
     private void initiateStartPhase() {
         // the players list is assumed to be already set with choices from the GUI
-        DeckManager.dealCards(players, deck);
+        DeckManager.getInstance().dealCards(players, deck);
 
         PlayerManager.printAllPlayerDetails();
 

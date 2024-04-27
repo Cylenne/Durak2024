@@ -9,14 +9,14 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
 import static Card.Card.resizeImageIcon;
+
+// this entire class needs to be refactored but before that an architecture has to be introduced first
 
 public class AttackScreen {
     private JFrame frame;

@@ -64,7 +64,7 @@ public class ConfigPhase {
         }
 
         public ConfigPhaseBuilder setTrump() {
-            this.trump = DeckManager.dealTrump(deck);
+            this.trump = DeckManager.getInstance().dealTrump(deck);
             return this;
         }
 
