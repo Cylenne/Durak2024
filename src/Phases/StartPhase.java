@@ -19,7 +19,7 @@ public class StartPhase {
     private ConfigPhase configPhase;
     private static StartPhase startPhaseInstance;
 
-    public StartPhase() {
+    private StartPhase() {
     }
 
     public static synchronized StartPhase getInstance() { // lazy method uses synchronized to prevent issues with multithreading
@@ -27,6 +27,32 @@ public class StartPhase {
             startPhaseInstance = new StartPhase();
         }
         return startPhaseInstance;
+    }
+
+    public void printCurrentGameState() {
+        gameMessage = "The trump is: " + trump + "\n" + startingPlayer.getName() + " starts the game";
+        System.out.println(gameMessage);
+        DeckManager.printDeck(deck);
+    }
+
+    public  List<Player> getPlayers() {
+        return players;
+    }
+
+    public  Deck getDeck() {
+        return deck;
+    }
+
+    public  Card getTrump() {
+        return trump;
+    }
+
+    public  Card.Suit getTrumpSuit() {
+        return trumpSuit;
+    }
+
+    public  String getGameMessage() {
+        return gameMessage;
     }
 
     public void execute() {
@@ -79,30 +105,6 @@ public class StartPhase {
         printCurrentGameState();
     }
 
-    public void printCurrentGameState() {
-        gameMessage = "The trump is: " + trump + "\n" + startingPlayer.getName() + " starts the game";
-        System.out.println(gameMessage);
-        DeckManager.printDeck(deck);
-    }
 
-    public  List<Player> getPlayers() {
-        return players;
-    }
-
-    public  Deck getDeck() {
-        return deck;
-    }
-
-    public  Card getTrump() {
-        return trump;
-    }
-
-    public  Card.Suit getTrumpSuit() {
-        return trumpSuit;
-    }
-
-    public  String getGameMessage() {
-        return gameMessage;
-    }
 
 }
